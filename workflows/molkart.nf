@@ -49,6 +49,11 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
+include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
+include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
+include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
+include { MCQUANT                     } from '../modules/nf-core/mcquant/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
