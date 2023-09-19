@@ -46,7 +46,6 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
@@ -79,8 +78,9 @@ workflow MOLKART {
     // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
     // ! There is currently no tooling to help you write a sample sheet schema
 
+
     //
-    // MODULE: Run FastQC
+    // MODULE: Run Mindagap_mindagap
     //
     FASTQC (
         INPUT_CHECK.out.reads
@@ -90,6 +90,35 @@ workflow MOLKART {
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
+
+    // Stack images
+
+    //
+    // MODULE: Apply Contract-limited adaptive histogram equalization (CLAHE)
+    //
+
+    //
+    // MODULE: Cellpose segmentation
+    //
+
+    //
+    // MODULE: Run Module Mindagap duplicatefinder
+    //
+    // Filter out potential duplicate spots from the spots table
+
+     //
+    // MODULE: PROJECT SPOTS
+    //
+    // Transform spot table to 2 dimensional numpy array to use with MCQUANT
+
+
+    //
+    // MODULE: MCQuant
+    //
+
+    //
+    // MODULE: Run Module MOLCART_QC
+    //
 
     //
     // MODULE: MultiQC
