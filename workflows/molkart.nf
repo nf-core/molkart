@@ -32,6 +32,9 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { MINDAGAP_DUPLICATEFINDER   } from '../modules/local/mindagap_duplicatefinder'
+include { PROJECT_SPOTS              } from '../modules/local/project_spots'
+
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
@@ -71,7 +74,6 @@ workflow MOLKART {
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
     ch_from_samplesheet = Channel.fromSamplesheet("input")
-    ch_from_samplesheet.view()
 
     ch_from_samplesheet
         .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], nuclear_image) }
@@ -99,18 +101,41 @@ workflow MOLKART {
     //
 
     // Cellpose segmentation and quantification
-    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, "")
+    // CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
 
     //
     // MODULE: Run Module Mindagap duplicatefinder
     //
     // Filter out potential duplicate spots from the spots table
+    ch_from_samplesheet
+        .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], spot_table) }
+        .set { spot_tuple }
+
+    MINDAGAP_DUPLICATEFINDER(spot_tuple)
+
+    dedup_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
+        .join(image_tuple)
+    dedup_spots.view()
+
+    qc_spots = dedup_spots.map(it -> tuple([id: it[0]],it[1]))
+
+    PROJECT_SPOTS(
+        dedup_spots.map(it -> tuple(it[0],it[1])),
+        dedup_spots.map(it -> it[2])
+    )
 
      //
     // MODULE: PROJECT SPOTS
     //
     // Transform spot table to 2 dimensional numpy array to use with MCQUANT
 
+
+    /// Prepare input for MCQuant using images and spots
+    mcquant_cellpose_in = PROJECT_SPOTS.out.img_spots
+        .join(PROJECT_SPOTS.out.channel_names)
+        .map{
+            meta,tiff,channels -> [meta,tiff,channels]}
+        .join(cellpose_mask_filt)
 
     //
     // MODULE: MCQuant
