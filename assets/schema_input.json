@@ -9,20 +9,20 @@
         "properties": {
             "sample": {
                 "type": "string",
-                "pattern": "^\\S+$",
+                "pattern": ".*$",
                 "errorMessage": "Sample name must be provided and cannot contain spaces"
             },
-            "fastq_1": {
+            "nuclear_image": {
                 "type": "string",
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "pattern": ".*.tiff$",
                 "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
             },
-            "fastq_2": {
+            "spot_table": {
                 "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
                 "anyOf": [
                     {
                         "type": "string",
-                        "pattern": "^\\S+\\.f(ast)?q\\.gz$"
+                        "pattern": ".*.txt$"
                     },
                     {
                         "type": "string",
@@ -31,6 +31,6 @@
                 ]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["sample", "nuclear_image", "spot_table"]
     }
 }
