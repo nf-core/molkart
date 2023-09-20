@@ -15,20 +15,12 @@
             "nuclear_image": {
                 "type": "string",
                 "pattern": ".*.tiff$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "errorMessage": "Nuclear image must be provided, cannot contain spaces and must have extension '.tiff'"
             },
             "spot_table": {
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
-                "anyOf": [
-                    {
-                        "type": "string",
-                        "pattern": ".*.txt$"
-                    },
-                    {
-                        "type": "string",
-                        "maxLength": 0
-                    }
-                ]
+                "type": "string",
+                "pattern": ".*.txt$",
+                "errorMessage": "Spot table must be provided, has to have shape x,y,z,gene with sep = '\t', cannot contain spaces and must have extension '.txt'"
             }
         },
         "required": ["sample", "nuclear_image", "spot_table"]

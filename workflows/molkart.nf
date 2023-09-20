@@ -97,13 +97,6 @@ workflow MOLKART {
     // APPLY_CLAHE_DASK(MKIMG_STACKS.out.mcimage) TODO : Add local module for testing
 
     //
-    // MODULE: Cellpose segmentation
-    //
-
-    // Cellpose segmentation and quantification
-    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
-
-    //
     // MODULE: Run Module Mindagap duplicatefinder
     //
     // Filter out potential duplicate spots from the spots table
@@ -129,6 +122,14 @@ workflow MOLKART {
     //
     // Transform spot table to 2 dimensional numpy array to use with MCQUANT
 
+/*
+
+    //
+    // MODULE: Cellpose segmentation
+    //
+
+    // Cellpose segmentation and quantification
+    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
 
     /// Prepare input for MCQuant using images and spots
     mcquant_cellpose_in = PROJECT_SPOTS.out.img_spots
@@ -136,6 +137,8 @@ workflow MOLKART {
         .map{
             meta,tiff,channels -> [meta,tiff,channels]}
         .join(CELLPOSE.out.mask)
+
+*/
 
     //
     // MODULE: MCQuant
