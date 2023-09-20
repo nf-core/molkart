@@ -86,9 +86,7 @@ workflow MOLKART {
     //
     MINDAGAP_MINDAGAP(image_tuple, 7, 100)
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
 
     // Stack images
 
@@ -108,6 +106,8 @@ workflow MOLKART {
 
     MINDAGAP_DUPLICATEFINDER(spot_tuple)
 
+    ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
+
     //
     // MODULE: PROJECT SPOTS
     //
@@ -124,6 +124,18 @@ workflow MOLKART {
     )
 
     DEEPCELL_MESMER(CLAHE_DASK.out.img_clahe, [[:],[]])
+
+    ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
+
+    /*
+
+    //
+    // MODULE: Cellpose segmentation
+    //
+
+    // Cellpose segmentation and quantification
+    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
+    */
 
     /// Prepare input for MCQuant using images and spots
     mcquant_in = PROJECT_SPOTS.out.img_spots
@@ -143,6 +155,7 @@ workflow MOLKART {
         mcquant_in.map{it -> tuple([id:it[0]],it[2])}
         )
 
+    ch_versions = ch_versions.mix(MCQUANT.out.versions)
     //
     // MODULE: MOLCART_QC
     //
@@ -156,15 +169,9 @@ workflow MOLKART {
             "Mesmer"
         )
 
-/*
-
-    //
-    // MODULE: Cellpose segmentation
-    //
-
-    // Cellpose segmentation and quantification
-    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
-*/
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //
     // MODULE: Run Module MOLCART_QC
