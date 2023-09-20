@@ -1,6 +1,6 @@
 process PROJECT_SPOTS{
-    debug true
-    tag "Projecting spots $meta"
+    debug false
+    tag "Projecting spots $meta.id"
 
     container 'wuennemannflorian/project_spots:latest'
 
