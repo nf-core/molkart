@@ -134,7 +134,7 @@ workflow MOLKART {
     //
 
     // Cellpose segmentation and quantification
-    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
+    CELLPOSE(CLAHE_DASK.out.tiff, [])
     */
 
     /// Prepare input for MCQuant using images and spots
@@ -190,7 +190,6 @@ workflow MOLKART {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    /// ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([])) TODO: remove
 
     MULTIQC (
         ch_multiqc_files.collect(),
