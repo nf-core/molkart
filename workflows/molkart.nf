@@ -101,7 +101,7 @@ workflow MOLKART {
     //
 
     // Cellpose segmentation and quantification
-    // CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
+    CELLPOSE(MINDAGAP_MINDAGAP.out.tiff, [])
 
     //
     // MODULE: Run Module Mindagap duplicatefinder
@@ -135,7 +135,7 @@ workflow MOLKART {
         .join(PROJECT_SPOTS.out.channel_names)
         .map{
             meta,tiff,channels -> [meta,tiff,channels]}
-        .join(cellpose_mask_filt)
+        .join(CELLPOSE.out.mask)
 
     //
     // MODULE: MCQuant
