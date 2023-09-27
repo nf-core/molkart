@@ -5,14 +5,39 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "cellpose": {
+                        "branch": "master",
+                        "git_sha": "716ef3019b66772a817b417078edce2f7b337858",
+                        "installed_by": ["modules"]
+                    },
                     "custom/dumpsoftwareversions": {
                         "branch": "master",
                         "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
                         "installed_by": ["modules"]
                     },
-                    "fastqc": {
+                    "deepcell/mesmer": {
                         "branch": "master",
                         "git_sha": "bd8092b67b5103bdd52e300f75889442275c3117",
+                        "installed_by": ["modules"]
+                    },
+                    "ilastik/multicut": {
+                        "branch": "master",
+                        "git_sha": "6f150e1503c0826c21fedf1fa566cdbecbe98ec7",
+                        "installed_by": ["modules"]
+                    },
+                    "ilastik/pixelclassification": {
+                        "branch": "master",
+                        "git_sha": "6f150e1503c0826c21fedf1fa566cdbecbe98ec7",
+                        "installed_by": ["modules"]
+                    },
+                    "mcquant": {
+                        "branch": "master",
+                        "git_sha": "b9829e1064382745d8dff7f1d74d2138d2864f71",
+                        "installed_by": ["modules"]
+                    },
+                    "mindagap/mindagap": {
+                        "branch": "master",
+                        "git_sha": "240937a2a9c30298110753292be041188891f2cb",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {

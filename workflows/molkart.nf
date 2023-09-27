@@ -4,7 +4,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
+include { paramsSummaryLog; paramsSummaryMap; fromSamplesheet } from 'plugin/nf-validation'
 
 def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
 def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
@@ -32,10 +32,15 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { CLAHE_DASK   } from '../modules/local/clahe_dask'
+include { MINDAGAP_DUPLICATEFINDER   } from '../modules/local/mindagap_duplicatefinder'
+include { PROJECT_SPOTS              } from '../modules/local/project_spots'
+include { MOLCART_QC              } from '../modules/local/molcart_qc'
+
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+// include { INPUT_CHECK } from '../subworkflows/local/input_check' TODO: remove in the future
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,12 +48,16 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
+//wge
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
+include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
+include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
+include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
+include { MCQUANT                     } from '../modules/nf-core/mcquant/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,25 +75,107 @@ workflow MOLKART {
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
-    INPUT_CHECK (
-        file(params.input)
-    )
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
+    ch_from_samplesheet = Channel.fromSamplesheet("input")
+
+    ch_from_samplesheet
+        .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], nuclear_image) }
+        .set { image_tuple }
 
     //
-    // MODULE: Run FastQC
+    // MODULE: Run Mindagap_mindagap
     //
-    FASTQC (
-        INPUT_CHECK.out.reads
+    MINDAGAP_MINDAGAP(image_tuple, 7, 100)
+
+    ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
+
+    // Stack images
+
+    //
+    // MODULE: Apply Contract-limited adaptive histogram equalization (CLAHE)
+    //
+
+    CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
+
+    //
+    // MODULE: MINDAGAP Duplicatefinder
+    //
+    // Filter out potential duplicate spots from the spots table
+    ch_from_samplesheet
+        .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], spot_table) }
+        .set { spot_tuple }
+
+    MINDAGAP_DUPLICATEFINDER(spot_tuple)
+
+    ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
+
+    //
+    // MODULE: PROJECT SPOTS
+    //
+    // Transform spot table to 2 dimensional numpy array to use with MCQUANT
+
+    dedup_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
+        .join(image_tuple)
+
+    qc_spots = dedup_spots.map(it -> tuple([id: it[0]],it[1]))
+
+    PROJECT_SPOTS(
+        dedup_spots.map(it -> tuple(it[0],it[1])),
+        dedup_spots.map(it -> it[2])
     )
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+
+    DEEPCELL_MESMER(CLAHE_DASK.out.img_clahe, [[:],[]])
+
+    ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
+
+    /*
+
+    //
+    // MODULE: Cellpose segmentation
+    //
+
+    // Cellpose segmentation and quantification
+    CELLPOSE(CLAHE_DASK.out.tiff, [])
+    */
+
+    /// Prepare input for MCQuant using images and spots
+    mcquant_in = PROJECT_SPOTS.out.img_spots
+        .join(PROJECT_SPOTS.out.channel_names)
+        .map{
+            meta,tiff,channels -> [meta,tiff,channels]
+            }
+        .join(DEEPCELL_MESMER.out.mask)
+
+    //
+    // MODULE: MCQuant
+    //
+
+    MCQUANT(
+        mcquant_in.map{it -> tuple([id:it[0]],it[1])},
+        mcquant_in.map{it -> tuple([id:it[0]],it[3])},
+        mcquant_in.map{it -> tuple([id:it[0]],it[2])}
+        )
+
+    ch_versions = ch_versions.mix(MCQUANT.out.versions)
+    //
+    // MODULE: MOLCART_QC
+    //
+
+    molcart_qc = MCQUANT.out.csv
+        .join(qc_spots)
+
+    MOLCART_QC(
+            molcart_qc.map{it -> tuple(it[0],it[1])},
+            molcart_qc.map{it -> tuple(it[0],it[2])},
+            "Mesmer"
+        )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
+
+    //
+    // MODULE: Run Module MOLCART_QC
+    //
 
     //
     // MODULE: MultiQC
@@ -99,7 +190,6 @@ workflow MOLKART {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
 
     MULTIQC (
         ch_multiqc_files.collect(),

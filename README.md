@@ -11,15 +11,13 @@
 
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23molkart-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/molkart)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
 
+## Important note
+
+This pipeline is under active development and does not work at this point. If you want to process your Resolve Bioscience data in the meantime, please go to https://github.com/FloWuenne/nf-MolKart, where you can find a working nextflow pipeline, outside the nf-core ecosystem. In the coming weeks, nf-MolKart will be completely transitioned into nf-core/molkart for future use.
+
 ## Introduction
 
-**nf-core/molkart** is a bioinformatics pipeline that ...
-
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+**nf-core/molkart** is a pipeline for processing Molecular Cartography data from Resolve Bioscience (combinatorial FISH). It takes as input a table of FISH spot positions (x,y,z,gene), a corresponding DAPI image (tiff format) and optionally a membrane staining image in tiff format. nf-core/molkart performs end-to-end processing of the data including image processing, QC filtering of spots, cell segmentation, spot to cell assignment and reports quality metrics such as the spot assignment rate, average spots per cell and segmentation mask size ranges.
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
