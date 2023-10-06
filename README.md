@@ -42,8 +42,8 @@ First, prepare a samplesheet with your input data that looks as follows:
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,nuclear_image,spot_locations,membrane_image
+sample1,sample1_DAPI.tif,sample1_spots.txt, sample1_WGA.tif
 ```
 
 Each row represents a fastq file (single-end) or a pair of fastq files (paired end).

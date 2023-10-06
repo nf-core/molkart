@@ -56,7 +56,6 @@ if __name__ == "__main__":
 
     # Stack images on the c-axis
     spot_2d_stack = da.stack(spots_2d_list, axis=0)
-
     ## Write a csv file containing the channel names
     channel_names = spots_zsum.gene.unique().tolist()
     pd.DataFrame(channel_names).to_csv(args.sample_id + ".channel_names.csv", index=False, header=False)

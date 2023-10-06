@@ -32,15 +32,14 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CLAHE_DASK   } from '../modules/local/clahe_dask'
+include { CLAHE_DASK                 } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER   } from '../modules/local/mindagap_duplicatefinder'
 include { PROJECT_SPOTS              } from '../modules/local/project_spots'
-include { MOLCART_QC              } from '../modules/local/molcart_qc'
+include { MOLCART_QC                 } from '../modules/local/molcart_qc'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-// include { INPUT_CHECK } from '../subworkflows/local/input_check' TODO: remove in the future
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,7 +47,7 @@ include { MOLCART_QC              } from '../modules/local/molcart_qc'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//wge
+//
 // MODULE: Installed directly from nf-core/modules
 //
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
@@ -76,7 +75,6 @@ workflow MOLKART {
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
     ch_from_samplesheet = Channel.fromSamplesheet("input")
-
     ch_from_samplesheet
         .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], nuclear_image) }
         .set { image_tuple }
@@ -91,7 +89,7 @@ workflow MOLKART {
     // Stack images
 
     //
-    // MODULE: Apply Contract-limited adaptive histogram equalization (CLAHE)
+    // MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
 
     CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
@@ -113,60 +111,88 @@ workflow MOLKART {
     //
     // Transform spot table to 2 dimensional numpy array to use with MCQUANT
 
-    dedup_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
+    qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
+    dedup_spots = qc_spots
         .join(image_tuple)
-
-    qc_spots = dedup_spots.map(it -> tuple([id: it[0]],it[1]))
 
     PROJECT_SPOTS(
         dedup_spots.map(it -> tuple(it[0],it[1])),
         dedup_spots.map(it -> it[2])
     )
 
-    DEEPCELL_MESMER(CLAHE_DASK.out.img_clahe, [[:],[]])
-
-    ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
-
-    /*
+    //
+    // MODULE: DeepCell Mesmer segmentation
+    //
+    segmentation_masks = Channel.empty()
+    if (params.segmentation_method.split(',').contains('mesmer')) {
+        DEEPCELL_MESMER(CLAHE_DASK.out.img_clahe, [[:], []])
+        ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
+        segmentation_masks = segmentation_masks
+            .mix(DEEPCELL_MESMER.out.mask
+                .combine(Channel.of('mesmer')))
+    }
 
     //
     // MODULE: Cellpose segmentation
     //
+    if (params.segmentation_method.split(',').contains('cellpose')) {
+        CELLPOSE(CLAHE_DASK.out.img_clahe, [])
+        ch_versions = ch_versions.mix(CELLPOSE.out.versions)
+        segmentation_masks = segmentation_masks
+            .mix(CELLPOSE.out.mask
+                .combine(Channel.of('cellpose')))
+    }
 
-    // Cellpose segmentation and quantification
-    CELLPOSE(CLAHE_DASK.out.tiff, [])
-    */
-
-    /// Prepare input for MCQuant using images and spots
-    mcquant_in = PROJECT_SPOTS.out.img_spots
+    PROJECT_SPOTS.out.img_spots
         .join(PROJECT_SPOTS.out.channel_names)
         .map{
             meta,tiff,channels -> [meta,tiff,channels]
             }
-        .join(DEEPCELL_MESMER.out.mask)
+        .combine(segmentation_masks, by: 0)
+        .map {
+            meta, tiff, channels, mask, seg ->
+            new_meta = meta.clone()
+            new_meta.segmentation = seg
+            [new_meta, tiff, channels, mask]
+        }.set{ mcquant_in }
+
+    /// Prepare input for MCQuant using images and spots
+    //mcquant_in = PROJECT_SPOTS.out.img_spots
+    ///    .join(PROJECT_SPOTS.out.channel_names)
+    //    .map{
+    //        meta,tiff,channels -> [meta,tiff,channels]
+    //        }
+    //    .combine(segmentation_masks, by: 0)
 
     //
     // MODULE: MCQuant
     //
-
     MCQUANT(
-        mcquant_in.map{it -> tuple([id:it[0]],it[1])},
-        mcquant_in.map{it -> tuple([id:it[0]],it[3])},
-        mcquant_in.map{it -> tuple([id:it[0]],it[2])}
+        mcquant_in.map{it -> tuple(it[0],it[1])},
+        mcquant_in.map{it -> tuple(it[0],it[3])},
+        mcquant_in.map{it -> tuple(it[0],it[2])}
         )
-
     ch_versions = ch_versions.mix(MCQUANT.out.versions)
+
     //
     // MODULE: MOLCART_QC
     //
+    MCQUANT.out.csv
+        .map {
+            meta, quant ->
+            [meta.subMap("id"), quant, meta.segmentation]
+        }.set { mcquant_out }
 
-    molcart_qc = MCQUANT.out.csv
-        .join(qc_spots)
+    qc_spots.combine(
+        mcquant_out, by: 0)
+        .set{ molcart_qc }
+
+    molcart_qc.view()
 
     MOLCART_QC(
-            molcart_qc.map{it -> tuple(it[0],it[1])},
             molcart_qc.map{it -> tuple(it[0],it[2])},
-            "Mesmer"
+            molcart_qc.map{it -> tuple(it[0],it[1])},
+            molcart_qc.map{it -> it[3]}
         )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
@@ -174,15 +200,10 @@ workflow MOLKART {
     )
 
     //
-    // MODULE: Run Module MOLCART_QC
-    //
-
-    //
     // MODULE: MultiQC
     //
     workflow_summary    = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
-
     methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
     ch_methods_description = Channel.value(methods_description)
 

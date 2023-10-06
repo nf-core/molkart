@@ -73,7 +73,8 @@ if __name__ == "__main__":
         ]
     )
     summary_df.loc[0] = [
-        args.sample_id + "_" + args.segmentation_method,
+        args.sample_id,
+        ##args.sample_id + "_" + args.segmentation_method,
         args.segmentation_method,
         summary_segmentation[0],
         summary_segmentation[1],

@@ -251,5 +251,13 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "segmentation_method": {
+            "type": "string",
+            "description": "List of segmentation tools to apply to the image",
+            "default": "mesmer"
+        }
+    },
+    "required": ["segmentation_method"]
 }

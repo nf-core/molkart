@@ -14,12 +14,12 @@
             },
             "nuclear_image": {
                 "type": "string",
-                "pattern": ".*.tiff$",
-                "errorMessage": "Nuclear image must be provided, cannot contain spaces and must have extension '.tiff'"
+                "pattern": ".*.(tif|tiff)$",
+                "errorMessage": "Nuclear image must be provided, cannot contain spaces and must have extension '.tif' or '.tiff'"
             },
             "spot_table": {
                 "type": "string",
-                "pattern": ".*.txt$",
+                "pattern": ".*.(txt|tsv)$",
                 "errorMessage": "Spot table must be provided, has to have shape x,y,z,gene with sep = '\t', cannot contain spaces and must have extension '.txt'"
             }
         },
