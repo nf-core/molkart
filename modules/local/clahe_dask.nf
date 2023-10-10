@@ -12,14 +12,14 @@ process CLAHE_DASK{
 
     script:
     """
-    apply_clahe.dask.py \
-    --raw ${image} \
-    --output ${image.baseName}.clahe.tiff \
-    --cliplimit 0.01 \
-    --kernel 25 \
-    --nbins 256 \
-    --channel 0 \
-    --pixel-size 0.138
+    apply_clahe.dask.py \\
+        --raw ${image} \\
+        --output ${image.baseName}.clahe.tiff \\
+        --cliplimit 0.01 \\
+        --kernel 25 \\
+        --nbins 256 \\
+        --channel 0 \\
+        --pixel-size 0.138
     """
 
 }

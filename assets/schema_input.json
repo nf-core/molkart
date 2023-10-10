@@ -9,18 +9,32 @@
         "properties": {
             "sample": {
                 "type": "string",
-                "pattern": ".*$",
+                "pattern": "^\\S+$",
                 "errorMessage": "Sample name must be provided and cannot contain spaces"
             },
             "nuclear_image": {
                 "type": "string",
-                "pattern": ".*.(tif|tiff)$",
+                "pattern": "^\\S+\\.(tif|tiff)$",
+                "format": "file-path",
                 "errorMessage": "Nuclear image must be provided, cannot contain spaces and must have extension '.tif' or '.tiff'"
             },
             "spot_table": {
                 "type": "string",
-                "pattern": ".*.(txt|tsv)$",
+                "pattern": "^\\S+\\.(txt|tsv)$",
                 "errorMessage": "Spot table must be provided, has to have shape x,y,z,gene with sep = '\t', cannot contain spaces and must have extension '.txt'"
+            },
+            "membrane_image": {
+                "errorMessage": "Membrane image is optional, and cannot contain spaces and must have extension '.tif' or '.tiff'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.(tif|tiff)$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ]
             }
         },
         "required": ["sample", "nuclear_image", "spot_table"]

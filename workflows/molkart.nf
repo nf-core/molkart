@@ -21,9 +21,9 @@ WorkflowMolkart.initialise(params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
-ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
+ch_multiqc_config                     = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+ch_multiqc_custom_config              = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
+ch_multiqc_logo                       = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
 ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
 /*
@@ -32,6 +32,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { CREATE_STACK               } from '../modules/local/create_stack'
 include { CLAHE_DASK                 } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER   } from '../modules/local/mindagap_duplicatefinder'
 include { PROJECT_SPOTS              } from '../modules/local/project_spots'
@@ -74,36 +75,78 @@ workflow MOLKART {
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
     //
+    //ch_from_samplesheet = Channel.fromSamplesheet("input")
+
     ch_from_samplesheet = Channel.fromSamplesheet("input")
+
     ch_from_samplesheet
-        .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], nuclear_image) }
+        .map {
+            if (it[3] != []) {
+                return tuple([id:it[0],stain:"1"], it[3])
+            } else {
+                return null
+            }
+        }.set { membrane_tuple }
+
+    ch_from_samplesheet
+        .map { it -> tuple([id:it[0],stain:"0"], it[1]) }
         .set { image_tuple }
+
+    ch_from_samplesheet
+        .map { it -> tuple([id:it[0]], it[2]) }
+        .set { spot_tuple }
 
     //
     // MODULE: Run Mindagap_mindagap
     //
-    MINDAGAP_MINDAGAP(image_tuple, 7, 100)
-
+    images_tuple = membrane_tuple.mix(image_tuple)
+    MINDAGAP_MINDAGAP(images_tuple, 7, 100)
     ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
 
-    // Stack images
-
     //
-    // MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
+    //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
-
+    // currently CLAHE is either applied on all channels, or none.
     CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
+
+    //
+    // MODULE: Stack channels if membrane image provided for segmentation
+    //
+    CLAHE_DASK.out.img_clahe
+        .map {
+            meta, tiff ->
+            [meta.subMap("id"), tiff, meta.stain]
+        }.set { clahe_out }
+    clahe_out.groupTuple().map{
+        tuple(it[0], [it[1][0], it[2][0]], [it[1][1], it[2][1]])
+        }.map{
+            meta, list1, list2 -> [meta, [list1, list2].sort{ it[1] }]
+        }.map{
+            [it[0],it[1][0],it[1][1]]
+        }.map{
+            if (it[1][0]==null){
+                return [it[0],it[2][0]]
+            } else {
+                return [it[0],it[1][0], it[2][0]]
+            }
+        }.set { grouped_clahe_out }
+    grouped_clahe_out.filter{
+        it[2] == null
+        }.set{ no_stack }
+    grouped_clahe_out.filter{
+        it[2] != null
+        }.map{
+            [it[0],tuple(it[1],it[2])]
+        }.set{ create_stack_in }
+
+    CREATE_STACK(create_stack_in)
+    stacked_unstacked = CREATE_STACK.out.stack.mix(no_stack)
 
     //
     // MODULE: MINDAGAP Duplicatefinder
     //
     // Filter out potential duplicate spots from the spots table
-    ch_from_samplesheet
-        .map { sample_id, nuclear_image, spot_table -> tuple([id: sample_id], spot_table) }
-        .set { spot_tuple }
-
     MINDAGAP_DUPLICATEFINDER(spot_tuple)
-
     ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
 
     //
@@ -112,37 +155,56 @@ workflow MOLKART {
     // Transform spot table to 2 dimensional numpy array to use with MCQUANT
 
     qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
-    dedup_spots = qc_spots
-        .join(image_tuple)
+
+    qc_spots.join(
+        image_tuple.map {
+            meta, tiff ->
+            [meta.subMap("id"), tiff]
+        }
+    ).set { dedup_spots }
 
     PROJECT_SPOTS(
         dedup_spots.map(it -> tuple(it[0],it[1])),
         dedup_spots.map(it -> it[2])
     )
+    grouped_clahe_out.map{
+        if (it[2] == null){
+            return [[:],[]]
+        } else {
+            return tuple(it[0], it[2])
+        }
+    }
 
     //
     // MODULE: DeepCell Mesmer segmentation
     //
     segmentation_masks = Channel.empty()
     if (params.segmentation_method.split(',').contains('mesmer')) {
-        DEEPCELL_MESMER(CLAHE_DASK.out.img_clahe, [[:], []])
+        DEEPCELL_MESMER(
+            grouped_clahe_out.map{ tuple(it[0], it[1]) },
+            grouped_clahe_out.map{
+                if (it[2] == null){ // if no membrane channel specified, give empty membrane input
+                    return [[:],[]]
+                } else {
+                    return tuple(it[0], it[2]) // if membrane image exists, provide it to the process
+                }
+            }
+        )
         ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
         segmentation_masks = segmentation_masks
             .mix(DEEPCELL_MESMER.out.mask
                 .combine(Channel.of('mesmer')))
     }
-
     //
     // MODULE: Cellpose segmentation
     //
     if (params.segmentation_method.split(',').contains('cellpose')) {
-        CELLPOSE(CLAHE_DASK.out.img_clahe, [])
+        CELLPOSE(stacked_unstacked, [])
         ch_versions = ch_versions.mix(CELLPOSE.out.versions)
         segmentation_masks = segmentation_masks
             .mix(CELLPOSE.out.mask
                 .combine(Channel.of('cellpose')))
     }
-
     PROJECT_SPOTS.out.img_spots
         .join(PROJECT_SPOTS.out.channel_names)
         .map{
@@ -155,14 +217,6 @@ workflow MOLKART {
             new_meta.segmentation = seg
             [new_meta, tiff, channels, mask]
         }.set{ mcquant_in }
-
-    /// Prepare input for MCQuant using images and spots
-    //mcquant_in = PROJECT_SPOTS.out.img_spots
-    ///    .join(PROJECT_SPOTS.out.channel_names)
-    //    .map{
-    //        meta,tiff,channels -> [meta,tiff,channels]
-    //        }
-    //    .combine(segmentation_masks, by: 0)
 
     //
     // MODULE: MCQuant
@@ -187,8 +241,6 @@ workflow MOLKART {
         mcquant_out, by: 0)
         .set{ molcart_qc }
 
-    molcart_qc.view()
-
     MOLCART_QC(
             molcart_qc.map{it -> tuple(it[0],it[2])},
             molcart_qc.map{it -> tuple(it[0],it[1])},
@@ -202,8 +254,8 @@ workflow MOLKART {
     //
     // MODULE: MultiQC
     //
-    workflow_summary    = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
-    ch_workflow_summary = Channel.value(workflow_summary)
+    workflow_summary       = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
+    ch_workflow_summary    = Channel.value(workflow_summary)
     methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
     ch_methods_description = Channel.value(methods_description)
 
