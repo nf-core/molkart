@@ -14,10 +14,11 @@ process CREATE_STACK {
 
     script:
     def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     create_stack.py \\
         --input ${image} \\
-        --output ${image[0].baseName}.stack.ome.tif \\
+        --output ${meta.id}.stack.ome.tif \\
         --num-channels 2
     """
 }

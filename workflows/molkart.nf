@@ -81,11 +81,7 @@ workflow MOLKART {
 
     ch_from_samplesheet
         .map {
-            if (it[3] != []) {
-                return tuple([id:it[0],stain:"1"], it[3])
-            } else {
-                return null
-            }
+            it[3] != [] ? tuple([id:it[0],stain:"1"], it[3]) : null
         }.set { membrane_tuple }
 
     ch_from_samplesheet
@@ -99,48 +95,49 @@ workflow MOLKART {
     //
     // MODULE: Run Mindagap_mindagap
     //
-    images_tuple = membrane_tuple.mix(image_tuple)
-    MINDAGAP_MINDAGAP(images_tuple, 7, 100)
+    mindagap_in = membrane_tuple.mix(image_tuple)
+    MINDAGAP_MINDAGAP(mindagap_in, 7, 100)
     ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
 
     //
     //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
     // currently CLAHE is either applied on all channels, or none.
-    CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
+    if (params.clahe) {
+        CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
+        CLAHE_DASK.out.img_clahe.set{ map_for_stacks }
+    } else {
+        MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks }
+    } // if clahe should be run, use its output for next step, otherwise, use mindagap output
 
-    //
-    // MODULE: Stack channels if membrane image provided for segmentation
-    //
-    CLAHE_DASK.out.img_clahe
+    //map_for_stacks.view()
+    map_for_stacks
         .map {
-            meta, tiff ->
-            [meta.subMap("id"), tiff, meta.stain]
-        }.set { clahe_out }
-    clahe_out.groupTuple().map{
-        tuple(it[0], [it[1][0], it[2][0]], [it[1][1], it[2][1]])
+            meta, tiff -> [meta.subMap("id"), tiff, meta.stain]
+        }.groupTuple()
+        .map{
+            meta, paths, stains -> [meta, [paths[0], stains[0]], [paths[1], stains[1]]]
         }.map{
-            meta, list1, list2 -> [meta, [list1, list2].sort{ it[1] }]
+            meta, stain1, stain2 -> [meta, [stain1, stain2].sort{ it[1] }] // sort by stain index (0 for nuclear, 1 for other)
         }.map{
-            [it[0],it[1][0],it[1][1]]
+            meta, list -> [meta, list[0], list[1]] // sorted will have null as first list
         }.map{
-            if (it[1][0]==null){
-                return [it[0],it[2][0]]
-            } else {
-                return [it[0],it[1][0], it[2][0]]
-            }
-        }.set { grouped_clahe_out }
-    grouped_clahe_out.filter{
+            it[1][0] != null ? [it[0],it[1][0],it[2][0]] : [it[0],it[2][0]] // if null, only return the valid nuclear path value, otherwise return both nuclear and membrane paths
+        }.set { grouped_map_stack }
+    grouped_map_stack.filter{
         it[2] == null
         }.set{ no_stack }
-    grouped_clahe_out.filter{
+    grouped_map_stack.filter{
         it[2] != null
         }.map{
             [it[0],tuple(it[1],it[2])]
         }.set{ create_stack_in }
+    //
+    // MODULE: Stack channels if membrane image provided for segmentation
+    //
 
     CREATE_STACK(create_stack_in)
-    stacked_unstacked = CREATE_STACK.out.stack.mix(no_stack)
+    stack_mix = CREATE_STACK.out.stack.mix(no_stack)
 
     //
     // MODULE: MINDAGAP Duplicatefinder
@@ -167,13 +164,6 @@ workflow MOLKART {
         dedup_spots.map(it -> tuple(it[0],it[1])),
         dedup_spots.map(it -> it[2])
     )
-    grouped_clahe_out.map{
-        if (it[2] == null){
-            return [[:],[]]
-        } else {
-            return tuple(it[0], it[2])
-        }
-    }
 
     //
     // MODULE: DeepCell Mesmer segmentation
@@ -181,13 +171,9 @@ workflow MOLKART {
     segmentation_masks = Channel.empty()
     if (params.segmentation_method.split(',').contains('mesmer')) {
         DEEPCELL_MESMER(
-            grouped_clahe_out.map{ tuple(it[0], it[1]) },
-            grouped_clahe_out.map{
-                if (it[2] == null){ // if no membrane channel specified, give empty membrane input
-                    return [[:],[]]
-                } else {
-                    return tuple(it[0], it[2]) // if membrane image exists, provide it to the process
-                }
+            grouped_map_stack.map{ tuple(it[0], it[1]) },
+            grouped_map_stack.map{
+                it[2] == null ? [[:],[]] : tuple(it[0], it[2]) // if no membrane channel specified, give empty membrane input; if membrane image exists, provide it to the process
             }
         )
         ch_versions = ch_versions.mix(DEEPCELL_MESMER.out.versions)
@@ -199,7 +185,7 @@ workflow MOLKART {
     // MODULE: Cellpose segmentation
     //
     if (params.segmentation_method.split(',').contains('cellpose')) {
-        CELLPOSE(stacked_unstacked, [])
+        CELLPOSE(stack_mix, Channel.fromPath(params.cellpose_custom_model))
         ch_versions = ch_versions.mix(CELLPOSE.out.versions)
         segmentation_masks = segmentation_masks
             .mix(CELLPOSE.out.mask

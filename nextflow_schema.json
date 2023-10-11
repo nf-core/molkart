@@ -257,6 +257,74 @@
             "type": "string",
             "description": "List of segmentation tools to apply to the image",
             "default": "mesmer"
+        },
+        "cellpose_diameter": {
+            "type": "integer",
+            "default": 30,
+            "description": "Cell diameter, if 0 will use the diameter of the training labels used in the model, or with built-in model will estimate diameter for each image."
+        },
+        "cellpose_chan": {
+            "type": "integer",
+            "default": 0,
+            "description": "Specifies the channel to be segmented by Cellpose."
+        },
+        "cellpose_chan2": {
+            "type": "integer",
+            "description": "Specifies nuclear channel index for Cellpose if using pretrained models such as cyto."
+        },
+        "cellpose_pretrained_model": {
+            "type": "string",
+            "default": "cyto",
+            "description": "Pretrained Cellpose model to be used for segmentation."
+        },
+        "cellpose_custom_model": {
+            "type": "string",
+            "description": "Custom Cellpose model can be provided by the user."
+        },
+        "cellpose_flow_threshold": {
+            "type": "number",
+            "default": 0.4,
+            "description": "Flow error threshold for Cellpose."
+        },
+        "mesmer_image_mpp": {
+            "type": "number",
+            "default": 0.138,
+            "description": "Pixel size in microns for segmentation with Mesmer."
+        },
+        "mesmer_compartment": {
+            "type": "string",
+            "default": "nuclear",
+            "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)"
+        },
+        "clahe": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specify whether to run contrast-limited adaptive histogram equalization (set --clahe false to exclude) ."
+        },
+        "clahe_cliplimit": {
+            "type": "number",
+            "default": 0.01,
+            "description": "Contrast limit for localized changes in contrast by CLAHE."
+        },
+        "clahe_nbins": {
+            "type": "integer",
+            "default": 256,
+            "description": "Number of histogram bins to be used by CLAHE."
+        },
+        "clahe_pixel_size": {
+            "type": "number",
+            "default": 0.138,
+            "description": "Pixel size to be used by CLAHE."
+        },
+        "clahe_kernel": {
+            "type": "number",
+            "default": 25,
+            "description": "Kernel size to be used by CLAHE."
+        },
+        "cellpose_edge_exclude": {
+            "type": "boolean",
+            "default": true,
+            "description": "Should cells detected near image edges be excluded."
         }
     },
     "required": ["segmentation_method"]
