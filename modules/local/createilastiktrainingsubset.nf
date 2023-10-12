@@ -5,7 +5,7 @@ process CREATEILASTIKTRAININGSUBSET {
     container 'docker.io/labsyspharm/mcmicro-ilastik:1.6.1'
 
     input:
-    tuple val(meta), path(image_stack)
+    tuple val(meta), path(image_stack), val(num_channels)
 
     output:
     tuple val(meta), path("*crop*.hdf5")        , emit: ilastik_training
@@ -21,7 +21,7 @@ process CREATEILASTIKTRAININGSUBSET {
     python /app/CommandIlastikPrepOME.py \
         --input $image_stack \
         --output . \
-        --num_channels 2 \
+        --num_channels $num_channels \
         $args
     """
 }

@@ -32,6 +32,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { CREATETRAININGTIFF          } from '../modules/local/createtrainingtiff'
 include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
@@ -111,7 +112,6 @@ workflow MOLKART {
         MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks }
     } // if clahe should be run, use its output for next step, otherwise, use mindagap output
 
-    //map_for_stacks.view()
     map_for_stacks
         .map {
             meta, tiff -> [meta.subMap("id"), tiff, meta.stain]
@@ -142,34 +142,20 @@ workflow MOLKART {
     CREATE_STACK(create_stack_in)
     stack_mix = CREATE_STACK.out.stack.mix(no_stack)
 
-    // IN PROGRESS
     if ( params.create_training_subset ) {
-    // IN PROGRESS
-    // Create training stacks for ilastik pixel classification
-    grouped_map_stack.map{
-        it[2] == null ? Channel.of(1) : Channel.of(2)
-        }.set{ stack_size }
-
-    grouped_map_stack.map{
-        it[2] == null ? Channel.of('nuclear') : [Channel.of('nuclear'),Channel.of('membrane')]
-        }.set{ channel_ids }
-
-    stack_mix.view()
-    // Create subsets of the image for training an ilastik model
-    // only works for now if multiple channels exist
-    CREATEILASTIKTRAININGSUBSET(stack_mix)
-
-    // Combine CLAHE corrected image with crop_summary for making the same training tiff stacks as ilastik
-    //tiff_crop = APPLY_CLAHE_DASK.out.img_clahe
-    //.join(MK_ILASTIK_TRAINING_STACKS.out.crop_summary)
-
-    // Create tiff training sets for the same regions as ilastik for Cellpose training
-    //CREATE_TIFF_TRAINING(
-     //   tiff_crop.map(it -> tuple(it[0],it[1])),
-     //   tiff_crop.map(it -> tuple(it[0],it[2])),
-     //   )
-
-    // IN PROGRESS
+        // Create subsets of the image for training an ilastik model
+        stack_mix.join(
+            grouped_map_stack.map{
+                it[2] == null ? tuple(it[0], 1) : tuple(it[0], 2)
+            } // hardcodes that if membrane channel present, num_channels is 2, otherwise 1
+        ).set{ training_in }
+        CREATEILASTIKTRAININGSUBSET(training_in)
+        // Combine images with crop_summary for making the same training tiff stacks as ilastik
+        tiff_crop = stack_mix.join(CREATEILASTIKTRAININGSUBSET.out.crop_summary)
+        CREATETRAININGTIFF(
+            tiff_crop.map(it -> tuple(it[0],it[1])),
+            tiff_crop.map(it -> tuple(it[0],it[2])),
+            )
     } else {
 
     //
@@ -216,7 +202,7 @@ workflow MOLKART {
     }
     //
     // MODULE: Cellpose segmentation
-    //
+    // TODO: check if there is a problem with resume fore Cellpose.
     cellpose_custom_model = params.cellpose_custom_model ? Channel.fromPath(params.cellpose_custom_model) : []
     if (params.segmentation_method.split(',').contains('cellpose')) {
         CELLPOSE(stack_mix, cellpose_custom_model)

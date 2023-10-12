@@ -47,5 +47,7 @@ if __name__ == "__main__":
     crops = ast.literal_eval(crops)
         ## Read in tiff image
     tiff_image = tiff.imread(args.input)
+    if len(tiff_image.shape) == 2:
+        tiff_image = np.expand_dims(tiff_image, axis=0)
 
     create_crops(tiff_image,crops)
