@@ -12,6 +12,9 @@ process PROJECT_SPOTS{
     tuple val(meta), path("${spots.baseName}.tiff"), emit: img_spots
     tuple val(meta), path("${spots.baseName}.channel_names.csv"), emit: channel_names
 
+    when:
+    task.ext.when == null || task.ext.when
+
     script:
     """
     project_spots.dask.py \

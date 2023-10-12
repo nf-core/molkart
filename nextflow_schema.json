@@ -293,7 +293,7 @@
         },
         "mesmer_compartment": {
             "type": "string",
-            "default": "nuclear",
+            "default": "whole-cell",
             "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)"
         },
         "clahe": {
@@ -318,13 +318,41 @@
         },
         "clahe_kernel": {
             "type": "number",
-            "default": 25,
+            "default": 25.0,
             "description": "Kernel size to be used by CLAHE."
         },
         "cellpose_edge_exclude": {
             "type": "boolean",
             "default": true,
             "description": "Should cells detected near image edges be excluded."
+        },
+        "create_training_subset": {
+            "type": "boolean",
+            "description": "Create subset for training a segmentation model."
+        },
+        "training_subset_hdf5": {
+            "type": "boolean",
+            "description": "Should the training subset be converted to .hdf5 (for ilastik)."
+        },
+        "training_crop_amount": {
+            "type": "integer",
+            "default": 4,
+            "description": "Number of crops you would like to extract."
+        },
+        "training_nonzero_fraction": {
+            "type": "number",
+            "default": 0.5,
+            "description": "Indicates fraction of pixels per crop above global threshold to ensure tissue and not only background is selected."
+        },
+        "crop_size_x": {
+            "type": "integer",
+            "default": 400,
+            "description": "Indicates crop size on x axis."
+        },
+        "crop_size_y": {
+            "type": "integer",
+            "default": 400,
+            "description": "Indicates crop size on y axis."
         }
     },
     "required": ["segmentation_method"]

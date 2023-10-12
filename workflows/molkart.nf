@@ -32,11 +32,12 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CREATE_STACK               } from '../modules/local/create_stack'
-include { CLAHE_DASK                 } from '../modules/local/clahe_dask'
-include { MINDAGAP_DUPLICATEFINDER   } from '../modules/local/mindagap_duplicatefinder'
-include { PROJECT_SPOTS              } from '../modules/local/project_spots'
-include { MOLCART_QC                 } from '../modules/local/molcart_qc'
+include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
+include { CREATE_STACK                } from '../modules/local/create_stack'
+include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
+include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
+include { PROJECT_SPOTS               } from '../modules/local/project_spots'
+include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -124,9 +125,11 @@ workflow MOLKART {
         }.map{
             it[1][0] != null ? [it[0],it[1][0],it[2][0]] : [it[0],it[2][0]] // if null, only return the valid nuclear path value, otherwise return both nuclear and membrane paths
         }.set { grouped_map_stack }
+
     grouped_map_stack.filter{
         it[2] == null
         }.set{ no_stack }
+
     grouped_map_stack.filter{
         it[2] != null
         }.map{
@@ -138,6 +141,36 @@ workflow MOLKART {
 
     CREATE_STACK(create_stack_in)
     stack_mix = CREATE_STACK.out.stack.mix(no_stack)
+
+    // IN PROGRESS
+    if ( params.create_training_subset ) {
+    // IN PROGRESS
+    // Create training stacks for ilastik pixel classification
+    grouped_map_stack.map{
+        it[2] == null ? Channel.of(1) : Channel.of(2)
+        }.set{ stack_size }
+
+    grouped_map_stack.map{
+        it[2] == null ? Channel.of('nuclear') : [Channel.of('nuclear'),Channel.of('membrane')]
+        }.set{ channel_ids }
+
+    stack_mix.view()
+    // Create subsets of the image for training an ilastik model
+    // only works for now if multiple channels exist
+    CREATEILASTIKTRAININGSUBSET(stack_mix)
+
+    // Combine CLAHE corrected image with crop_summary for making the same training tiff stacks as ilastik
+    //tiff_crop = APPLY_CLAHE_DASK.out.img_clahe
+    //.join(MK_ILASTIK_TRAINING_STACKS.out.crop_summary)
+
+    // Create tiff training sets for the same regions as ilastik for Cellpose training
+    //CREATE_TIFF_TRAINING(
+     //   tiff_crop.map(it -> tuple(it[0],it[1])),
+     //   tiff_crop.map(it -> tuple(it[0],it[2])),
+     //   )
+
+    // IN PROGRESS
+    } else {
 
     //
     // MODULE: MINDAGAP Duplicatefinder
@@ -184,8 +217,9 @@ workflow MOLKART {
     //
     // MODULE: Cellpose segmentation
     //
+    cellpose_custom_model = params.cellpose_custom_model ? Channel.fromPath(params.cellpose_custom_model) : []
     if (params.segmentation_method.split(',').contains('cellpose')) {
-        CELLPOSE(stack_mix, Channel.fromPath(params.cellpose_custom_model))
+        CELLPOSE(stack_mix, cellpose_custom_model)
         ch_versions = ch_versions.mix(CELLPOSE.out.versions)
         segmentation_masks = segmentation_masks
             .mix(CELLPOSE.out.mask
@@ -257,6 +291,7 @@ workflow MOLKART {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
+    }
 }
 
 /*
