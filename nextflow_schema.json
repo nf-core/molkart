@@ -68,6 +68,11 @@
                     "default": "whole-cell",
                     "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)",
                     "fa_icon": "fas fa-border-all"
+                },
+                "cellpose_save_flows": {
+                    "type": "boolean",
+                    "description": "Should flow fields from Cellpose be saved?",
+                    "fa_icon": "fas fa-arrows-alt"
                 }
             },
             "required": ["segmentation_method"],
