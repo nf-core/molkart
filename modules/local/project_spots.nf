@@ -2,7 +2,7 @@ process PROJECT_SPOTS{
     debug false
     tag "Projecting spots $meta.id"
 
-    container 'wuennemannflorian/project_spots:latest'
+    container 'docker.io/wuennemannflorian/project_spots:latest'
 
     input:
     tuple val(meta), path(spots)

@@ -1,6 +1,6 @@
 process MOLCART_QC{
     tag "$meta.id"
-    container 'wuennemannflorian/project_spots:latest'
+    container 'docker.io/wuennemannflorian/project_spots:latest'
 
     input:
     tuple val(meta), path(mcquant)
