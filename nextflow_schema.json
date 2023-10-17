@@ -5,6 +5,156 @@
     "description": "An analysis pipeline for Molecular Cartography data from Resolve Biosciences.",
     "type": "object",
     "definitions": {
+        "segmentation_methods_and_options": {
+            "title": "Segmentation methods and options",
+            "type": "object",
+            "description": "Define which segmentation methods should be used and how.",
+            "default": "",
+            "properties": {
+                "segmentation_method": {
+                    "type": "string",
+                    "description": "List of segmentation tools to apply to the image",
+                    "default": "mesmer",
+                    "fa_icon": "fas fa-border-all"
+                },
+                "cellpose_diameter": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "Cell diameter, if 0 will use the diameter of the training labels used in the model, or with built-in model will estimate diameter for each image.",
+                    "fa_icon": "far fa-circle"
+                },
+                "cellpose_chan": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Specifies the channel to be segmented by Cellpose.",
+                    "fa_icon": "fas fa-dice-one"
+                },
+                "cellpose_chan2": {
+                    "type": "integer",
+                    "description": "Specifies nuclear channel index for Cellpose if using pretrained models such as cyto.",
+                    "fa_icon": "fas fa-dice-two"
+                },
+                "cellpose_pretrained_model": {
+                    "type": "string",
+                    "default": "cyto",
+                    "description": "Pretrained Cellpose model to be used for segmentation.",
+                    "fa_icon": "fas fa-address-card"
+                },
+                "cellpose_custom_model": {
+                    "type": "string",
+                    "description": "Custom Cellpose model can be provided by the user.",
+                    "fa_icon": "far fa-address-card"
+                },
+                "cellpose_flow_threshold": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Flow error threshold for Cellpose.",
+                    "fa_icon": "fas fa-border-style"
+                },
+                "cellpose_edge_exclude": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Should cells detected near image edges be excluded.",
+                    "fa_icon": "fas fa-border-none"
+                },
+                "mesmer_image_mpp": {
+                    "type": "number",
+                    "default": 0.138,
+                    "description": "Pixel size in microns for segmentation with Mesmer.",
+                    "fa_icon": "fas fa-camera"
+                },
+                "mesmer_compartment": {
+                    "type": "string",
+                    "default": "whole-cell",
+                    "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)",
+                    "fa_icon": "fas fa-border-all"
+                },
+                "cellpose_save_flows": {
+                    "type": "boolean",
+                    "description": "Should flow fields from Cellpose be saved?",
+                    "fa_icon": "fas fa-arrows-alt"
+                }
+            },
+            "required": ["segmentation_method"],
+            "fa_icon": "fas fa-border-all"
+        },
+        "contrast_adjustment": {
+            "title": "Contrast adjustment",
+            "type": "object",
+            "description": "Define should contrast adjustment be applied and how.",
+            "default": "",
+            "fa_icon": "fas fa-adjust",
+            "properties": {
+                "clahe": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specify whether to run contrast-limited adaptive histogram equalization (set --clahe false to exclude) .",
+                    "fa_icon": "fas fa-adjust"
+                },
+                "clahe_cliplimit": {
+                    "type": "number",
+                    "default": 0.01,
+                    "description": "Contrast limit for localized changes in contrast by CLAHE.",
+                    "fa_icon": "fas fa-border-style"
+                },
+                "clahe_nbins": {
+                    "type": "integer",
+                    "default": 256,
+                    "description": "Number of histogram bins to be used by CLAHE.",
+                    "fa_icon": "fas fa-ruler-combined"
+                },
+                "clahe_pixel_size": {
+                    "type": "number",
+                    "default": 0.138,
+                    "description": "Pixel size to be used by CLAHE.",
+                    "fa_icon": "fas fa-camera"
+                },
+                "clahe_kernel": {
+                    "type": "number",
+                    "default": 25,
+                    "description": "Kernel size to be used by CLAHE.",
+                    "fa_icon": "far fa-object-group"
+                }
+            }
+        },
+        "training_subset_options": {
+            "title": "Training subset options",
+            "type": "object",
+            "description": "Define whether a cropped training set for segmentation methods should be created.",
+            "default": "",
+            "fa_icon": "fas fa-running",
+            "properties": {
+                "create_training_subset": {
+                    "type": "boolean",
+                    "description": "Create subset for training a segmentation model.",
+                    "fa_icon": "fas fa-running"
+                },
+                "crop_size_x": {
+                    "type": "integer",
+                    "default": 400,
+                    "description": "Indicates crop size on x axis.",
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "crop_size_y": {
+                    "type": "integer",
+                    "default": 400,
+                    "description": "Indicates crop size on y axis.",
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "crop_amount": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Number of crops you would like to extract.",
+                    "fa_icon": "fas fa-hashtag"
+                },
+                "crop_nonzero_fraction": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Indicates fraction of pixels per crop above global threshold to ensure tissue and not only background is selected.",
+                    "fa_icon": "fas fa-percentage"
+                }
+            }
+        },
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -41,7 +191,8 @@
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
-            }
+            },
+            "help_text": ""
         },
         "institutional_config_options": {
             "title": "Institutional config options",
@@ -240,6 +391,15 @@
     },
     "allOf": [
         {
+            "$ref": "#/definitions/segmentation_methods_and_options"
+        },
+        {
+            "$ref": "#/definitions/contrast_adjustment"
+        },
+        {
+            "$ref": "#/definitions/training_subset_options"
+        },
+        {
             "$ref": "#/definitions/input_output_options"
         },
         {
@@ -251,5 +411,17 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "ilastik_pixel_project": {
+            "type": "string",
+            "description": "Provide ilastik with a pixel classification project to produce probability maps.",
+            "format": "file-path"
+        },
+        "ilastik_multicut_project": {
+            "type": "string",
+            "description": "Provide ilastik with a multicut project to create segmentation masks.",
+            "format": "file-path"
+        }
+    }
 }
