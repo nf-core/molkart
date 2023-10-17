@@ -411,5 +411,17 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "ilastik_pixel_project": {
+            "type": "string",
+            "description": "Provide ilastik with a pixel classification project to produce probability maps.",
+            "format": "file-path"
+        },
+        "ilastik_multicut_project": {
+            "type": "string",
+            "description": "Provide ilastik with a multicut project to create segmentation masks.",
+            "format": "file-path"
+        }
+    }
 }

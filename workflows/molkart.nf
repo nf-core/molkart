@@ -38,6 +38,7 @@ include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
 include { PROJECT_SPOTS               } from '../modules/local/project_spots'
+include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
 include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 
 //
@@ -59,6 +60,7 @@ include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindag
 include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
 include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
 include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
+include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
 include { MCQUANT                     } from '../modules/nf-core/mcquant/main'
 
 /*
@@ -138,7 +140,6 @@ workflow MOLKART {
     //
     // MODULE: Stack channels if membrane image provided for segmentation
     //
-
     CREATE_STACK(create_stack_in)
     stack_mix = CREATE_STACK.out.stack.mix(no_stack)
 
@@ -202,7 +203,7 @@ workflow MOLKART {
     }
     //
     // MODULE: Cellpose segmentation
-    // TODO: check if there is a problem with resume fore Cellpose.
+    // TODO: check if there is a problem with resume for Cellpose.
     cellpose_custom_model = params.cellpose_custom_model ? Channel.fromPath(params.cellpose_custom_model) : []
     if (params.segmentation_method.split(',').contains('cellpose')) {
         CELLPOSE(stack_mix, cellpose_custom_model)
@@ -211,6 +212,42 @@ workflow MOLKART {
             .mix(CELLPOSE.out.mask
                 .combine(Channel.of('cellpose')))
     }
+    //
+    // MODULE: ilastik segmentation
+    //
+    if (params.segmentation_method.split(',').contains('ilastik')) {
+        if (params.ilastik_pixel_project == null) {
+            error "ILASTIK_PIXELCLASSIFICATION module was not provided with the project .ilp file."
+        }
+        stack_mix.join(
+            grouped_map_stack.map{
+                it[2] == null ? tuple(it[0], 1) : tuple(it[0], 2)
+            }).set{ tiffin }
+
+        TIFFH5CONVERT(tiffin)
+
+        TIFFH5CONVERT.out.hdf5.combine(Channel.fromPath(params.ilastik_pixel_project)).set{ ilastik_in }
+        ILASTIK_PIXELCLASSIFICATION(ilastik_in.map{ [it[0], it[1]] }, ilastik_in.map{ [it[0], it[2]] })
+        ch_versions = ch_versions.mix(ILASTIK_PIXELCLASSIFICATION.out.versions)
+
+        if (params.ilastik_multicut_project == null) {
+            error "ILASTIK_MULTICUT module was not provided with the project .ilp file."
+        }
+        ilastik_in.join(ILASTIK_PIXELCLASSIFICATION.out.output)
+            .combine(Channel.fromPath(params.ilastik_multicut_project))
+            .set{ multicut_in }
+
+        ILASTIK_MULTICUT(
+            multicut_in.map{ tuple(it[0], it[1]) },
+            multicut_in.map{ tuple(it[0], it[4]) },
+            multicut_in.map{ tuple(it[0], it[3]) }
+        )
+        ch_versions = ch_versions.mix(ILASTIK_MULTICUT.out.versions)
+        segmentation_masks = segmentation_masks
+            .mix(ILASTIK_MULTICUT.out.out_tiff
+                .combine(Channel.of('ilastik')))
+    }
+
     PROJECT_SPOTS.out.img_spots
         .join(PROJECT_SPOTS.out.channel_names)
         .map{

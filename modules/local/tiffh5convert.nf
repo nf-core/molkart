@@ -5,12 +5,10 @@ process TIFFH5CONVERT {
     container "docker.io/labsyspharm/mcmicro-ilastik:1.6.1"
 
     input:
-    tuple val(meta), path(image)
-    val(channel_ids)
+    tuple val(meta), path(image), val(num_channels)
 
     output:
-    tuple val(meta), path("${meta.id}.stack.*.hdf5"), emit: hdf5
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("*.hdf5"), emit: hdf5
 
     when:
     task.ext.when == null || task.ext.when
@@ -21,6 +19,6 @@ process TIFFH5CONVERT {
     python /app/CommandIlastikPrepOME.py \
         --input $image \
         --output . \
-        --channelIDs $channel_ids
+        --num_channels $num_channels
     """
 }
