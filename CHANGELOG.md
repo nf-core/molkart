@@ -11,7 +11,7 @@ Added barebones version of multiqc output.
 
 - emit value for png overview for createtrainingtiff
 - molcart-qc: added sampleid-segmentation tag as sample id, as multiqc was only showing the second row if sample id is same - can this be fixed to unique row?
--
+- input for multiqc are the csv files produced by molcart qc
 
 ### `Fixed`
 
