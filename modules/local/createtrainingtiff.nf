@@ -9,8 +9,8 @@ process CREATETRAININGTIFF {
     tuple val(meta), path(crop_summary)
 
     output:
-    tuple val(meta), path("*crop*.tiff"), emit: crop_tiff
-    tuple val(meta), path("*crop_overview.png")
+    tuple val(meta), path("*crop*.tiff"),        emit: crop_tiff
+    tuple val(meta), path("*crop_overview.png"), emit: overview
 
     when:
     task.ext.when == null || task.ext.when
