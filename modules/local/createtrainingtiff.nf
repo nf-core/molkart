@@ -9,7 +9,7 @@ process CREATETRAININGTIFF {
     tuple val(meta), path(crop_summary)
 
     output:
-    tuple val(meta), path("*crop*.tiff"),        emit: crop_tiff
+    tuple val(meta), path("*crop*.tiff")       , emit: crop_tiff
     tuple val(meta), path("*crop_overview.png"), emit: overview
 
     when:
