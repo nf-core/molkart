@@ -107,7 +107,7 @@ workflow MOLKART {
     //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
     // currently CLAHE is either applied on all channels, or none.
-    if (params.clahe) {
+    if (!params.skip_clahe) {
         CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
         CLAHE_DASK.out.img_clahe.set{ map_for_stacks }
     } else {

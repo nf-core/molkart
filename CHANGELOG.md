@@ -3,6 +3,23 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.22.10]
+
+Replaced the `clahe` param with `skip_clahe` so that the default value for running CLAHE is `False`.
+
+### `Added`
+
+- skip_clahe param (default False)
+- removed clahe param
+- adjusted workflow to check the params.skip_clahe value instead of the params.clahe
+- adjusted the ext.when in modules.config
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## v1.0.1dev - [2023.12.10]
 
 Molkart adapted to most nf-core standards with optional parameters, multiple segmentation options, as well as membrane channel handling. Started work on creating training subset functionality.
