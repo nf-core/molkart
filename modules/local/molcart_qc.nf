@@ -1,5 +1,5 @@
 process MOLCART_QC{
-    tag "$meta.id"
+    tag "${meta.id}"
     container 'docker.io/wuennemannflorian/project_spots:latest'
 
     input:
@@ -18,10 +18,10 @@ process MOLCART_QC{
     def sample_id = "${meta.id}"
     """
     collect_QC.py \
-    --mcquant $mcquant \
-    --spots $spot_table \
-    --sample_id $sample_id \
-    --segmentation_method $segmethod \
-    --outdir .
+        --mcquant $mcquant \
+        --spots $spot_table \
+        --sample_id $sample_id \
+        --segmentation_method $segmethod \
+        --outdir .
     """
 }
