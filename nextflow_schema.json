@@ -73,6 +73,18 @@
                     "type": "boolean",
                     "description": "Should flow fields from Cellpose be saved?",
                     "fa_icon": "fas fa-arrows-alt"
+                },
+                "ilastik_pixel_project": {
+                    "type": "string",
+                    "description": "Provide ilastik with a pixel classification project to produce probability maps.",
+                    "format": "file-path",
+                    "fa_icon": "fas fa-camera"
+                },
+                "ilastik_multicut_project": {
+                    "type": "string",
+                    "description": "Provide ilastik with a multicut project to create segmentation masks.",
+                    "format": "file-path",
+                    "fa_icon": "fas fa-cut"
                 }
             },
             "required": ["segmentation_method"],
@@ -85,12 +97,6 @@
             "default": "",
             "fa_icon": "fas fa-adjust",
             "properties": {
-                "clahe": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Specify whether to run contrast-limited adaptive histogram equalization (set --clahe false to exclude) .",
-                    "fa_icon": "fas fa-adjust"
-                },
                 "clahe_cliplimit": {
                     "type": "number",
                     "default": 0.01,
@@ -114,6 +120,11 @@
                     "default": 25,
                     "description": "Kernel size to be used by CLAHE.",
                     "fa_icon": "far fa-object-group"
+                },
+                "skip_clahe": {
+                    "type": "boolean",
+                    "description": "Specifies whether contrast-limited adaptive histogram equalization should be skipped.",
+                    "fa_icon": "fab fa-buromobelexperte"
                 }
             }
         },
@@ -411,17 +422,5 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ],
-    "properties": {
-        "ilastik_pixel_project": {
-            "type": "string",
-            "description": "Provide ilastik with a pixel classification project to produce probability maps.",
-            "format": "file-path"
-        },
-        "ilastik_multicut_project": {
-            "type": "string",
-            "description": "Provide ilastik with a multicut project to create segmentation masks.",
-            "format": "file-path"
-        }
-    }
+    ]
 }
