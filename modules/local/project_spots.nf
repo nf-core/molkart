@@ -1,6 +1,7 @@
 process PROJECT_SPOTS{
     debug false
     tag "Projecting spots $meta.id"
+    label 'process_medium'
 
     container 'docker.io/wuennemannflorian/project_spots:latest'
 

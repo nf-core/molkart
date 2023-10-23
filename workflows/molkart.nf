@@ -37,7 +37,7 @@ include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrai
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
-include { PROJECT_SPOTS               } from '../modules/local/project_spots'
+include { SPOT2CELL                   } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
 include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 
@@ -61,7 +61,6 @@ include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
 include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
 include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
 include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
-include { MCQUANT                     } from '../modules/nf-core/mcquant/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,18 +172,6 @@ workflow MOLKART {
 
     qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
 
-    qc_spots.join(
-        image_tuple.map {
-            meta, tiff ->
-            [meta.subMap("id"), tiff]
-        }
-    ).set { dedup_spots }
-
-    PROJECT_SPOTS(
-        dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> it[2])
-    )
-
     //
     // MODULE: DeepCell Mesmer segmentation
     //
@@ -248,33 +235,43 @@ workflow MOLKART {
                 .combine(Channel.of('ilastik')))
     }
 
-    PROJECT_SPOTS.out.img_spots
-        .join(PROJECT_SPOTS.out.channel_names)
-        .map{
-            meta,tiff,channels -> [meta,tiff,channels]
-            }
+    // Assigning of spots to mask
+    qc_spots
         .combine(segmentation_masks, by: 0)
-        .map {
-            meta, tiff, channels, mask, seg ->
-            new_meta = meta.clone()
-            new_meta.segmentation = seg
-            [new_meta, tiff, channels, mask]
-        }.set{ mcquant_in }
+        .set { dedup_spots }
+
+    SPOT2CELL(
+        dedup_spots.map(it -> tuple(it[0],it[1])),
+        dedup_spots.map(it -> tuple(it[0],it[2]))
+    )
+
+    // PROJECT_SPOTS.out.img_spots
+    //     .join(PROJECT_SPOTS.out.channel_names)
+    //     .map{
+    //         meta,tiff,channels -> [meta,tiff,channels]
+    //         }
+    //     .combine(segmentation_masks, by: 0)
+    //     .map {
+    //         meta, tiff, channels, mask, seg ->
+    //         new_meta = meta.clone()
+    //         new_meta.segmentation = seg
+    //         [new_meta, tiff, channels, mask]
+    //     }.set{ mcquant_in }
 
     //
     // MODULE: MCQuant
     //
-    MCQUANT(
-        mcquant_in.map{it -> tuple(it[0],it[1])},
-        mcquant_in.map{it -> tuple(it[0],it[3])},
-        mcquant_in.map{it -> tuple(it[0],it[2])}
-        )
-    ch_versions = ch_versions.mix(MCQUANT.out.versions)
+    // MCQUANT(
+    //     mcquant_in.map{it -> tuple(it[0],it[1])},
+    //     mcquant_in.map{it -> tuple(it[0],it[3])},
+    //     mcquant_in.map{it -> tuple(it[0],it[2])}
+    //     )
+    // ch_versions = ch_versions.mix(MCQUANT.out.versions)
 
     //
     // MODULE: MOLCART_QC
     //
-    MCQUANT.out.csv
+    SPOT2CELL.out.cellxgene_table
         .map {
             meta, quant ->
             [meta.subMap("id"), quant, meta.segmentation]
