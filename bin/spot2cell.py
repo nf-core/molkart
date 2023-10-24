@@ -8,13 +8,26 @@ import tifffile as tiff
 import argparse
 import os
 
-def assign_spots2cell(spot_table, cell_mask):
 
+def assign_spots2cell(spot_table, cell_mask):
     # Initialize a dictionary to hold the counts
     gene_counts = {}
 
     # Calculate cell properties for cell_mask using regionprops_table
-    cell_props = regionprops_table(cell_mask, properties=["label", "centroid", "area", "major_axis_length", "minor_axis_length", "eccentricity", "solidity", "extent", "orientation"])
+    cell_props = regionprops_table(
+        cell_mask,
+        properties=[
+            "label",
+            "centroid",
+            "area",
+            "major_axis_length",
+            "minor_axis_length",
+            "eccentricity",
+            "solidity",
+            "extent",
+            "orientation",
+        ],
+    )
 
     # Turn cell props into a pandas DataFrame and add a Cell_ID column
     name_map = {
@@ -27,7 +40,7 @@ def assign_spots2cell(spot_table, cell_mask):
         "Eccentricity": "eccentricity",
         "Solidity": "solidity",
         "Extent": "extent",
-        "Orientation": "orientation"
+        "Orientation": "orientation",
     }
 
     for new_name, old_name in name_map.items():
@@ -39,14 +52,14 @@ def assign_spots2cell(spot_table, cell_mask):
     cell_props = pd.DataFrame(cell_props)
 
     # Exclude any rows that contain Duplicated in the gene column from spot_table
-    spot_table = spot_table[~spot_table['gene'].str.contains("Duplicated")]
+    spot_table = spot_table[~spot_table["gene"].str.contains("Duplicated")]
 
     # Iterate over each row in the grouped DataFrame
-    for index,row in spot_table.iterrows():
+    for index, row in spot_table.iterrows():
         # Get the x and y positions and gene
-        x = int(row['x'])
-        y = int(row['y'])
-        gene = row['gene']
+        x = int(row["x"])
+        y = int(row["y"])
+        gene = row["gene"]
 
         # Get the cell ID from the labeled mask
         cell_id = cell_mask[y, x]
@@ -69,26 +82,27 @@ def assign_spots2cell(spot_table, cell_mask):
     gene_counts_df = pd.DataFrame(gene_counts).T
 
     # Add a column to gene_counts_df for the Cell_ID, make it the first column of the table
-    gene_counts_df['CellID'] = gene_counts_df.index
+    gene_counts_df["CellID"] = gene_counts_df.index
 
     # Add the regionprops data from cell_props for each cell ID to gene_counts_df add NA when cell_ID exists in cell_props but not in gene_counts_df
-    gene_counts_df = gene_counts_df.merge(cell_props, on='CellID', how='outer')
+    gene_counts_df = gene_counts_df.merge(cell_props, on="CellID", how="outer")
 
     # Convert NaN values to 0
     gene_counts_df = gene_counts_df.fillna(0)
 
     # Sort by Cell_ID in ascending order
-    gene_counts_df = gene_counts_df.sort_values(by=['CellID'])
+    gene_counts_df = gene_counts_df.sort_values(by=["CellID"])
 
     # Make Cell_ID the first column in gene_counts_df
-    gene_counts_df = gene_counts_df.set_index('CellID').reset_index()
+    gene_counts_df = gene_counts_df.set_index("CellID").reset_index()
 
     # Filter out cell_ID = 0 into it's own dataframe called background
-    background = gene_counts_df[gene_counts_df['CellID'] == 0]
-    gene_counts_df = gene_counts_df[gene_counts_df['CellID'] != 0]
+    background = gene_counts_df[gene_counts_df["CellID"] == 0]
+    gene_counts_df = gene_counts_df[gene_counts_df["CellID"] != 0]
 
     # Return both gene_counts_df and background
     return gene_counts_df, background
+
 
 if __name__ == "__main__":
     # Add a python argument parser with options for input, output and image size in x and y
@@ -99,13 +113,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ## Read in spot table
-    spot_data = pd.read_csv(args.spot_table,
-                names=['x', 'y', 'z', 'gene',"empty"], sep='\t', header=None,index_col=None)
+    spot_data = pd.read_csv(
+        args.spot_table, names=["x", "y", "z", "gene", "empty"], sep="\t", header=None, index_col=None
+    )
 
-    cell_mask  = tiff.imread(args.cell_mask)
+    cell_mask = tiff.imread(args.cell_mask)
 
     gene_counts_df, background = assign_spots2cell(spot_data, cell_mask)
 
     basename = os.path.basename(args.spot_table)
     basename = os.path.splitext(basename)[0]
-    gene_counts_df.to_csv(f"{basename}.cellxgene.tsv", sep=',',  header=True, index=False)
+    gene_counts_df.to_csv(f"{basename}.cellxgene.tsv", sep=",", header=True, index=False)

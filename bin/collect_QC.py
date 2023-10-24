@@ -15,7 +15,7 @@ def summarize_spots(spot_table):
     total_spots = spot_table.shape[0]
 
     ## Get list of genes
-    genes = spot_table['gene'].unique()
+    genes = spot_table["gene"].unique()
 
     return (tx_per_gene, total_spots, genes)
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ## Read in cellxgene_table table
-    cellxgene_table = pd.read_csv(args.cellxgene, sep =",")
+    cellxgene_table = pd.read_csv(args.cellxgene, sep=",")
 
     ## Read in spot table
     spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
