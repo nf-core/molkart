@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - removed project spots and mcquant from modules.config
 - changed pattern for molcart_qc as it was not matching the files (removed {})
 - added meta value to segmethod input in molcart_qc
+- spot counts are now int values
+- QC metrics rounded to 2 decimals
 
 ## v1.0.1dev - [2023.22.10]
 
