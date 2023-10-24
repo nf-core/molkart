@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Replace `PROJECT_SPOTS` and `MCQUANT` modules with spot2cells. This new (for now local) module reduces the RAM requirements drastically, because it doesn't create a multi-channel stack for the spots. Spots are assigned by looking up cell IDs at x,y, positions and iterating over the deduplicated spots table.
 - Added process labels to many modules to fix linting warnings
+- Added meta map to molcart_qc output to remove linting warning
 
 ## v1.0.1dev - [2023.22.10]
 

@@ -14,19 +14,22 @@ def summarize_spots(spot_table):
     ## Calculate the total number of spots in spot_table
     total_spots = spot_table.shape[0]
 
-    return (tx_per_gene, total_spots)
+    ## Get list of genes
+    genes = spot_table['gene'].unique()
+
+    return (tx_per_gene, total_spots, genes)
 
 
-def summarize_segmasks(mcquant, spots_summary):
-    ## Calculate the total number of cells (rows) in mcquant
-    total_cells = mcquant.shape[0]
+def summarize_segmasks(cellxgene_table, spots_summary):
+    ## Calculate the total number of cells (rows) in cellxgene_table
+    total_cells = cellxgene_table.shape[0]
 
-    ## Calculate the average segmentation area from column Area in mcquant
-    avg_area = mcquant["Area"].mean()
+    ## Calculate the average segmentation area from column Area in cellxgene_table
+    avg_area = cellxgene_table["Area"].mean()
 
     ## Calculate the % of spots assigned
-    ## Subset mcquant for all columns with _intensity_sum in the column name and sum the column values
-    spot_assign = mcquant.filter(regex="_intensity_sum").sum(axis=1)
+    ## Subset cellxgene_table for all columns with _intensity_sum in the column name and sum the column values
+    spot_assign = cellxgene_table[spots_summary[2]].sum(axis=1)
     spot_assign_total = int(sum(spot_assign))
     spot_assign_per_cell = total_cells and spot_assign_total / total_cells or 0
     # spot_assign_per_cell = spot_assign_total / total_cells
@@ -36,9 +39,9 @@ def summarize_segmasks(mcquant, spots_summary):
 
 
 if __name__ == "__main__":
-    # Write an argparse with input options mcquant_in, spots and output options outdir, sample_id
+    # Write an argparse with input options cellxgene_table, spots and output options outdir, sample_id
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--mcquant", help="mcquant regionprops_table.")
+    parser.add_argument("-i", "--cellxgene", help="cellxgene regionprops_table.")
     parser.add_argument("-s", "--spots", help="Resolve biosciences spot table.")
     parser.add_argument("-o", "--outdir", help="Output directory.")
 
@@ -48,8 +51,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    ## Read in mcquant table
-    mcquant = pd.read_csv(args.mcquant)
+    ## Read in cellxgene_table table
+    cellxgene_table = pd.read_csv(args.cellxgene, sep =",")
 
     ## Read in spot table
     spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
@@ -57,7 +60,7 @@ if __name__ == "__main__":
 
     ## Summarize spots table
     summary_spots = summarize_spots(spots)
-    summary_segmentation = summarize_segmasks(mcquant, summary_spots)
+    summary_segmentation = summarize_segmasks(cellxgene_table, summary_spots)
 
     ## Create pandas data frame with one row per parameter and write each value in summary_segmentation to a new row in the data frame
     summary_df = pd.DataFrame(

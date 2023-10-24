@@ -4,7 +4,7 @@ process MOLCART_QC{
     label 'process_single'
 
     input:
-    tuple val(meta), path(mcquant)
+    tuple val(meta), path(cellxgene_table)
     tuple val(meta2), path(spot_table)
     val(segmethod)
 
@@ -19,7 +19,7 @@ process MOLCART_QC{
     def sample_id = "${meta.id}"
     """
     collect_QC.py \
-        --mcquant $mcquant \
+        --cellxgene $cellxgene_table \
         --spots $spot_table \
         --sample_id $sample_id \
         --segmentation_method $segmethod \

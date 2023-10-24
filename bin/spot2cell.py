@@ -14,9 +14,8 @@ def assign_spots2cell(spot_table, cell_mask):
     gene_counts = {}
 
     # Calculate cell properties for cell_mask using regionprops_table
-    cell_props = regionprops_table(cell_mask,
-                                   properties=["label", "centroid", "area", "major_axis_length", "minor_axis_length", "eccentricity", "solidity", "extent", "orientation"])
-                                 #properties=["label","centroid","area"])
+    cell_props = regionprops_table(cell_mask, properties=["label", "centroid", "area", "major_axis_length", "minor_axis_length", "eccentricity", "solidity", "extent", "orientation"])
+
     # Turn cell props into a pandas DataFrame and add a Cell_ID column
     name_map = {
         "CellID": "label",
@@ -28,10 +27,14 @@ def assign_spots2cell(spot_table, cell_mask):
         "Eccentricity": "eccentricity",
         "Solidity": "solidity",
         "Extent": "extent",
-        "Orientation": "orientation",
+        "Orientation": "orientation"
     }
+
     for new_name, old_name in name_map.items():
         cell_props[new_name] = cell_props[old_name]
+
+    for old_name in set(name_map.values()):
+        del cell_props[old_name]
 
     cell_props = pd.DataFrame(cell_props)
 
@@ -105,4 +108,4 @@ if __name__ == "__main__":
 
     basename = os.path.basename(args.spot_table)
     basename = os.path.splitext(basename)[0]
-    gene_counts_df.to_csv(f"{basename}.cellxgene.tsv", sep='\t',  header=True, index=False)
+    gene_counts_df.to_csv(f"{basename}.cellxgene.tsv", sep=',',  header=True, index=False)

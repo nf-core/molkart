@@ -238,6 +238,12 @@ workflow MOLKART {
     // Assigning of spots to mask
     qc_spots
         .combine(segmentation_masks, by: 0)
+        .map {
+            meta, spots_table, mask, segmethod ->
+            new_meta = meta.clone()
+            new_meta.segmentation = segmethod
+            [new_meta, spots_table, mask]
+            }
         .set { dedup_spots }
 
     SPOT2CELL(
@@ -275,11 +281,12 @@ workflow MOLKART {
         .map {
             meta, quant ->
             [meta.subMap("id"), quant, meta.segmentation]
-        }.set { mcquant_out }
+        }.set { spot2cell_out }
 
-    qc_spots.combine(
-        mcquant_out, by: 0)
+    qc_spots
+        .combine(spot2cell_out, by: 0)
         .set{ molcart_qc }
+    molcart_qc.view()
 
     MOLCART_QC(
             molcart_qc.map{it -> tuple(it[0],it[2])},
