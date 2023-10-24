@@ -84,6 +84,7 @@ def assign_spots2cell(spot_table, cell_mask):
     # Add a column to gene_counts_df for the Cell_ID, make it the first column of the table
     gene_counts_df["CellID"] = gene_counts_df.index
 
+
     # Add the regionprops data from cell_props for each cell ID to gene_counts_df add NA when cell_ID exists in cell_props but not in gene_counts_df
     gene_counts_df = gene_counts_df.merge(cell_props, on="CellID", how="outer")
 
@@ -95,6 +96,8 @@ def assign_spots2cell(spot_table, cell_mask):
 
     # Make Cell_ID the first column in gene_counts_df
     gene_counts_df = gene_counts_df.set_index("CellID").reset_index()
+
+    gene_counts_df[spot_table.gene.unique()] = gene_counts_df[spot_table.gene.unique()].astype(int)
 
     # Filter out cell_ID = 0 into it's own dataframe called background
     background = gene_counts_df[gene_counts_df["CellID"] == 0]
@@ -109,6 +112,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--spot_table", help="Spot table to project.")
     parser.add_argument("-c", "--cell_mask", help="Sample ID.")
+    parser.add_argument("--tag", type=str, help="Additional tag to append to filename")
 
     args = parser.parse_args()
 
@@ -123,4 +127,4 @@ if __name__ == "__main__":
 
     basename = os.path.basename(args.spot_table)
     basename = os.path.splitext(basename)[0]
-    gene_counts_df.to_csv(f"{basename}.cellxgene.tsv", sep=",", header=True, index=False)
+    gene_counts_df.to_csv(f"{basename}.{args.tag}.cellxgene.csv", sep=",", header=True, index=False)

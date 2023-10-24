@@ -32,8 +32,10 @@ def summarize_segmasks(cellxgene_table, spots_summary):
     spot_assign = cellxgene_table[spots_summary[2]].sum(axis=1)
     spot_assign_total = int(sum(spot_assign))
     spot_assign_per_cell = total_cells and spot_assign_total / total_cells or 0
+    spot_assign_per_cell = round(spot_assign_per_cell, 2)
     # spot_assign_per_cell = spot_assign_total / total_cells
     spot_assign_percent = spot_assign_total / spots_summary[1] * 100
+    spot_assign_percent = round(spot_assign_percent, 2)
 
     return (total_cells, avg_area, spot_assign_per_cell, spot_assign_total, spot_assign_percent)
 
@@ -44,9 +46,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--cellxgene", help="cellxgene regionprops_table.")
     parser.add_argument("-s", "--spots", help="Resolve biosciences spot table.")
     parser.add_argument("-o", "--outdir", help="Output directory.")
-
     parser.add_argument("-d", "--sample_id", help="Sample ID.")
-
     parser.add_argument("-g", "--segmentation_method", help="Segmentation method used.")
 
     args = parser.parse_args()
@@ -56,6 +56,7 @@ if __name__ == "__main__":
 
     ## Read in spot table
     spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
+    duplicated = sum(spots.gene.str.contains("Duplicated"))
     spots = spots[~spots.gene.str.contains("Duplicated")]
 
     ## Summarize spots table
@@ -73,6 +74,7 @@ if __name__ == "__main__":
             "spot_assign_per_cell",
             "spot_assign_total",
             "spot_assign_percent",
+            "duplicated_total"
         ]
     )
     summary_df.loc[0] = [
@@ -85,8 +87,9 @@ if __name__ == "__main__":
         summary_segmentation[2],
         summary_segmentation[3],
         summary_segmentation[4],
+        duplicated
     ]
-
+    print(args.sample_id)
     # Write summary_df to a csv file
     summary_df.to_csv(
         f"{args.outdir}/{args.sample_id}.{args.segmentation_method}.spot_QC.csv", header=True, index=False

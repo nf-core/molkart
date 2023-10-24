@@ -8,9 +8,10 @@ process SPOT2CELL{
     input:
     tuple val(meta) , path(spot_table)
     tuple val(meta2), path(cell_mask)
+    val(tag)
 
     output:
-    tuple val(meta), path("*cellxgene.tsv"), emit: cellxgene_table
+    tuple val(meta), path("*cellxgene.csv"), emit: cellxgene_table
 
     when:
     task.ext.when == null || task.ext.when
@@ -18,7 +19,8 @@ process SPOT2CELL{
     script:
     """
     spot2cell.py \
-    --spot_table ${spot_table} \
-    --cell_mask ${cell_mask}
+        --spot_table ${spot_table} \
+        --cell_mask ${cell_mask} \
+        --tag ${tag}
     """
 }

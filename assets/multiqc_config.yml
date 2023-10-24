@@ -47,6 +47,9 @@ custom_data:
       spot_assign_percent:
         title: Percentage of spots assigned to cell
         description: "% of spots assigned to cells"
+      duplicated_total:
+        title: Total number of duplicated spots in the area
+        description: "Total number of duplicated spots"
 sp:
   segmentation_stats:
     fn: "final_QC.all_samples.csv"

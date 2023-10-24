@@ -248,31 +248,9 @@ workflow MOLKART {
 
     SPOT2CELL(
         dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> tuple(it[0],it[2]))
+        dedup_spots.map(it -> tuple(it[0],it[2])),
+        dedup_spots.map(it -> it[0].segmentation)
     )
-
-    // PROJECT_SPOTS.out.img_spots
-    //     .join(PROJECT_SPOTS.out.channel_names)
-    //     .map{
-    //         meta,tiff,channels -> [meta,tiff,channels]
-    //         }
-    //     .combine(segmentation_masks, by: 0)
-    //     .map {
-    //         meta, tiff, channels, mask, seg ->
-    //         new_meta = meta.clone()
-    //         new_meta.segmentation = seg
-    //         [new_meta, tiff, channels, mask]
-    //     }.set{ mcquant_in }
-
-    //
-    // MODULE: MCQuant
-    //
-    // MCQUANT(
-    //     mcquant_in.map{it -> tuple(it[0],it[1])},
-    //     mcquant_in.map{it -> tuple(it[0],it[3])},
-    //     mcquant_in.map{it -> tuple(it[0],it[2])}
-    //     )
-    // ch_versions = ch_versions.mix(MCQUANT.out.versions)
 
     //
     // MODULE: MOLCART_QC
@@ -286,18 +264,16 @@ workflow MOLKART {
     qc_spots
         .combine(spot2cell_out, by: 0)
         .set{ molcart_qc }
-    molcart_qc.view()
 
     MOLCART_QC(
             molcart_qc.map{it -> tuple(it[0],it[2])},
             molcart_qc.map{it -> tuple(it[0],it[1])},
-            molcart_qc.map{it -> it[3]}
+            molcart_qc.map{it -> tuple(it[0],it[3])}
         )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
     //
     // MODULE: MultiQC
     //
@@ -306,7 +282,8 @@ workflow MOLKART {
     methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
     ch_methods_description = Channel.value(methods_description)
 
-    ch_multiqc_files = MOLCART_QC.out.qc.collectFile(name: 'final_QC.all_samples.csv',keepHeader: true, storeDir: "$params.outdir" )
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(MOLCART_QC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "$params.outdir"))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())

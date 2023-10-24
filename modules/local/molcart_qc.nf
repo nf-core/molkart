@@ -6,7 +6,7 @@ process MOLCART_QC{
     input:
     tuple val(meta), path(cellxgene_table)
     tuple val(meta2), path(spot_table)
-    val(segmethod)
+    tuple val(meta3), val(segmethod)
 
     output:
     tuple val(meta), path("*.csv"), emit: qc
