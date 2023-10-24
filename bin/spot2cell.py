@@ -84,7 +84,6 @@ def assign_spots2cell(spot_table, cell_mask):
     # Add a column to gene_counts_df for the Cell_ID, make it the first column of the table
     gene_counts_df["CellID"] = gene_counts_df.index
 
-
     # Add the regionprops data from cell_props for each cell ID to gene_counts_df add NA when cell_ID exists in cell_props but not in gene_counts_df
     gene_counts_df = gene_counts_df.merge(cell_props, on="CellID", how="outer")
 

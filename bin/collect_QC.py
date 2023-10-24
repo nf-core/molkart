@@ -74,7 +74,7 @@ if __name__ == "__main__":
             "spot_assign_per_cell",
             "spot_assign_total",
             "spot_assign_percent",
-            "duplicated_total"
+            "duplicated_total",
         ]
     )
     summary_df.loc[0] = [
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         summary_segmentation[2],
         summary_segmentation[3],
         summary_segmentation[4],
-        duplicated
+        duplicated,
     ]
     print(args.sample_id)
     # Write summary_df to a csv file
