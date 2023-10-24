@@ -9,7 +9,7 @@ process MOLCART_QC{
     val(segmethod)
 
     output:
-    path("*.csv"), emit: qc
+    tuple val(meta), path("*.csv"), emit: qc
 
     when:
     task.ext.when == null || task.ext.when
