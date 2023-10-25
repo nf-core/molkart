@@ -165,11 +165,6 @@ workflow MOLKART {
     MINDAGAP_DUPLICATEFINDER(spot_tuple)
     ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
 
-    //
-    // MODULE: PROJECT SPOTS
-    //
-    // Transform spot table to 2 dimensional numpy array to use with MCQUANT
-
     qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
 
     //
