@@ -30,11 +30,6 @@
                         "git_sha": "6f150e1503c0826c21fedf1fa566cdbecbe98ec7",
                         "installed_by": ["modules"]
                     },
-                    "mcquant": {
-                        "branch": "master",
-                        "git_sha": "b9829e1064382745d8dff7f1d74d2138d2864f71",
-                        "installed_by": ["modules"]
-                    },
                     "mindagap/mindagap": {
                         "branch": "master",
                         "git_sha": "240937a2a9c30298110753292be041188891f2cb",

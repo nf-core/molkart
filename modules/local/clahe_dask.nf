@@ -1,6 +1,7 @@
 process CLAHE_DASK{
     debug false
     tag "Applying CLAHE to $meta.id"
+    label 'process_low'
 
     container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
 
