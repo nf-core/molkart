@@ -90,10 +90,10 @@
             "required": ["segmentation_method"],
             "fa_icon": "fas fa-border-all"
         },
-        "contrast_adjustment": {
-            "title": "Contrast adjustment",
+        "image_preprocessing": {
+            "title": "Image preprocessing",
             "type": "object",
-            "description": "Define should contrast adjustment be applied and how.",
+            "description": "Defines gridsize for Mindagap and should contrast adjustment be applied and how.",
             "default": "",
             "fa_icon": "fas fa-adjust",
             "properties": {
@@ -125,6 +125,12 @@
                     "type": "boolean",
                     "description": "Specifies whether contrast-limited adaptive histogram equalization should be skipped.",
                     "fa_icon": "fab fa-buromobelexperte"
+                },
+                "tilesize": {
+                    "type": "integer",
+                    "default": 2144,
+                    "description": "Tile size (distance between gridlines)",
+                    "fa_icon": "fas fa-th"
                 }
             }
         },
@@ -405,7 +411,7 @@
             "$ref": "#/definitions/segmentation_methods_and_options"
         },
         {
-            "$ref": "#/definitions/contrast_adjustment"
+            "$ref": "#/definitions/image_preprocessing"
         },
         {
             "$ref": "#/definitions/training_subset_options"
