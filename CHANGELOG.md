@@ -11,7 +11,8 @@ Implemented the tilesize parameter for Mindagap_mindagap and mindagap_duplicatef
 
 - tilesize param
 - tilesize passing to mindagap and duplicatefinder in modules.config
-- 
+-
+
 ### `Fixed`
 
 ### `Dependencies`
