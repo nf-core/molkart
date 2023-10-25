@@ -37,7 +37,7 @@ include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrai
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
-include { PROJECT_SPOTS               } from '../modules/local/project_spots'
+include { SPOT2CELL                   } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
 include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 
@@ -61,7 +61,6 @@ include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
 include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
 include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
 include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
-include { MCQUANT                     } from '../modules/nf-core/mcquant/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,24 +165,7 @@ workflow MOLKART {
     MINDAGAP_DUPLICATEFINDER(spot_tuple)
     ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
 
-    //
-    // MODULE: PROJECT SPOTS
-    //
-    // Transform spot table to 2 dimensional numpy array to use with MCQUANT
-
     qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
-
-    qc_spots.join(
-        image_tuple.map {
-            meta, tiff ->
-            [meta.subMap("id"), tiff]
-        }
-    ).set { dedup_spots }
-
-    PROJECT_SPOTS(
-        dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> it[2])
-    )
 
     //
     // MODULE: DeepCell Mesmer segmentation
@@ -248,52 +230,45 @@ workflow MOLKART {
                 .combine(Channel.of('ilastik')))
     }
 
-    PROJECT_SPOTS.out.img_spots
-        .join(PROJECT_SPOTS.out.channel_names)
-        .map{
-            meta,tiff,channels -> [meta,tiff,channels]
-            }
+    // Assigning of spots to mask
+    qc_spots
         .combine(segmentation_masks, by: 0)
         .map {
-            meta, tiff, channels, mask, seg ->
+            meta, spots_table, mask, segmethod ->
             new_meta = meta.clone()
-            new_meta.segmentation = seg
-            [new_meta, tiff, channels, mask]
-        }.set{ mcquant_in }
+            new_meta.segmentation = segmethod
+            [new_meta, spots_table, mask]
+            }
+        .set { dedup_spots }
 
-    //
-    // MODULE: MCQuant
-    //
-    MCQUANT(
-        mcquant_in.map{it -> tuple(it[0],it[1])},
-        mcquant_in.map{it -> tuple(it[0],it[3])},
-        mcquant_in.map{it -> tuple(it[0],it[2])}
-        )
-    ch_versions = ch_versions.mix(MCQUANT.out.versions)
+    SPOT2CELL(
+        dedup_spots.map(it -> tuple(it[0],it[1])),
+        dedup_spots.map(it -> tuple(it[0],it[2])),
+        dedup_spots.map(it -> it[0].segmentation)
+    )
 
     //
     // MODULE: MOLCART_QC
     //
-    MCQUANT.out.csv
+    SPOT2CELL.out.cellxgene_table
         .map {
             meta, quant ->
             [meta.subMap("id"), quant, meta.segmentation]
-        }.set { mcquant_out }
+        }.set { spot2cell_out }
 
-    qc_spots.combine(
-        mcquant_out, by: 0)
+    qc_spots
+        .combine(spot2cell_out, by: 0)
         .set{ molcart_qc }
 
     MOLCART_QC(
             molcart_qc.map{it -> tuple(it[0],it[2])},
             molcart_qc.map{it -> tuple(it[0],it[1])},
-            molcart_qc.map{it -> it[3]}
+            molcart_qc.map{it -> tuple(it[0],it[3])}
         )
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
     //
     // MODULE: MultiQC
     //
@@ -302,7 +277,8 @@ workflow MOLKART {
     methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
     ch_methods_description = Channel.value(methods_description)
 
-    ch_multiqc_files = MOLCART_QC.out.qc.collectFile(name: 'final_QC.all_samples.csv',keepHeader: true, storeDir: "$params.outdir" )
+    ch_multiqc_files = Channel.empty()
+    ch_multiqc_files = ch_multiqc_files.mix(MOLCART_QC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "$params.outdir"))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())

@@ -11,6 +11,25 @@ Implemented the tilesize parameter for Mindagap_mindagap and mindagap_duplicatef
 
 - tilesize param
 - tilesize passing to mindagap and duplicatefinder in modules.config
+- 
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
+## v1.0.1dev - [2023.23.10]
+
+- Replace `PROJECT_SPOTS` and `MCQUANT` modules with spot2cells. This new (for now local) module reduces the RAM requirements drastically, because it doesn't create a multi-channel stack for the spots. Spots are assigned by looking up cell IDs at x,y, positions and iterating over the deduplicated spots table.
+- Added process labels to many modules to fix linting warnings
+- Added meta map to molcart_qc output to remove linting warning -- adjusted script for multiqc input accordingly
+- Added duplicated spots counts to collect_qc.py and multiqc_config.yml so that they also get counted.
+- Added tag option to spot2cell so that the output names with same sample id and different segmentation methods can be differentiated (they were overwriting each other previously)
+- removed project spots and mcquant from modules.config
+- changed pattern for molcart_qc as it was not matching the files (removed {})
+- added meta value to segmethod input in molcart_qc
+- spot counts are now int values
+- QC metrics rounded to 2 decimals
 
 ## v1.0.1dev - [2023.22.10]
 

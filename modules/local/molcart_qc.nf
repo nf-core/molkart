@@ -1,14 +1,15 @@
 process MOLCART_QC{
     tag "${meta.id}"
     container 'docker.io/wuennemannflorian/project_spots:latest'
+    label 'process_single'
 
     input:
-    tuple val(meta), path(mcquant)
+    tuple val(meta), path(cellxgene_table)
     tuple val(meta2), path(spot_table)
-    val(segmethod)
+    tuple val(meta3), val(segmethod)
 
     output:
-    path("*.csv"), emit: qc
+    tuple val(meta), path("*.csv"), emit: qc
 
     when:
     task.ext.when == null || task.ext.when
@@ -18,7 +19,7 @@ process MOLCART_QC{
     def sample_id = "${meta.id}"
     """
     collect_QC.py \
-        --mcquant $mcquant \
+        --cellxgene $cellxgene_table \
         --spots $spot_table \
         --sample_id $sample_id \
         --segmentation_method $segmethod \

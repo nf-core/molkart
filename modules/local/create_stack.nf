@@ -1,5 +1,6 @@
 process CREATE_STACK {
     tag "Stacking channels for $meta.id"
+    label 'process_medium'
 
     container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
 
