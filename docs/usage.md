@@ -73,9 +73,39 @@ nextflow run nf-core/molkart -profile docker -params-file params.yaml
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
-outdir: './results/'
-<...>
+input: "./samplesheet.csv"
+outdir: "./results/"
+```
+
+Additionally, `params.yaml` can contain optional parameters:
+
+```yaml
+input: "./samplesheet.csv"
+outdir: "./results/"
+segmentation_method: "mesmer"
+cellpose_save_flows: false
+cellpose_diameter: 30
+cellpose_chan: 0
+cellpose_chan2: null
+cellpose_pretrained_model: "cyto"
+cellpose_custom_model: null
+cellpose_flow_threshold: 0.4
+cellpose_edge_exclude: true
+mesmer_image_mpp: 0.138
+mesmer_compartment: "whole-cell"
+ilastik_pixel_project: null
+ilastik_multicut_project: null
+tilesize: 2144
+skip_clahe: false
+clahe_cliplimit: 0.01
+clahe_nbins: 256
+clahe_pixel_size: 0.138
+clahe_kernel: 25
+create_training_subset: false
+crop_amount: 4
+crop_nonzero_fraction: 0.4
+crop_size_x: 400
+crop_size_y: 400
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
