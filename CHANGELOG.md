@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.10.11]
+
+Added documentation - usage.md and output.md
+
+### `Added`
+
+- usage.md documentation
+- output.md documentation
+- segmentation outputs are all moved to a segmentation folder.
+- updated nf-core module versions
+-
+
 ## v1.0.1dev - [2023.25.10]
 
 Implemented the tilesize parameter for Mindagap_mindagap and mindagap_duplicatefinder so that smaller representative images can be used as test.

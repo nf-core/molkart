@@ -80,6 +80,18 @@ outdir: './results/'
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
+To run the pipeline so that the training subset is created with default values, run:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --create_training_subset
+```
+
+After training a Cellpose 2.0 model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --segmentation_method cellpose,ilastik --cellpose_custom_model /path/to/model --ilastik_pixel_project /path/to/pixel_classifier.ilp --ilastik_multicut_project /path/to/multicut.ilp
+```
+
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
