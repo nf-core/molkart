@@ -13,7 +13,9 @@ Added documentation - usage.md and output.md
 - output.md documentation
 - segmentation outputs are all moved to a segmentation folder.
 - updated nf-core module versions
--
+- CITATIONS.md updated
+- README.md updated
+- WorkflowMolkart.groovy updated to return citations if tools are used
 
 ## v1.0.1dev - [2023.25.10]
 
