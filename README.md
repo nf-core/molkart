@@ -15,7 +15,6 @@
 
 **nf-core/molkart** is a pipeline for processing Molecular Cartography data from Resolve Bioscience (combinatorial FISH). It takes as input a table of FISH spot positions (x,y,z,gene), a corresponding DAPI image (`tiff` format) and optionally a membrane staining image in the `tiff` format. nf-core/molkart performs end-to-end processing of the data including image processing, QC filtering of spots, cell segmentation, spot-to-cell assignment and reports quality metrics such as the spot assignment rate, average spots per cell and segmentation mask size ranges.
 
-<!-- TODO nf-core: Add docs/images/molkart_workflow.png -->
 <p align="center">
     <img title="Molkart Workflow" src="docs/images/molkart_workflow.png" width=30%>
 </p>
