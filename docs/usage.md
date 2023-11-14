@@ -22,18 +22,18 @@ A final samplesheet file that can be used to process a full dataset (after segme
 
 ```console
 sample,nuclear_image,spot_table,membrane_image
-SAMPLE1,SAMPLE1.DAPI.tiff,SAMPLE1.spots.txt,SAMPLE1.WGA.tiff
-SAMPLE2,SAMPLE2.DAPI.tiff,SAMPLE2.spots.txt,SAMPLE2.WGA.tiff
-SAMPLE3,SAMPLE3.DAPI.tiff,SAMPLE3.spots.txt,SAMPLE3.WGA.tiff
-SAMPLE4,SAMPLE4.DAPI.tiff,SAMPLE4.spots.txt,SAMPLE4.WGA.tiff
+SAMPLE1,SAMPLE1.nucleus.tiff,SAMPLE1.spots.txt,SAMPLE1.membrane.tiff
+SAMPLE2,SAMPLE2.nucleus.tiff,SAMPLE2.spots.txt,SAMPLE2.membrane.tiff
+SAMPLE3,SAMPLE3.nucleus.tiff,SAMPLE3.spots.txt,SAMPLE3.membrane.tiff
+SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 ```
 
-| Column           | Description                                                                                                               |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `sample`         | Custom sample name. If multiple images are being processed, their sample tags must be different. Must not contain spaces. |
-| `nuclear_image`  | Full path to nuclear image (DAPI, Hoechst).                                                                               |
-| `spot_table`     | Full path to tsv or txt spot table provided by Resolve.                                                                   |
-| `membrane_image` | Full path to membrane image (e.g WGA) or second channel to help with segmentation (optional).                             |
+| Column           | Description                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces. |
+| `nuclear_image`  | Full path to nuclear image (DAPI, Hoechst).                                                                                                                  |
+| `spot_table`     | Full path to tsv or txt spot table provided by Resolve. Separartor must be `\t`.                                                                             |
+| `membrane_image` | Full path to membrane image (e.g WGA) or second channel to help with segmentation (optional).                                                                |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
