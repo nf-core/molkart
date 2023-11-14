@@ -6,58 +6,43 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
-
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns (4th column optional), and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline requires that the first column specifies the sample ID. If multiple rows are provided, their sample tags must be different. The samplesheet needs to have the three column names exactly as specified below, with the optional fourth column specifying the `membrane_image` (it does not have to be a membrane image necessarily, but the second image can be provided here to help with segmentation).
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+A final samplesheet file that can be used to process a full dataset (after segmentation optimization), where a matching membrane image is provided would look like:
 
 ```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,nuclear_image,spot_table,membrane_image
+SAMPLE1,SAMPLE1.nucleus.tiff,SAMPLE1.spots.txt,SAMPLE1.membrane.tiff
+SAMPLE2,SAMPLE2.nucleus.tiff,SAMPLE2.spots.txt,SAMPLE2.membrane.tiff
+SAMPLE3,SAMPLE3.nucleus.tiff,SAMPLE3.spots.txt,SAMPLE3.membrane.tiff
+SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| Column           | Description                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces. |
+| `nuclear_image`  | Full path to nuclear image (DAPI, Hoechst).                                                                                                                  |
+| `spot_table`     | Full path to tsv or txt spot table provided by Resolve. Separartor must be `\t`.                                                                             |
+| `membrane_image` | Full path to membrane image (e.g WGA) or second channel to help with segmentation (optional).                                                                |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
 ## Running the pipeline
 
-The typical command for running the pipeline is as follows:
+The typical command for running the pipeline with default values is as follows:
 
 ```bash
-nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -88,13 +73,54 @@ nextflow run nf-core/molkart -profile docker -params-file params.yaml
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
-<...>
+input: "./samplesheet.csv"
+outdir: "./results/"
+```
+
+Additionally, `params.yaml` can contain optional parameters:
+
+```yaml
+input: "./samplesheet.csv"
+outdir: "./results/"
+segmentation_method: "mesmer"
+cellpose_save_flows: false
+cellpose_diameter: 30
+cellpose_chan: 0
+cellpose_chan2: null
+cellpose_pretrained_model: "cyto"
+cellpose_custom_model: null
+cellpose_flow_threshold: 0.4
+cellpose_edge_exclude: true
+mesmer_image_mpp: 0.138
+mesmer_compartment: "whole-cell"
+ilastik_pixel_project: null
+ilastik_multicut_project: null
+tilesize: 2144
+skip_clahe: false
+clahe_cliplimit: 0.01
+clahe_nbins: 256
+clahe_pixel_size: 0.138
+clahe_kernel: 25
+create_training_subset: false
+crop_amount: 4
+crop_nonzero_fraction: 0.4
+crop_size_x: 400
+crop_size_y: 400
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+To run the pipeline so that the training subset is created with default values, run:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --create_training_subset
+```
+
+After training a Cellpose 2.0 model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --segmentation_method cellpose,ilastik --cellpose_custom_model /path/to/model --ilastik_pixel_project /path/to/pixel_classifier.ilp --ilastik_multicut_project /path/to/multicut.ilp
+```
 
 ### Updating the pipeline
 
@@ -112,7 +138,7 @@ First, go to the [nf-core/molkart releases page](https://github.com/nf-core/molk
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
 
-To further assist in reproducbility, you can use share and re-use [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
+To further assist in reproducibility, you can use share and re-use [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
 
 :::tip
 If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
@@ -131,7 +157,7 @@ Use this parameter to choose a configuration profile. Profiles can give configur
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
 :::info
-We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
+We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility -- currently, Conda is not supported for this pipeline.
 :::
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
@@ -139,7 +165,7 @@ The pipeline also dynamically loads configurations from [https://github.com/nf-c
 Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer enviroment.
+If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
 
 - `test`
   - A profile with a complete configuration for automated testing
@@ -157,7 +183,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer. Currently not supported.
 
 ### `-resume`
 
