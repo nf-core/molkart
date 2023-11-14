@@ -15,7 +15,7 @@ Added documentation - usage.md and output.md
 - updated nf-core module versions
 - CITATIONS.md updated
 - README.md updated
-- WorkflowMolkart.groovy updated to return citations if tools are used
+- WorkflowMolkart.groovy updated to return citations if tools are used (added commas)
 
 ## v1.0.1dev - [2023.25.10]
 

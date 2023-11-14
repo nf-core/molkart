@@ -59,10 +59,10 @@ class WorkflowMolkart {
         // Uncomment function in methodsDescriptionText to render in MultiQC report
         def citation_text = [
                 "Tools used in the workflow included:",
-                "Mindagap (Guerreiro et al. 2023)"
-                params.segmentation_method.split(',').contains('mesmer')   ? "Mesmer (Greenwald et al. 2021)" : "",
-                params.segmentation_method.split(',').contains('ilastik')  ? "ilastik (Berg et al. 2019)"     : "",
-                params.segmentation_method.split(',').contains('cellpose') ? "Cellpose (Stringer et al. 2021; Pachitariu et al 2022)" : "",
+                "Mindagap (Guerreiro et al. 2023),",
+                params.segmentation_method.split(',').contains('mesmer')   ? "Mesmer (Greenwald et al. 2021)," : "",
+                params.segmentation_method.split(',').contains('ilastik')  ? "ilastik (Berg et al. 2019),"     : "",
+                params.segmentation_method.split(',').contains('cellpose') ? "Cellpose (Stringer et al. 2021; Pachitariu et al 2022)," : "",
                 "MultiQC (Ewels et al. 2016)",
                 "."
             ].join(' ').trim()
