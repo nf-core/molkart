@@ -185,10 +185,13 @@ workflow MOLKART {
     }
     //
     // MODULE: Cellpose segmentation
-    // TODO: check if there is a problem with resume for Cellpose.
-    cellpose_custom_model = params.cellpose_custom_model ? Channel.fromPath(params.cellpose_custom_model) : []
+    //
+    cellpose_custom_model = params.cellpose_custom_model ? stack_mix.combine(Channel.fromPath(params.cellpose_custom_model)) : []
     if (params.segmentation_method.split(',').contains('cellpose')) {
-        CELLPOSE(stack_mix, cellpose_custom_model)
+        CELLPOSE(
+            stack_mix,
+            cellpose_custom_model ? cellpose_custom_model.map{it[2]} : []
+            )
         ch_versions = ch_versions.mix(CELLPOSE.out.versions)
         segmentation_masks = segmentation_masks
             .mix(CELLPOSE.out.mask

@@ -55,6 +55,13 @@ def get_args():
         "-g", "--nbins", dest="nbins", action="store", required=False, default=256, help="Number of bins for CLAHE"
     )
     inputs.add_argument("-p", "--pixel-size", dest="pixel_size", action="store", required=True, help="Image pixel size")
+    inputs.add_argument(
+        "--skip_pyramid",
+        dest="skip_pyramid",
+        action="store_true",
+        default=False,
+        help="Should pyramid creation be skipped",
+    )
 
     arg = parser.parse_args()
 
@@ -125,53 +132,58 @@ def main(args):
     # construct levels
     tile_size = 1024
     scale = 2
-
     pixel_size = args.pixel_size
-    dtype = img_dask.dtype
-    base_shape = img_dask[0].shape
-    num_channels = img_dask.shape[0]
-    num_levels = (np.ceil(np.log2(max(base_shape) / tile_size)) + 1).astype(int)
-    factors = 2 ** np.arange(num_levels)
-    shapes = (np.ceil(np.array(base_shape) / factors[:, None])).astype(int)
 
-    print("Pyramid level sizes: ")
-    for i, shape in enumerate(shapes):
-        print(f"   level {i+1}: {format_shape(shape)}", end="")
-        if i == 0:
-            print("(original size)", end="")
-        print()
-    print()
-    print(shapes)
-
-    level_full_shapes = []
-    for shape in shapes:
-        level_full_shapes.append((num_channels, shape[0], shape[1]))
-    level_shapes = shapes
-    tip_level = np.argmax(np.all(level_shapes < tile_size, axis=1))
-    tile_shapes = [(tile_size, tile_size) if i <= tip_level else None for i in range(len(level_shapes))]
-
-    # write pyramid
-    with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
-        tiff.write(
-            data=img_dask,
-            shape=level_full_shapes[0],
-            subifds=int(num_levels - 1),
-            dtype=dtype,
-            resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
-            tile=tile_shapes[0],
-        )
-        for level, (shape, tile_shape) in enumerate(zip(level_full_shapes[1:], tile_shapes[1:]), 1):
+    if args.skip_pyramid:
+        with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
             tiff.write(
-                data=subres_tiles(level, level_full_shapes, tile_shapes, args.output, scale),
-                shape=shape,
-                subfiletype=1,
-                dtype=dtype,
-                tile=tile_shape,
+                data=img_dask,
+                shape=img_dask.shape,
+                dtype=img_dask.dtype,
+                resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
             )
+    else:
+        dtype = img_dask.dtype
+        base_shape = img_dask[0].shape
+        num_channels = img_dask.shape[0]
+        num_levels = (np.ceil(np.log2(max(base_shape) / tile_size)) + 1).astype(int)
+        factors = 2 ** np.arange(num_levels)
+        shapes = (np.ceil(np.array(base_shape) / factors[:, None])).astype(int)
 
-    # note about metadata: the channels, planes etc were adjusted not to include the removed channels, however
-    # the channel ids have stayed the same as before removal. E.g if channels 1 and 2 are removed,
-    # the channel ids in the metadata will skip indices 1 and 2 (channel_id:0, channel_id:3, channel_id:4 ...)
+        print("Pyramid level sizes: ")
+        for i, shape in enumerate(shapes):
+            print(f"   level {i+1}: {format_shape(shape)}", end="")
+            if i == 0:
+                print("(original size)", end="")
+            print()
+        print()
+        print(shapes)
+
+        level_full_shapes = []
+        for shape in shapes:
+            level_full_shapes.append((num_channels, shape[0], shape[1]))
+        level_shapes = shapes
+        tip_level = np.argmax(np.all(level_shapes < tile_size, axis=1))
+        tile_shapes = [(tile_size, tile_size) if i <= tip_level else None for i in range(len(level_shapes))]
+
+        # write pyramid
+        with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
+            tiff.write(
+                data=img_dask,
+                shape=level_full_shapes[0],
+                subifds=int(num_levels - 1),
+                dtype=dtype,
+                resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
+                tile=tile_shapes[0],
+            )
+            for level, (shape, tile_shape) in enumerate(zip(level_full_shapes[1:], tile_shapes[1:]), 1):
+                tiff.write(
+                    data=subres_tiles(level, level_full_shapes, tile_shapes, args.output, scale),
+                    shape=shape,
+                    subfiletype=1,
+                    dtype=dtype,
+                    tile=tile_shape
+                )
     # tifffile.tiffcomment(args.output, to_xml(metadata))
     print()
 
