@@ -101,6 +101,7 @@ clahe_cliplimit: 0.01
 clahe_nbins: 256
 clahe_pixel_size: 0.138
 clahe_kernel: 25
+clahe_skip_pyramid: false
 create_training_subset: false
 crop_amount: 4
 crop_nonzero_fraction: 0.4
