@@ -182,7 +182,7 @@ def main(args):
                     shape=shape,
                     subfiletype=1,
                     dtype=dtype,
-                    tile=tile_shape
+                    tile=tile_shape,
                 )
     # tifffile.tiffcomment(args.output, to_xml(metadata))
     print()
