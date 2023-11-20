@@ -3,6 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.11.15]
+
+Upgraded workflow, fixed multisample cellpose segmentation with custom model. Added options necessary to make testing work on small images.
+
+### `Added`
+
+- white background in metromap
+- clahe_skip_pyramid parameter to skip pyramid generation in the clahe step - necessary for smaller data
+
+### `Fixed`
+
+- Cellpose custom model functions with multiple samples now.
+
 ## v1.0.1dev - [2023.11.13]
 
 Added documentation - usage.md and output.md

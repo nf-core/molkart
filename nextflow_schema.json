@@ -72,7 +72,8 @@
                 "cellpose_save_flows": {
                     "type": "boolean",
                     "description": "Should flow fields from Cellpose be saved?",
-                    "fa_icon": "fas fa-arrows-alt"
+                    "fa_icon": "fas fa-arrows-alt",
+                    "hidden": true
                 },
                 "ilastik_pixel_project": {
                     "type": "string",
@@ -131,6 +132,12 @@
                     "default": 2144,
                     "description": "Tile size (distance between gridlines)",
                     "fa_icon": "fas fa-th"
+                },
+                "clahe_skip_pyramid": {
+                    "type": "boolean",
+                    "description": "Should pyramid generation be skipped for CLAHE",
+                    "fa_icon": "fas fa-cubes",
+                    "hidden": true
                 }
             }
         },
