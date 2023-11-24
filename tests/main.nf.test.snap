@@ -1,0 +1,38 @@
+{
+    "Two channels, mesmer and cellpose, with clahe": {
+        "content": [
+            "membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
+            "spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
+            "mem_only_0.clahe.tiff:md5,49ddd621b8f389729c2e2610efd94082",
+            "mem_only_1.clahe.tiff:md5,9d875972fb697955ce459a212abf8181",
+            "mem_only_cellpose_mask.tif:md5,590591f541b6d3f17810cd44dd71b252",
+            "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
+            "spots_markedDups.cellpose.cellxgene.csv:md5,f063c1ce5e93e1e73431af36c6bc1e79",
+            "spots_markedDups.mesmer.cellxgene.csv:md5,f54f2af6ce874e96f7973504bddd9bc9",
+            "mem_only.stack.ome.tif:md5,d8659ad7bf017fecc795b855785b74be",
+            "mem_only.cellpose.spot_QC.csv:md5,4b24962d8eae2579eab419179212fd27",
+            "mem_only.mesmer.spot_QC.csv:md5,d5c302ff76e8ce7a8d212f6d818cedbc"
+        ],
+        "timestamp": "2023-11-24T17:29:36.533136659"
+    },
+    "Nuclear channel, mesmer and cellpose, without clahe": {
+        "content": [
+            "nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
+            "spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
+            "nuc_only_cellpose_mask.tif:md5,2784d8c6683ad80c24d8df4121e1128f",
+            "nuc_only_mesmer_mask.tif:md5,e9719f53651b4bf76a37e9374db7f4e4",
+            "spots_markedDups.cellpose.cellxgene.csv:md5,0610a8713457c28acf1bc4c298bee8e3",
+            "spots_markedDups.mesmer.cellxgene.csv:md5,13d8f4fb05a400c94866404fc424a8e8",
+            "nuc_only.cellpose.spot_QC.csv:md5,3fa7f7d1f87d37428907a77236893330",
+            "nuc_only.mesmer.spot_QC.csv:md5,9779af541ceae4a0fe0ae20d75db2bee"
+        ],
+        "timestamp": "2023-11-24T16:28:34.810940773"
+    },
+    "Create training subset": {
+        "content": [
+            "nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
+            "nuc_only_0.clahe.tiff:md5,d68e4bfa536c00555bc7acb33425b82f"
+        ],
+        "timestamp": "2023-11-24T17:29:59.476151001"
+    }
+}
