@@ -41,6 +41,7 @@ nextflow_pipeline {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
                 outdir = "$outputDir"
                 tilesize = 90
+                clahe_skip_pyramid = true
                 segmentation_method = "cellpose,mesmer"
                 }
         }
