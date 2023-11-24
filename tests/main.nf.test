@@ -51,8 +51,6 @@ nextflow_pipeline {
             assert snapshot(
                 path("$outputDir/mindagap/membrane_gridfilled.tiff"),
                 path("$outputDir/mindagap/spots_markedDups.txt"),
-                path("$outputDir/clahe/mem_only_0.clahe.tiff"),
-                path("$outputDir/clahe/mem_only_1.clahe.tiff"),
                 path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
                 path("$outputDir/segmentation/mesmer/mem_only_mesmer_mask.tif"),
                 path("$outputDir/spot2cell/spots_markedDups.cellpose.cellxgene.csv"),
@@ -61,6 +59,8 @@ nextflow_pipeline {
                 path("$outputDir/molcart_qc/mem_only.cellpose.spot_QC.csv"),
                 path("$outputDir/molcart_qc/mem_only.mesmer.spot_QC.csv"),
             ).match()
+            assert file("$outputDir/clahe/mem_only_0.clahe.tiff").exists()
+            assert file("$outputDir/clahe/mem_only_1.clahe.tiff").exists()
             assert file("$outputDir/multiqc/multiqc_report.html").exists()
         }
     }
@@ -72,6 +72,7 @@ nextflow_pipeline {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
                 outdir = "$outputDir"
                 tilesize = 90
+                clahe_skip_pyramid = true
                 create_training_subset = true
                 crop_amount = 2
                 crop_size_x = 10
@@ -83,8 +84,8 @@ nextflow_pipeline {
             assert workflow.success
             assert snapshot(
                 path("$outputDir/mindagap/nuclear_gridfilled.tiff"),
-                path("$outputDir/clahe/nuc_only_0.clahe.tiff")
             ).match()
+            assert file("$outputDir/clahe/nuc_only_0.clahe.tiff").exists()
             assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_crop0.hdf5").exists()
             assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_crop1.hdf5").exists()
             assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_CropSummary.txt").exists()
