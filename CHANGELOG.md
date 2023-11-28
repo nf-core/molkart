@@ -5,13 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.1dev - [2023.11.28.]
 
-Fixed file naming schema for mindagap and spot2cell.
+Fixed file naming schema for mindagap and spot2cell. If only mesmer is used for segmentation, create stack does not have to be run.
 
 ### `Fixed`
 
 - Mindagap outputs, in case the filenames were the same, would overwrite each other.
 - spot2cell outputs, in case the filenames and segmentation method were the same, would overwrite each other.
 - removed hardcoded memory requirement for CREATEILASTIKTRAININGSUBSET
+- if only mesmer is used for segmentation, create stack does not have to be run.
 
 ## v1.0.1dev - [2023.11.24.]
 
