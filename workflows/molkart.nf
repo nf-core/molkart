@@ -139,8 +139,14 @@ workflow MOLKART {
     //
     // MODULE: Stack channels if membrane image provided for segmentation
     //
-    CREATE_STACK(create_stack_in)
-    stack_mix = CREATE_STACK.out.stack.mix(no_stack)
+    if (params.segmentation_method.split(',').contains('cellpose') ||
+        params.segmentation_method.split(',').contains('ilastik') ||
+        params.create_training_subset){
+        CREATE_STACK(create_stack_in)
+        stack_mix = CREATE_STACK.out.stack.mix(no_stack)
+    } else {
+        stack_mix = no_stack
+    }
 
     if ( params.create_training_subset ) {
         // Create subsets of the image for training an ilastik model
