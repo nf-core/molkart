@@ -41,7 +41,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `clahe/`
-  - `*.clahe.tiff`: Image with contrast-limited adaptive histogram equalization applied.
+  - `*_clahe.tiff`: Image with contrast-limited adaptive histogram equalization applied.
 
 </details>
 
