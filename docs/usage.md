@@ -95,13 +95,13 @@ mesmer_image_mpp: 0.138
 mesmer_compartment: "whole-cell"
 ilastik_pixel_project: null
 ilastik_multicut_project: null
-tilesize: 2144
+mindagap_tilesize: 2144
 skip_clahe: false
 clahe_cliplimit: 0.01
 clahe_nbins: 256
 clahe_pixel_size: 0.138
 clahe_kernel: 25
-clahe_skip_pyramid: false
+clahe_pyramid_tile: 1072
 create_training_subset: false
 crop_amount: 4
 crop_nonzero_fraction: 0.4
