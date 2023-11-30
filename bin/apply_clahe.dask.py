@@ -42,32 +42,33 @@ def get_args():
 
     # Sections
     inputs = parser.add_argument_group(title="Required Input", description="Path to required input file")
-    inputs.add_argument("-r", "--raw", dest="raw", action="store", required=True, help="File path to input image.")
+    inputs.add_argument("-r", "--input", dest="input", action="store", required=True, help="File path to input image.")
     inputs.add_argument("-o", "--output", dest="output", action="store", required=True, help="Path to output image.")
     inputs.add_argument(
-        "-c", "--channel", dest="channel", action="store", required=True, help="Channel on which CLAHE will be applied"
-    )
-    inputs.add_argument("-l", "--cliplimit", dest="clip", action="store", required=True, help="Clip Limit for CLAHE")
-    inputs.add_argument(
-        "--kernel", dest="kernel", action="store", required=False, default=None, help="Kernel size for CLAHE"
+        "--cliplimit", dest="clip", action="store", required=True, type=float, default=0.01, help="Clip Limit for CLAHE"
     )
     inputs.add_argument(
-        "-g", "--nbins", dest="nbins", action="store", required=False, default=256, help="Number of bins for CLAHE"
+        "--kernel", dest="kernel", action="store", required=False, type=int, default=25, help="Kernel size for CLAHE"
     )
-    inputs.add_argument("-p", "--pixel-size", dest="pixel_size", action="store", required=True, help="Image pixel size")
     inputs.add_argument(
-        "--skip_pyramid",
-        dest="skip_pyramid",
-        action="store_true",
-        default=False,
-        help="Should pyramid creation be skipped",
+        "--nbins", dest="nbins", action="store", required=False, type=int, default=256, help="Number of bins for CLAHE"
     )
-
+    inputs.add_argument(
+        "-p", "--pixel-size", dest="pixel_size", action="store", type=float, required=False, help="Image pixel size"
+    )
+    inputs.add_argument(
+        "--tile-size",
+        dest="tile_size",
+        action="store",
+        type=int,
+        default=1072,
+        help="Tile size for pyramid generation (must be divisible by 16)",
+    )
+    inputs.add_argument("--version", action="version", version="0.1.0")
     arg = parser.parse_args()
 
     # Standardize paths
-    arg.raw = abspath(arg.raw)
-    arg.channel = int(arg.channel)
+    arg.input = abspath(arg.input)
     arg.clip = float(arg.clip)
     arg.pixel_size = float(arg.pixel_size)
     arg.nbins = int(arg.nbins)
@@ -113,78 +114,95 @@ def subres_tiles(level, level_full_shapes, tile_shapes, outpath, scale):
                 yield a
 
 
+def detect_pixel_size(img_path, pixel_size=None):
+    if pixel_size is None:
+        print("Pixel size overwrite not specified")
+        try:
+            metadata = ome_types.from_tiff(img_path)
+            pixel_size = metadata.images[0].pixels.physical_size_x
+        except Exception as err:
+            print(err)
+            print("Pixel size detection using ome-types failed")
+            pixel_size = None
+    return pixel_size
+
+
 def main(args):
-    print(f"Head directory = {args.raw}")
-    print(
-        f"Channel = {args.channel}, ClipLimit = {args.clip}, nbins = {args.nbins}, kernel_size = {args.kernel}, pixel_size = {args.pixel_size}"
-    )
+    _version = "0.1.0"
+    print(f"Head directory = {args.input}")
+    print(f"ClipLimit = {args.clip}, nbins = {args.nbins}, kernel_size = {args.kernel}, pixel_size = {args.pixel_size}")
 
     # clahe = cv2.createCLAHE(clipLimit = int(args.clip), tileGridSize=tuple(map(int, args.grid)))
 
-    img_raw = AI.AICSImage(args.raw)
-    img_dask = img_raw.get_image_dask_data("CYX").astype("uint16")
-    adapted = img_dask[args.channel].compute() / 65535
+    img_in = AI.AICSImage(args.input)
+    img_dask = img_in.get_image_dask_data("CYX").astype("uint16")
+    adapted = img_dask[0].compute() / 65535
     adapted = (
         equalize_adapthist(adapted, kernel_size=args.kernel, clip_limit=args.clip, nbins=args.nbins) * 65535
     ).astype("uint16")
-    img_dask[args.channel] = adapted
+    img_dask[0] = adapted
 
     # construct levels
-    tile_size = 1024
+    tile_size = args.tile_size
     scale = 2
-    pixel_size = args.pixel_size
+    pixel_size = detect_pixel_size(args.input, args.pixel_size)
+    if pixel_size is None:
+        pixel_size = 1
 
-    if args.skip_pyramid:
-        with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
-            tiff.write(
-                data=img_dask,
-                shape=img_dask.shape,
-                dtype=img_dask.dtype,
-                resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
-            )
-    else:
-        dtype = img_dask.dtype
-        base_shape = img_dask[0].shape
-        num_channels = img_dask.shape[0]
-        num_levels = (np.ceil(np.log2(max(base_shape) / tile_size)) + 1).astype(int)
-        factors = 2 ** np.arange(num_levels)
-        shapes = (np.ceil(np.array(base_shape) / factors[:, None])).astype(int)
+    dtype = img_dask.dtype
+    base_shape = img_dask[0].shape
+    num_channels = img_dask.shape[0]
+    num_levels = (np.ceil(np.log2(max(1, max(base_shape) / tile_size))) + 1).astype(int)
+    factors = 2 ** np.arange(num_levels)
+    shapes = (np.ceil(np.array(base_shape) / factors[:, None])).astype(int)
 
-        print("Pyramid level sizes: ")
-        for i, shape in enumerate(shapes):
-            print(f"   level {i+1}: {format_shape(shape)}", end="")
-            if i == 0:
-                print("(original size)", end="")
-            print()
+    print("Pyramid level sizes: ")
+    for i, shape in enumerate(shapes):
+        print(f"   level {i+1}: {format_shape(shape)}", end="")
+        if i == 0:
+            print("(original size)", end="")
         print()
-        print(shapes)
+    print()
+    print(shapes)
 
-        level_full_shapes = []
-        for shape in shapes:
-            level_full_shapes.append((num_channels, shape[0], shape[1]))
-        level_shapes = shapes
-        tip_level = np.argmax(np.all(level_shapes < tile_size, axis=1))
-        tile_shapes = [(tile_size, tile_size) if i <= tip_level else None for i in range(len(level_shapes))]
+    level_full_shapes = []
+    for shape in shapes:
+        level_full_shapes.append((num_channels, shape[0], shape[1]))
+    level_shapes = shapes
+    tip_level = np.argmax(np.all(level_shapes < tile_size, axis=1))
+    tile_shapes = [(tile_size, tile_size) if i <= tip_level else None for i in range(len(level_shapes))]
 
-        # write pyramid
-        with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
+    software = f"molkart_clahe {_version}"
+    pixel_size = pixel_size
+    metadata = {
+        "Creator": software,
+        "Pixels": {
+            "PhysicalSizeX": pixel_size,
+            "PhysicalSizeXUnit": "\u00b5m",
+            "PhysicalSizeY": pixel_size,
+            "PhysicalSizeYUnit": "\u00b5m",
+        },
+    }
+
+    # write pyramid
+    with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
+        tiff.write(
+            data=img_dask,
+            metadata=metadata,
+            shape=level_full_shapes[0],
+            subifds=int(num_levels - 1),
+            dtype=dtype,
+            resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
+            tile=tile_shapes[0],
+        )
+        for level, (shape, tile_shape) in enumerate(zip(level_full_shapes[1:], tile_shapes[1:]), 1):
             tiff.write(
-                data=img_dask,
-                shape=level_full_shapes[0],
-                subifds=int(num_levels - 1),
+                data=subres_tiles(level, level_full_shapes, tile_shapes, args.output, scale),
+                shape=shape,
+                subfiletype=1,
                 dtype=dtype,
-                resolution=(10000 / pixel_size, 10000 / pixel_size, "centimeter"),
-                tile=tile_shapes[0],
+                tile=tile_shape,
             )
-            for level, (shape, tile_shape) in enumerate(zip(level_full_shapes[1:], tile_shapes[1:]), 1):
-                tiff.write(
-                    data=subres_tiles(level, level_full_shapes, tile_shapes, args.output, scale),
-                    shape=shape,
-                    subfiletype=1,
-                    dtype=dtype,
-                    tile=tile_shape,
-                )
-    # tifffile.tiffcomment(args.output, to_xml(metadata))
     print()
 
 

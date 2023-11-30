@@ -2,6 +2,7 @@
     "Two channels, mesmer and cellpose, with clahe": {
         "content": [
             "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
+            "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
             "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
             "mem_only_cellpose_mask.tif:md5,590591f541b6d3f17810cd44dd71b252",
             "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
@@ -11,7 +12,7 @@
             "mem_only.cellpose.spot_QC.csv:md5,4b24962d8eae2579eab419179212fd27",
             "mem_only.mesmer.spot_QC.csv:md5,d5c302ff76e8ce7a8d212f6d818cedbc"
         ],
-        "timestamp": "2023-11-28T21:37:13.813957843"
+        "timestamp": "2023-11-30T16:46:18.513521201"
     },
     "Nuclear channel, mesmer and cellpose, without clahe": {
         "content": [

@@ -1,6 +1,6 @@
-process CLAHE_DASK{
+process CLAHE{
     debug false
-    tag "Applying CLAHE to $meta.id"
+    tag "$meta.id"
     label 'process_low'
 
     container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
@@ -9,19 +9,25 @@ process CLAHE_DASK{
     tuple val(meta), path(image)
 
     output:
-    tuple val(meta), path("*.clahe.tiff") , emit: img_clahe
+    tuple val(meta), path("*.tiff") , emit: img_clahe
+    path "versions.yml"             , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}_${meta.stain}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     apply_clahe.dask.py \\
-        --raw ${image} \\
-        --output ${prefix}.clahe.tiff \\
+        --input ${image} \\
+        --output ${prefix}.tiff \\
         $args
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_clahe: \$(apply_clahe.dask.py --version)
+    END_VERSIONS
     """
 
 }

@@ -57,6 +57,12 @@
                     "description": "Should cells detected near image edges be excluded.",
                     "fa_icon": "fas fa-border-none"
                 },
+                "cellpose_save_flows": {
+                    "type": "boolean",
+                    "description": "Should flow fields from Cellpose be saved?",
+                    "fa_icon": "fas fa-arrows-alt",
+                    "hidden": true
+                },
                 "mesmer_image_mpp": {
                     "type": "number",
                     "default": 0.138,
@@ -68,12 +74,6 @@
                     "default": "whole-cell",
                     "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)",
                     "fa_icon": "fas fa-border-all"
-                },
-                "cellpose_save_flows": {
-                    "type": "boolean",
-                    "description": "Should flow fields from Cellpose be saved?",
-                    "fa_icon": "fas fa-arrows-alt",
-                    "hidden": true
                 },
                 "ilastik_pixel_project": {
                     "type": "string",
@@ -127,17 +127,19 @@
                     "description": "Specifies whether contrast-limited adaptive histogram equalization should be skipped.",
                     "fa_icon": "fab fa-buromobelexperte"
                 },
-                "tilesize": {
+                "mindagap_tilesize": {
                     "type": "integer",
                     "default": 2144,
-                    "description": "Tile size (distance between gridlines)",
-                    "fa_icon": "fas fa-th"
-                },
-                "clahe_skip_pyramid": {
-                    "type": "boolean",
-                    "description": "Should pyramid generation be skipped for CLAHE",
-                    "fa_icon": "fas fa-cubes",
+                    "description": "Tile size (distance between gridlines) for Mindagap.",
+                    "fa_icon": "fas fa-th",
                     "hidden": true
+                },
+                "clahe_pyramid_tile": {
+                    "type": "integer",
+                    "description": "Tile size used for pyramid generation (must be divisible by 16).",
+                    "fa_icon": "fas fa-cubes",
+                    "hidden": true,
+                    "default": 1072
                 }
             }
         },

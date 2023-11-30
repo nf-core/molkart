@@ -35,7 +35,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 include { CREATETRAININGTIFF          } from '../modules/local/createtrainingtiff'
 include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
 include { CREATE_STACK                } from '../modules/local/create_stack'
-include { CLAHE_DASK                  } from '../modules/local/clahe_dask'
+include { CLAHE                       } from '../modules/local/clahe_dask'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
 include { SPOT2CELL                   } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
@@ -107,8 +107,9 @@ workflow MOLKART {
     //
     // currently CLAHE is either applied on all channels, or none.
     if (!params.skip_clahe) {
-        CLAHE_DASK(MINDAGAP_MINDAGAP.out.tiff) // TODO : Add local module for testing
-        CLAHE_DASK.out.img_clahe.set{ map_for_stacks }
+        CLAHE(MINDAGAP_MINDAGAP.out.tiff)
+        ch_versions = ch_versions.mix(CLAHE.out.versions)
+        CLAHE.out.img_clahe.set{ map_for_stacks }
     } else {
         MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks }
     } // if clahe should be run, use its output for next step, otherwise, use mindagap output
