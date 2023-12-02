@@ -13,7 +13,7 @@ nextflow_pipeline {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
                 outdir = "$outputDir"
                 skip_clahe = true
-                tilesize = 90
+                mindagap_tilesize = 90
                 segmentation_method = "cellpose,mesmer"
             }
         }
@@ -40,8 +40,8 @@ nextflow_pipeline {
             params {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
                 outdir = "$outputDir"
-                tilesize = 90
-                clahe_skip_pyramid = true
+                mindagap_tilesize = 90
+                clahe_pyramid_tile = 368
                 segmentation_method = "cellpose,mesmer"
                 }
         }
@@ -50,6 +50,7 @@ nextflow_pipeline {
             assert workflow.success
             assert snapshot(
                 path("$outputDir/mindagap/mem_only_membrane_gridfilled.tiff"),
+                path("$outputDir/mindagap/mem_only_nuclear_gridfilled.tiff"),
                 path("$outputDir/mindagap/mem_only_spots_markedDups.txt"),
                 path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
                 path("$outputDir/segmentation/mesmer/mem_only_mesmer_mask.tif"),
@@ -59,8 +60,8 @@ nextflow_pipeline {
                 path("$outputDir/molcart_qc/mem_only.cellpose.spot_QC.csv"),
                 path("$outputDir/molcart_qc/mem_only.mesmer.spot_QC.csv"),
             ).match()
-            assert file("$outputDir/clahe/mem_only_0.clahe.tiff").exists()
-            assert file("$outputDir/clahe/mem_only_1.clahe.tiff").exists()
+            assert file("$outputDir/clahe/mem_only_membrane_gridfilled_clahe.tiff").exists()
+            assert file("$outputDir/clahe/mem_only_nuclear_gridfilled_clahe.tiff").exists()
             assert file("$outputDir/multiqc/multiqc_report.html").exists()
         }
     }
@@ -71,8 +72,8 @@ nextflow_pipeline {
             params {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
                 outdir = "$outputDir"
-                tilesize = 90
-                clahe_skip_pyramid = true
+                mindagap_tilesize = 90
+                clahe_pyramid_tile = 368
                 create_training_subset = true
                 crop_amount = 2
                 crop_size_x = 10
@@ -85,13 +86,13 @@ nextflow_pipeline {
             assert snapshot(
                 path("$outputDir/mindagap/nuc_only_nuclear_gridfilled.tiff"),
             ).match()
-            assert file("$outputDir/clahe/nuc_only_0.clahe.tiff").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_crop0.hdf5").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_crop1.hdf5").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_0.clahe_CropSummary.txt").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_0.clahe_crop0.tiff").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_0.clahe_crop1.tiff").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_0.clahe.crop_overview.png").exists()
+            assert file("$outputDir/clahe/nuc_only_nuclear_gridfilled_clahe.tiff").exists()
+            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop0.hdf5").exists()
+            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop1.hdf5").exists()
+            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_CropSummary.txt").exists()
+            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop0.tiff").exists()
+            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff").exists()
+            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe.crop_overview.png").exists()
         }
     }
 }

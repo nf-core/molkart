@@ -3,6 +3,27 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.11.30.]
+
+Changes to clahe - more nf-core compliant, script change, versions, updated tests.
+
+### `Added`
+
+- Clahe now outputs versions
+- --clahe_pyramid_tile parameter (hidden)
+
+### `Fixed`
+
+- clahe local module now follows nf-core guidelines with output naming defined through ext.prefix
+- In all cases, the same writer will be used for clahe now
+- Fixed CLAHE metadata
+- renamed process from CLAHE_DASK to CLAHE
+- renamed tilesize parameter to mindagap_tilesize for clarity
+
+### `Removed`
+
+- clahe_skip_pyramid parameter
+
 ## v1.0.1dev - [2023.11.28.]
 
 Fixed file naming schema for mindagap and spot2cell. If only mesmer is used for segmentation, create stack does not have to be run.
