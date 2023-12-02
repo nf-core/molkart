@@ -36,7 +36,7 @@ include { CREATETRAININGTIFF          } from '../modules/local/createtrainingtif
 include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE                       } from '../modules/local/clahe_dask'
-include { MINDAGAP_DUPLICATEFINDER    } from '../modules/local/mindagap_duplicatefinder'
+include { MINDAGAP_DUPLICATEFINDER    } from '../modules/nf-core/mindagap/duplicatefinder/main'
 include { SPOT2CELL                   } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
 include { MOLCART_QC                  } from '../modules/local/molcart_qc'
