@@ -30,6 +30,11 @@
                         "git_sha": "516189e968feb4ebdd9921806988b4c12b4ac2dc",
                         "installed_by": ["modules"]
                     },
+                    "mindagap/duplicatefinder": {
+                        "branch": "master",
+                        "git_sha": "cdc42519bf7d6d2cac9b5f14cb56e0060477c69c",
+                        "installed_by": ["modules"]
+                    },
                     "mindagap/mindagap": {
                         "branch": "master",
                         "git_sha": "8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a",

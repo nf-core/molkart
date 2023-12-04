@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.02]
+
+Replaced local module for mindagap/duplicatefinder with nf-core module.
+
+### `Added`
+
+- installed mindagap/duplicatefinder via nf-core tools
+
+### `Removed`
+
+- removed local mindagap_duplicatefinder.nf in local modules
+
 ## v1.0.1dev - [2023.11.30.]
 
 Changes to clahe - more nf-core compliant, script change, versions, updated tests.
