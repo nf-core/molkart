@@ -13,7 +13,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Mindagap](#Mindagap) - Fill empty grid lines in a panorama image with neighbor-weighted values.
 - [CLAHE](#CLAHE) - perform contrast-limited adaptive histogram equalization.
 - [Create stacks](#create_stacks) - If a second image is provided, combine both into one stack as input for segmentation modules.
-- [segmentation](#segmentation) - Segment single cells from provided image using segmentation method of choice (Cellpose, Mesmer, ilastik).
+- [segmentation](#segmentation) - Segment single cells from provided image using segmentation method of choice (Cellpose, Mesmer, ilastik) and filter them by size.
 - [Mindagap_duplicatefinder](#Mindagap) - Take a spot table and search for duplicates along grid lines.
 - [Spot2cell](#spot2cell) - Assign non-duplicated spots to segmented cells based on segmentation mask and extract cell shape information.
 - [MolkartQC](#molkartqc) - Produce QC metrics specific to this pipeline.
