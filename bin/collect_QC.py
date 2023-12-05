@@ -25,7 +25,7 @@ def summarize_segmasks(cellxgene_table, spots_summary):
     total_cells = cellxgene_table.shape[0]
 
     ## Calculate the average segmentation area from column Area in cellxgene_table
-    avg_area = cellxgene_table["Area"].mean()
+    avg_area = round(cellxgene_table["Area"].mean(), 2)
 
     ## Calculate the % of spots assigned
     ## Subset cellxgene_table for all columns with _intensity_sum in the column name and sum the column values
@@ -48,6 +48,8 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--outdir", help="Output directory.")
     parser.add_argument("-d", "--sample_id", help="Sample ID.")
     parser.add_argument("-g", "--segmentation_method", help="Segmentation method used.")
+    parser.add_argument("--filterqc", required=False, help="QC from mask filter step")
+    parser.add_argument("--version", action="version", version="0.1.0")
 
     args = parser.parse_args()
 
@@ -58,6 +60,13 @@ if __name__ == "__main__":
     spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
     duplicated = sum(spots.gene.str.contains("Duplicated"))
     spots = spots[~spots.gene.str.contains("Duplicated")]
+
+    ## Pass on filterqc values
+    filterqc = pd.read_csv(
+        args.filterqc,
+        names=["below_min_area", "below_percentage", "above_max_area", "above_percentage", "total_labels"],
+        header=None,
+    )
 
     ## Summarize spots table
     summary_spots = summarize_spots(spots)
@@ -75,6 +84,9 @@ if __name__ == "__main__":
             "spot_assign_total",
             "spot_assign_percent",
             "duplicated_total",
+            "labels_total",
+            "labels_below_thresh",
+            "labels_above_thresh",
         ]
     )
     summary_df.loc[0] = [
@@ -88,6 +100,9 @@ if __name__ == "__main__":
         summary_segmentation[3],
         summary_segmentation[4],
         duplicated,
+        filterqc.total_labels[1],
+        filterqc.below_min_area[1],
+        filterqc.above_max_area[1],
     ]
     print(args.sample_id)
     # Write summary_df to a csv file

@@ -1,6 +1,6 @@
 process CREATE_STACK {
-    tag "Stacking channels for $meta.id"
-    label 'process_medium'
+    tag "$meta.id"
+    label 'process_low'
 
     container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
 
@@ -16,10 +16,12 @@ process CREATE_STACK {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    
     """
     create_stack.py \\
         --input ${image} \\
-        --output ${meta.id}.stack.ome.tif \\
-        --num-channels 2
+        --output ${prefix}.ome.tif \\
+        --num-channels 2 \\
+        $args
     """
 }

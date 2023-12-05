@@ -25,10 +25,12 @@ nextflow_pipeline {
                 path("$outputDir/mindagap/nuc_only_spots_markedDups.txt"),
                 path("$outputDir/segmentation/cellpose/nuc_only_cellpose_mask.tif"),
                 path("$outputDir/segmentation/mesmer/nuc_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/nuc_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/nuc_only_cellpose_mask.tif"),
                 path("$outputDir/spot2cell/cellxgene_nuc_only_cellpose.csv"),
                 path("$outputDir/spot2cell/cellxgene_nuc_only_mesmer.csv"),
-                path("$outputDir/molcart_qc/nuc_only.cellpose.spot_QC.csv"),
-                path("$outputDir/molcart_qc/nuc_only.mesmer.spot_QC.csv")
+                path("$outputDir/molkartqc/nuc_only.cellpose.spot_QC.csv"),
+                path("$outputDir/molkartqc/nuc_only.mesmer.spot_QC.csv")
             ).match()
             assert file("$outputDir/multiqc/multiqc_report.html").exists()
         }
@@ -54,11 +56,13 @@ nextflow_pipeline {
                 path("$outputDir/mindagap/mem_only_spots_markedDups.txt"),
                 path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
                 path("$outputDir/segmentation/mesmer/mem_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/mem_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_mask.tif"),
                 path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
                 path("$outputDir/spot2cell/cellxgene_mem_only_mesmer.csv"),
-                path("$outputDir/stack/mem_only.stack.ome.tif"),
-                path("$outputDir/molcart_qc/mem_only.cellpose.spot_QC.csv"),
-                path("$outputDir/molcart_qc/mem_only.mesmer.spot_QC.csv"),
+                path("$outputDir/stack/mem_only_stack.ome.tif"),
+                path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
+                path("$outputDir/molkartqc/mem_only.mesmer.spot_QC.csv"),
             ).match()
             assert file("$outputDir/clahe/mem_only_membrane_gridfilled_clahe.tiff").exists()
             assert file("$outputDir/clahe/mem_only_nuclear_gridfilled_clahe.tiff").exists()

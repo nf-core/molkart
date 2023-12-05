@@ -36,9 +36,10 @@ include { CREATETRAININGTIFF          } from '../modules/local/createtrainingtif
 include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE                       } from '../modules/local/clahe_dask'
+include { MASKFILTER                  } from '../modules/local/maskfilter'
+include { MOLKARTQC                   } from '../modules/local/molkartqc'
 include { SPOT2CELL                   } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
-include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -53,14 +54,14 @@ include { MOLCART_QC                  } from '../modules/local/molcart_qc'
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
+include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
+include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/nf-core/mindagap/duplicatefinder/main'
 include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
-include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
-include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
-include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
-include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
+include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,44 +83,46 @@ workflow MOLKART {
 
     ch_from_samplesheet = Channel.fromSamplesheet("input")
 
+    // stain: "1" denotes membrane, stain: "0" denotes nuclear image
+    // this is used to preserve the order later
     ch_from_samplesheet
         .map {
             it[3] != [] ? tuple([id:it[0],stain:"1"], it[3]) : null
-        }.set { membrane_tuple }
+        }.set { membrane_tuple } // if a membrane image is provided, return membrane image channel tuple (meta, path)
 
     ch_from_samplesheet
         .map { it -> tuple([id:it[0],stain:"0"], it[1]) }
-        .set { image_tuple }
+        .set { image_tuple } // creates nuclear image channel tuple (meta, path)
 
     ch_from_samplesheet
         .map { it -> tuple([id:it[0]], it[2]) }
-        .set { spot_tuple }
+        .set { spot_tuple } // creates spot table channel tuple (meta, path)
 
     //
     // MODULE: Run Mindagap_mindagap
     //
-    mindagap_in = membrane_tuple.mix(image_tuple)
-    MINDAGAP_MINDAGAP(mindagap_in, 7, 100)
+    mindagap_in = membrane_tuple.mix(image_tuple) // mindagap input contains both membrane and nuclear images
+    MINDAGAP_MINDAGAP(mindagap_in, 7, 100) // runs MINDAGAP_MINDAGAP, hardcoded boxsize and loopnumber parameters; TODO: make mindagap_mindagap more compliant with nf-core guidelines
     ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
 
     //
     //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
-    // currently CLAHE is either applied on all channels, or none.
+    // CLAHE is either applied to all images, or none.
     if (!params.skip_clahe) {
         CLAHE(MINDAGAP_MINDAGAP.out.tiff)
         ch_versions = ch_versions.mix(CLAHE.out.versions)
-        CLAHE.out.img_clahe.set{ map_for_stacks }
+        CLAHE.out.img_clahe.set{ map_for_stacks } // if CLAHE is run, use CLAHE output for next steps
     } else {
-        MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks }
-    } // if clahe should be run, use its output for next step, otherwise, use mindagap output
+        MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks } // if CLAHE is not run, use MINDAGAP output for next steps
+    }
 
     map_for_stacks
         .map {
-            meta, tiff -> [meta.subMap("id"), tiff, meta.stain]
-        }.groupTuple()
+            meta, tiff -> [meta.subMap("id"), tiff, meta.stain] // creates a channel containing only the sample id in meta, path to preprocessed image and the stain value ("0" or "1")
+        }.groupTuple() // combines based on meta
         .map{
-            meta, paths, stains -> [meta, [paths[0], stains[0]], [paths[1], stains[1]]]
+            meta, paths, stains -> [meta, [paths[0], stains[0]], [paths[1], stains[1]]] // reorganizes to match path and stain
         }.map{
             meta, stain1, stain2 -> [meta, [stain1, stain2].sort{ it[1] }] // sort by stain index (0 for nuclear, 1 for other)
         }.map{
@@ -128,20 +131,20 @@ workflow MOLKART {
             it[1][0] != null ? [it[0],it[1][0],it[2][0]] : [it[0],it[2][0]] // if null, only return the valid nuclear path value, otherwise return both nuclear and membrane paths
         }.set { grouped_map_stack }
 
-    grouped_map_stack.filter{
+    grouped_map_stack.filter{ // for rows without a present membrane image, set channel to no_stack
         it[2] == null
         }.set{ no_stack }
 
-    grouped_map_stack.filter{
+    grouped_map_stack.filter{ // for rows where the membrane image is present, make it compliant with STACK inputs
         it[2] != null
         }.map{
             [it[0],tuple(it[1],it[2])]
         }.set{ create_stack_in }
     //
-    // MODULE: Stack channels if membrane image provided for segmentation
+    // MODULE: Stack channels if membrane image provided for segmentation (Mesmer does not require it, Cellpose and ilastik do)
     //
     if (params.segmentation_method.split(',').contains('cellpose') ||
-        params.segmentation_method.split(',').contains('ilastik') ||
+        params.segmentation_method.split(',').contains('ilastik')  ||
         params.create_training_subset){
         CREATE_STACK(create_stack_in)
         stack_mix = CREATE_STACK.out.stack.mix(no_stack)
@@ -239,10 +242,28 @@ workflow MOLKART {
             .mix(ILASTIK_MULTICUT.out.out_tiff
                 .combine(Channel.of('ilastik')))
     }
+    segmentation_masks.map{
+        meta, mask, segmentation ->
+        new_meta = meta.clone()
+        new_meta.segmentation = segmentation
+        [new_meta, mask]
+    }.set { matched_segmasks }
 
-    // Assigning of spots to mask
+    //
+    // MODULE: filter segmentation masks
+    //
+    MASKFILTER(matched_segmasks)
+    ch_versions = ch_versions.mix(MASKFILTER.out.versions)
+    MASKFILTER.out.filtered_mask.map{
+        meta, mask ->
+        tuple(meta.subMap("id"), mask, meta.segmentation)
+    }.set { filtered_masks }
+
+    //
+    // MODULE: assign spots to segmentation mask
+    //
     qc_spots
-        .combine(segmentation_masks, by: 0)
+        .combine(filtered_masks, by: 0)
         .map {
             meta, spots_table, mask, segmethod ->
             new_meta = meta.clone()
@@ -256,29 +277,33 @@ workflow MOLKART {
         dedup_spots.map(it -> tuple(it[0],it[2])),
         dedup_spots.map(it -> it[0].segmentation)
     )
+    ch_versions = ch_versions.mix(SPOT2CELL.out.versions)
 
     //
-    // MODULE: MOLCART_QC
+    // MODULE: MOLKARTQC
     //
-    SPOT2CELL.out.cellxgene_table
-        .map {
-            meta, quant ->
-            [meta.subMap("id"), quant, meta.segmentation]
+    SPOT2CELL.out.cellxgene_table.combine(
+            MASKFILTER.out.filtered_qc, by: 0
+        ).map{
+            meta, quant, filterqc ->
+            [meta.subMap("id"), quant, meta.segmentation, filterqc]
         }.set { spot2cell_out }
 
     qc_spots
         .combine(spot2cell_out, by: 0)
-        .set{ molcart_qc }
+        .set{ molkartqc }
 
-    MOLCART_QC(
-            molcart_qc.map{it -> tuple(it[0],it[2])},
-            molcart_qc.map{it -> tuple(it[0],it[1])},
-            molcart_qc.map{it -> tuple(it[0],it[3])}
-        )
+    MOLKARTQC(molkartqc)
+    ch_versions = ch_versions.mix(MOLKARTQC.out.versions)
+
+    //
+    // MODULE: CUSTOM_DUMPSOFTWAREVERSIONS
+    //
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
+
     //
     // MODULE: MultiQC
     //
@@ -288,7 +313,7 @@ workflow MOLKART {
     ch_methods_description = Channel.value(methods_description)
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(MOLCART_QC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "$params.outdir"))
+    ch_multiqc_files = ch_multiqc_files.mix(MOLKARTQC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
