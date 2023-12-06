@@ -13,10 +13,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Mindagap](#Mindagap) - Fill empty grid lines in a panorama image with neighbor-weighted values.
 - [CLAHE](#CLAHE) - perform contrast-limited adaptive histogram equalization.
 - [Create stacks](#create_stacks) - If a second image is provided, combine both into one stack as input for segmentation modules.
-- [segmentation](#segmentation) - Segment single cells from provided image using segmentation method of choice (Cellpose, Mesmer, ilastik).
+- [segmentation](#segmentation) - Segment single cells from provided image using segmentation method of choice (Cellpose, Mesmer, ilastik) and filter them by size.
 - [Mindagap_duplicatefinder](#Mindagap) - Take a spot table and search for duplicates along grid lines.
 - [Spot2cell](#spot2cell) - Assign non-duplicated spots to segmented cells based on segmentation mask and extract cell shape information.
-- [molkartqc](#molkartqc) - Produce QC metrics specific to this pipeline.
+- [MolkartQC](#molkartqc) - Produce QC metrics specific to this pipeline.
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline.
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution.
 
@@ -72,8 +72,8 @@ Create stack is a local module used to merge images into a stack as preparation 
     - `*_ilastik_mask.tif`: Segmentation masks created by ilastik's Boundary prediction with Multicut workflow.
   - `mesmer/`:
     - `*_mesmer_mask.tif`: Segmentation masks created by Mesmer.
-
-</details>
+  - `filtered_masks/` - `*_method_mask.tif`: Segmentation masks filtered based on provided area limits.
+  </details>
 
 [Cellpose](https://www.cellpose.org) is a segmentation tool that provides pretrained models as well as additional human-in-the loop training. If additional training is performed, the envisioned way of doing it is creating the training subset (`tiff`), and training the model in the [Cellpose GUI](https://cellpose.readthedocs.io/en/latest/gui.html) on the subset, then giving the trained model as an argument within the pipeline to complete the pipeline run.
 
@@ -99,13 +99,7 @@ Spot2cell is a local module that assigns spots (without Duplicates) to cells via
 <summary>Output files</summary>
 
 - `molkartqc/`
-  - `*.spot_QC.csv`: ### Spot2cell
-
-<details markdown="1">
-<summary>Output files</summary>
-
-- `molkartqc/`
-  - `*.cellxgene.csv`: Sheet containing useful quality-control metrics specific to spot-based image processing methods.
+  - `*.spot_QC.csv`: Sheet containing useful quality-control metrics specific to spot-based image processing methods.
 
 </details>
 
@@ -117,6 +111,7 @@ MolkartQC is a local module used for gathering useful quality-control metrics fo
 <summary>Output files</summary>
 
 - `multiqc/`
+  - `final_QC.all_samples.csv`: all molkartqc outputs concatenated to one `csv` file.
   - `multiqc_report.html`: a standalone HTML file that can be viewed in your web browser.
   - `multiqc_data/`: directory containing parsed statistics from the different tools used in the pipeline.
   - `multiqc_plots/`: directory containing static images from the report in various formats.

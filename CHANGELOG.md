@@ -3,6 +3,27 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.05]
+
+Added MASKFILTER module.
+
+### `Added`
+
+- MASKFILTER module with respective script, parameters, qc measures that are passed to MOLKARTQC and MULTIQC
+- renamed molcart_qc to MOLKARTQC
+- versions to main local modules (MOLKARTQC, SPOT2CELL)
+- CREATE_STACK when clause (so that it does not show in the progress when it doesn't run)
+- comments in molkart.nf for clarity
+
+### `Fixed`
+
+- collect_QC average area is now rounded
+- prefix handling in some modules
+
+### `Removed`
+
+- SAMPLESHEETCHECK subworkflow and Python script
+
 ## v1.0.1dev - [2023.12.02]
 
 Replaced local module for mindagap/duplicatefinder with nf-core module.

@@ -50,6 +50,15 @@ custom_data:
       duplicated_total:
         title: Total number of duplicated spots in the area
         description: "Total number of duplicated spots"
+      labels_total:
+        title: Total number of segmentation labels before filtering
+        description: "Total number of segmented labels"
+      labels_below_thresh:
+        title: Number of removed small labels
+        description: "Total number of labels below min_area"
+      labels_above_thresh:
+        title: Number of removed large labels
+        description: "Total number of labels above max_area"
 sp:
   segmentation_stats:
     fn: "final_QC.all_samples.csv"

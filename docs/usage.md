@@ -32,7 +32,7 @@ SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces. |
 | `nuclear_image`  | Full path to nuclear image (DAPI, Hoechst).                                                                                                                  |
-| `spot_table`     | Full path to tsv or txt spot table provided by Resolve. Separartor must be `\t`.                                                                             |
+| `spot_table`     | Full path to tsv or txt spot table provided by Resolve. Separator must be `\t`.                                                                              |
 | `membrane_image` | Full path to membrane image (e.g WGA) or second channel to help with segmentation (optional).                                                                |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
@@ -83,6 +83,8 @@ Additionally, `params.yaml` can contain optional parameters:
 input: "./samplesheet.csv"
 outdir: "./results/"
 segmentation_method: "mesmer"
+segmentation_min_area: null
+segmentation_max_area: null
 cellpose_save_flows: false
 cellpose_diameter: 30
 cellpose_chan: 0

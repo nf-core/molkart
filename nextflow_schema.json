@@ -17,6 +17,16 @@
                     "default": "mesmer",
                     "fa_icon": "fas fa-border-all"
                 },
+                "segmentation_min_area": {
+                    "type": "integer",
+                    "description": "Minimum area size (in pixels) for segmentation masks.",
+                    "fa_icon": "fas fa-chart-area"
+                },
+                "segmentation_max_area": {
+                    "type": "integer",
+                    "description": "Maximum area size (in pixels) for segmenation masks.",
+                    "fa_icon": "fas fa-chart-area"
+                },
                 "cellpose_diameter": {
                     "type": "integer",
                     "default": 30,

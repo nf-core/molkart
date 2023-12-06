@@ -113,6 +113,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--cell_mask", help="Sample ID.")
     parser.add_argument("--tag", type=str, help="Additional tag to append to filename")
     parser.add_argument("--output", type=str, help="Output path")
+    parser.add_argument("--version", action="version", version="0.1.0")
 
     args = parser.parse_args()
 
