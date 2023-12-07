@@ -17,6 +17,7 @@ Local module revamp - all should use the same Docker image to save space.
 - pattern to only return cropped images and overview (not versions or full hdf5 image)
 - clahe does not use aicsimageio anymore
 - create stack outputs a pyramidal tif (Palom)
+- updated mesmer module - accordingly added prefix logic (and for maskfilter)
 
 ## v1.0.1dev - [2023.12.05]
 

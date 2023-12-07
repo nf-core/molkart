@@ -22,5 +22,10 @@ process CREATE_STACK {
         --input ${image} \\
         --output ${prefix}.ome.tif \\
         $args
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_stack: \$(stack.py --version)
+    END_VERSIONS
     """
 }

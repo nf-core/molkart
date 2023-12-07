@@ -59,7 +59,7 @@ nextflow_pipeline {
                 path("$outputDir/segmentation/filtered_masks/mem_only_mesmer_filtered.tif"),
                 path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_filtered.tif"),
                 path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
-                path("$outputDir/spot2cell/cellxgene_mem_only_mesmer.csv"),
+                path("$outputDir/spot2cell/cellxgene_mem_only_mesmer.csv"), 
                 path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
                 path("$outputDir/molkartqc/mem_only.mesmer.spot_QC.csv"),
             ).match()
