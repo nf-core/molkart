@@ -1,5 +1,4 @@
 process CLAHE{
-    debug false
     tag "$meta.id"
     label 'process_low'
 

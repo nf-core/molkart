@@ -2,7 +2,7 @@ process MASKFILTER {
     tag "$meta.id"
     label 'process_single'
 
-    container 'ghcr.io/schapirolabor/background_subtraction:v0.4.1'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
     input:
     tuple val(meta), path(mask)
@@ -10,7 +10,7 @@ process MASKFILTER {
     output:
     tuple val(meta), path("*.tif"), emit: filtered_mask
     tuple val(meta), path("*.csv"), emit: filtered_qc
-    path "versions.yml", emit: versions
+    path "versions.yml"           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

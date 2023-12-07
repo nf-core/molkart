@@ -32,8 +32,8 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CREATETRAININGTIFF          } from '../modules/local/createtrainingtiff'
-include { CREATEILASTIKTRAININGSUBSET } from '../modules/local/createilastiktrainingsubset'
+include { CROPTIFF          } from '../modules/local/croptiff'
+include { CROPHDF5 } from '../modules/local/crophdf5'
 include { CREATE_STACK                } from '../modules/local/create_stack'
 include { CLAHE                       } from '../modules/local/clahe_dask'
 include { MASKFILTER                  } from '../modules/local/maskfilter'
@@ -143,9 +143,10 @@ workflow MOLKART {
     //
     // MODULE: Stack channels if membrane image provided for segmentation (Mesmer does not require it, Cellpose and ilastik do)
     //
-    if (params.segmentation_method.split(',').contains('cellpose') ||
+    if ((params.segmentation_method.split(',').contains('cellpose') ||
         params.segmentation_method.split(',').contains('ilastik')  ||
-        params.create_training_subset){
+        params.create_training_subset) &&
+        (create_stack_in.map{it[1].size()} == 2)){
         CREATE_STACK(create_stack_in)
         stack_mix = CREATE_STACK.out.stack.mix(no_stack)
     } else {
@@ -159,10 +160,10 @@ workflow MOLKART {
                 it[2] == null ? tuple(it[0], 1) : tuple(it[0], 2)
             } // hardcodes that if membrane channel present, num_channels is 2, otherwise 1
         ).set{ training_in }
-        CREATEILASTIKTRAININGSUBSET(training_in)
+        CROPHDF5(training_in)
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
-        tiff_crop = stack_mix.join(CREATEILASTIKTRAININGSUBSET.out.crop_summary)
-        CREATETRAININGTIFF(
+        tiff_crop = stack_mix.join(CROPHDF5.out.crop_summary)
+        CROPTIFF(
             tiff_crop.map(it -> tuple(it[0],it[1])),
             tiff_crop.map(it -> tuple(it[0],it[2])),
             )
