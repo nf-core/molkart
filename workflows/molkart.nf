@@ -148,6 +148,7 @@ workflow MOLKART {
         params.create_training_subset) &&
         (create_stack_in.map{it[1].size() == 2})){
         CREATE_STACK(create_stack_in)
+        ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
         stack_mix = CREATE_STACK.out.stack.mix(no_stack)
     } else {
         stack_mix = no_stack

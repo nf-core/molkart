@@ -9,6 +9,7 @@ process CREATE_STACK {
 
     output:
     tuple val(meta), path("*.ome.tif"), emit: stack
+    path "versions.yml"               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
