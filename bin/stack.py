@@ -10,6 +10,7 @@ import copy
 import math
 import time
 
+
 def get_args():
     parser = AP(description="Stack a list of images into a single image stack using Dask")
     parser.add_argument("-i", "--input", nargs="+", help="List of images to stack")
@@ -37,7 +38,7 @@ def main(args):
 
     palom.pyramid.PyramidSetting.num_levels = num_levels_patch
     palom.pyramid.write_pyramid(
-        [mosaic_out], args.output, channel_names=['stack'], downscale_factor=2, pixel_size=0.138, tile_size=368
+        [mosaic_out], args.output, channel_names=["stack"], downscale_factor=2, pixel_size=0.138, tile_size=368
     )
 
 
