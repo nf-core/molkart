@@ -7,7 +7,6 @@ from argparse import ArgumentParser as AP
 from os.path import abspath
 import os
 import numpy as np
-import tifffile as tf
 from skimage.exposure import equalize_adapthist
 from multiprocessing.spawn import import_main_path
 import sys
@@ -17,7 +16,6 @@ import numpy as np
 import tifffile
 import zarr
 import skimage.transform
-from aicsimageio import aics_image as AI
 from ome_types import from_tiff, to_xml
 from os.path import abspath
 from argparse import ArgumentParser as AP
@@ -134,13 +132,13 @@ def main(args):
 
     # clahe = cv2.createCLAHE(clipLimit = int(args.clip), tileGridSize=tuple(map(int, args.grid)))
 
-    img_in = AI.AICSImage(args.input)
-    img_dask = img_in.get_image_dask_data("CYX").astype("uint16")
-    adapted = img_dask[0].compute() / 65535
+    img_in = tifffile.imread(args.input).astype("uint16")
+    print(img_in.shape)
+    adapted = img_in / 65535
     adapted = (
         equalize_adapthist(adapted, kernel_size=args.kernel, clip_limit=args.clip, nbins=args.nbins) * 65535
     ).astype("uint16")
-    img_dask[0] = adapted
+    img_in = adapted[np.newaxis, :, :]
 
     # construct levels
     tile_size = args.tile_size
@@ -149,9 +147,9 @@ def main(args):
     if pixel_size is None:
         pixel_size = 1
 
-    dtype = img_dask.dtype
-    base_shape = img_dask[0].shape
-    num_channels = img_dask.shape[0]
+    dtype = img_in.dtype
+    base_shape = img_in[0].shape
+    num_channels = img_in.shape[0]
     num_levels = (np.ceil(np.log2(max(1, max(base_shape) / tile_size))) + 1).astype(int)
     factors = 2 ** np.arange(num_levels)
     shapes = (np.ceil(np.array(base_shape) / factors[:, None])).astype(int)
@@ -187,7 +185,7 @@ def main(args):
     # write pyramid
     with tifffile.TiffWriter(args.output, ome=True, bigtiff=True) as tiff:
         tiff.write(
-            data=img_dask,
+            data=img_in,
             metadata=metadata,
             shape=level_full_shapes[0],
             subifds=int(num_levels - 1),

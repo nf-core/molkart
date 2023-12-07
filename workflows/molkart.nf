@@ -146,7 +146,7 @@ workflow MOLKART {
     if ((params.segmentation_method.split(',').contains('cellpose') ||
         params.segmentation_method.split(',').contains('ilastik')  ||
         params.create_training_subset) &&
-        (create_stack_in.map{it[1].size()} == 2)){
+        (create_stack_in.map{it[1].size() == 2})){
         CREATE_STACK(create_stack_in)
         stack_mix = CREATE_STACK.out.stack.mix(no_stack)
     } else {
@@ -221,9 +221,15 @@ workflow MOLKART {
             }).set{ tiffin }
 
         TIFFH5CONVERT(tiffin)
+        ch_versions = ch_versions.mix(TIFFH5CONVERT.out.versions)
 
-        TIFFH5CONVERT.out.hdf5.combine(Channel.fromPath(params.ilastik_pixel_project)).set{ ilastik_in }
-        ILASTIK_PIXELCLASSIFICATION(ilastik_in.map{ [it[0], it[1]] }, ilastik_in.map{ [it[0], it[2]] })
+        TIFFH5CONVERT.out.hdf5.combine(
+            Channel.fromPath(params.ilastik_pixel_project)
+            ).set{ ilastik_in }
+        ILASTIK_PIXELCLASSIFICATION(
+            ilastik_in.map{ [it[0], it[1]] },
+            ilastik_in.map{ [it[0], it[2]] }
+        )
         ch_versions = ch_versions.mix(ILASTIK_PIXELCLASSIFICATION.out.versions)
 
         if (params.ilastik_multicut_project == null) {

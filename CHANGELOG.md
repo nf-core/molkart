@@ -15,6 +15,8 @@ Local module revamp - all should use the same Docker image to save space.
 - CREATE_STACK when clause - also applied the size check logic in molkart.nf
 - Added crop_hdf5.py script instead of
 - pattern to only return cropped images and overview (not versions or full hdf5 image)
+- clahe does not use aicsimageio anymore
+- create stack outputs a pyramidal tif (Palom)
 
 ## v1.0.1dev - [2023.12.05]
 

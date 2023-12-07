@@ -26,7 +26,7 @@ process TIFFH5CONVERT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        molkart_tiffh5convert: \$(crop_hdf5.py --version)
+        molkart_crophdf5: \$(crop_hdf5.py --version)
     END_VERSIONS
     """
 }

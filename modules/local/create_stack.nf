@@ -2,7 +2,7 @@ process CREATE_STACK {
     tag "$meta.id"
     label 'process_low'
 
-    container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
     input:
     tuple val(meta), path(image)
@@ -18,10 +18,9 @@ process CREATE_STACK {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    create_stack.py \\
+    stack.py \\
         --input ${image} \\
         --output ${prefix}.ome.tif \\
-        --num-channels 2 \\
         $args
     """
 }
