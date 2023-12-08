@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.08]
+
+Crop overview is provided to Multiqc - now when create_training_subset is run, multiqc and customdumpsoftwareversions are also run.
+
+### `Added`
+
+- removed CropSummary.txt from published outputs
+- moved crop_overview.png to MultiQC folder
+
 ## v1.0.1dev - [2023.12.07]
 
 Local module revamp - all should use the same Docker image to save space.

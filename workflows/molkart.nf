@@ -143,10 +143,7 @@ workflow MOLKART {
     //
     // MODULE: Stack channels if membrane image provided for segmentation (Mesmer does not require it, Cellpose and ilastik do)
     //
-    if ((params.segmentation_method.split(',').contains('cellpose') ||
-        params.segmentation_method.split(',').contains('ilastik')  ||
-        params.create_training_subset) &&
-        (create_stack_in.map{it[1].size() == 2})){
+    if ((grouped_map_stack.map{it[2]} != null)){
         CREATE_STACK(create_stack_in)
         ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
         stack_mix = CREATE_STACK.out.stack.mix(no_stack)
@@ -162,12 +159,14 @@ workflow MOLKART {
             } // hardcodes that if membrane channel present, num_channels is 2, otherwise 1
         ).set{ training_in }
         CROPHDF5(training_in)
+        ch_versions = ch_versions.mix(CROPHDF5.out.versions)
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
         tiff_crop = stack_mix.join(CROPHDF5.out.crop_summary)
         CROPTIFF(
             tiff_crop.map(it -> tuple(it[0],it[1])),
             tiff_crop.map(it -> tuple(it[0],it[2])),
             )
+        ch_versions = ch_versions.mix(CROPTIFF.out.versions)
     } else {
 
     //
@@ -304,6 +303,7 @@ workflow MOLKART {
     MOLKARTQC(molkartqc)
     ch_versions = ch_versions.mix(MOLKARTQC.out.versions)
 
+    }
     //
     // MODULE: CUSTOM_DUMPSOFTWAREVERSIONS
     //
@@ -321,7 +321,16 @@ workflow MOLKART {
     ch_methods_description = Channel.value(methods_description)
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(MOLKARTQC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
+    if ( params.create_training_subset ){
+        ch_multiqc_files = ch_multiqc_files.mix(
+            CROPTIFF.out.overview
+            .map{it[1]}
+            .collectFile(name: 'crop_overview.png', storeDir: "${params.outdir}/multiqc"))
+    } else {
+        ch_multiqc_files = ch_multiqc_files.mix(
+            MOLKARTQC.out.qc.map{it[1]}
+            .collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
+    }
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
@@ -333,7 +342,6 @@ workflow MOLKART {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
-    }
 }
 
 /*
