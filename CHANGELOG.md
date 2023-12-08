@@ -13,7 +13,7 @@ Local module revamp - all should use the same Docker image to save space.
 - renamed TIFFTRAININGSUBSET to CROPTIFF
 - local modules now use the ghcr.io/schapirolabor/molkart-local:v0.0.1 container
 - CREATE_STACK when clause - also applied the size check logic in molkart.nf
-- Added crop_hdf5.py script instead of
+- Added crop_hdf5.py script instead of using mcmicro-ilastik container
 - pattern to only return cropped images and overview (not versions or full hdf5 image)
 - clahe does not use aicsimageio anymore
 - create stack outputs a pyramidal tif (Palom)
