@@ -3,6 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.07]
+
+Local module revamp - all should use the same Docker image to save space.
+
+### `Added`
+
+- renamed CREATEILASTIKTRAININGSUBSET to CROPHDF5
+- renamed TIFFTRAININGSUBSET to CROPTIFF
+- local modules now use the ghcr.io/schapirolabor/molkart-local:v0.0.1 container
+- CREATE_STACK when clause - also applied the size check logic in molkart.nf
+- Added crop_hdf5.py script instead of using mcmicro-ilastik container
+- pattern to only return cropped images and overview (not versions or full hdf5 image)
+- clahe does not use aicsimageio anymore
+- create stack outputs a pyramidal tif (Palom)
+- updated mesmer module - accordingly added prefix logic (and for maskfilter)
+
 ## v1.0.1dev - [2023.12.05]
 
 Added MASKFILTER module.

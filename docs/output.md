@@ -72,7 +72,7 @@ Create stack is a local module used to merge images into a stack as preparation 
     - `*_ilastik_mask.tif`: Segmentation masks created by ilastik's Boundary prediction with Multicut workflow.
   - `mesmer/`:
     - `*_mesmer_mask.tif`: Segmentation masks created by Mesmer.
-  - `filtered_masks/` - `*_method_mask.tif`: Segmentation masks filtered based on provided area limits.
+  - `filtered_masks/` - `*_method_filtered.tif`: Segmentation masks filtered based on provided area limits.
   </details>
 
 [Cellpose](https://www.cellpose.org) is a segmentation tool that provides pretrained models as well as additional human-in-the loop training. If additional training is performed, the envisioned way of doing it is creating the training subset (`tiff`), and training the model in the [Cellpose GUI](https://cellpose.readthedocs.io/en/latest/gui.html) on the subset, then giving the trained model as an argument within the pipeline to complete the pipeline run.

@@ -2,13 +2,14 @@ process CREATE_STACK {
     tag "$meta.id"
     label 'process_low'
 
-    container 'ghcr.io/schapirolabor/background_subtraction:v0.3.3'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
     input:
     tuple val(meta), path(image)
 
     output:
     tuple val(meta), path("*.ome.tif"), emit: stack
+    path "versions.yml"               , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -18,10 +19,14 @@ process CREATE_STACK {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    create_stack.py \\
+    stack.py \\
         --input ${image} \\
         --output ${prefix}.ome.tif \\
-        --num-channels 2 \\
         $args
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_stack: \$(stack.py --version)
+    END_VERSIONS
     """
 }

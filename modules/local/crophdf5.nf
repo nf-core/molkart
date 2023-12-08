@@ -1,25 +1,27 @@
-process TIFFH5CONVERT {
+process CROPHDF5 {
     tag "$meta.id"
     label 'process_single'
 
-    container "ghcr.io/schapirolabor/molkart-local:v0.0.1"
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
     input:
-    tuple val(meta), path(image), val(num_channels)
+    tuple val(meta), path(image_stack), val(num_channels)
 
     output:
-    tuple val(meta), path("*.hdf5"), emit: hdf5
+    tuple val(meta), path("*.hdf5"), emit: ilastik_training
+    tuple val(meta), path("*.txt") , emit: crop_summary
     path "versions.yml"            , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
+    def args   = task.ext.args   ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     crop_hdf5.py \\
-        --input $image \\
+        --input $image_stack \\
         --output . \\
         --num_channels $num_channels \\
         $args

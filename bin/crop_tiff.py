@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# importing the module
 import ast
 import tifffile as tiff
 import os
@@ -37,6 +36,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="Input tiffile.")
     parser.add_argument("-c", "--crop_summary", help="Crop summary file.")
+    parser.add_argument("--version", action="version", version="0.1.0")
     args = parser.parse_args()
 
     # reading the crop information from the file
