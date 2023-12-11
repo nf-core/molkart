@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.1dev - [2023.12.08]
+## v1.0.1dev - [2023.12.11]
 
 Crop overview is provided to Multiqc - now when create_training_subset is run, multiqc and customdumpsoftwareversions are also run.
 
@@ -11,6 +11,7 @@ Crop overview is provided to Multiqc - now when create_training_subset is run, m
 
 - removed CropSummary.txt from published outputs
 - moved crop_overview.png to MultiQC folder
+- gitpod container is nf-core/gitpod:dev instead of latest to include new versions of nf-tools and nf-test
 
 ## v1.0.1dev - [2023.12.07]
 

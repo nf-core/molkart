@@ -16,6 +16,7 @@ process TIFFH5CONVERT {
 
     script:
     def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     crop_hdf5.py \\

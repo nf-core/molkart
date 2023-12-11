@@ -109,13 +109,11 @@ workflow MOLKART {
     //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
     // CLAHE is either applied to all images, or none.
-    if (!params.skip_clahe) {
-        CLAHE(MINDAGAP_MINDAGAP.out.tiff)
-        ch_versions = ch_versions.mix(CLAHE.out.versions)
-        CLAHE.out.img_clahe.set{ map_for_stacks } // if CLAHE is run, use CLAHE output for next steps
-    } else {
-        MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks } // if CLAHE is not run, use MINDAGAP output for next steps
-    }
+    //
+    CLAHE(MINDAGAP_MINDAGAP.out.tiff)
+    ch_versions = ch_versions.mix(CLAHE.out.versions)
+
+    map_for_stacks = !params.skip_clahe ? CLAHE.out.img_clahe : MINDAGAP_MINDAGAP.out.tiff
 
     map_for_stacks
         .map {
@@ -140,16 +138,14 @@ workflow MOLKART {
         }.map{
             [it[0],tuple(it[1],it[2])]
         }.set{ create_stack_in }
+
     //
-    // MODULE: Stack channels if membrane image provided for segmentation (Mesmer does not require it, Cellpose and ilastik do)
+    // MODULE: Stack channels if membrane image provided for segmentation
     //
-    if ((grouped_map_stack.map{it[2]} != null)){
-        CREATE_STACK(create_stack_in)
-        ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
-        stack_mix = CREATE_STACK.out.stack.mix(no_stack)
-    } else {
-        stack_mix = no_stack
-    }
+    CREATE_STACK(create_stack_in)
+    ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
+    stack_mix = no_stack.mix(CREATE_STACK.out.stack)
+    //stack_mix = create_stack_in ? CREATE_STACK.out.stack.mix(no_stack) : no_stack
 
     if ( params.create_training_subset ) {
         // Create subsets of the image for training an ilastik model
@@ -158,6 +154,7 @@ workflow MOLKART {
                 it[2] == null ? tuple(it[0], 1) : tuple(it[0], 2)
             } // hardcodes that if membrane channel present, num_channels is 2, otherwise 1
         ).set{ training_in }
+
         CROPHDF5(training_in)
         ch_versions = ch_versions.mix(CROPHDF5.out.versions)
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
