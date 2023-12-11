@@ -2,10 +2,30 @@
 
 #### This script takes regionprops_tabe output from mcquant and the raw spot tables from Resolve bioscience as input
 #### and calculates some QC metrics for masks and spot assignments
+### If png files are provided, it combines them into one
 
 import argparse
 import pandas as pd
+from PIL import Image, ImageDraw, ImageFont
+import os
 
+def combine_png_files(input_paths, output_path):
+    print(input_paths)
+    images = []
+    for file_path in input_paths:
+        img = Image.open(file_path)
+        image_name = os.path.basename(file_path).replace('.ome','').replace('.crop','_crop')
+        draw = ImageDraw.Draw(img)
+        font_size = 50
+        font = ImageFont.load_default(font_size)
+        draw.text((100, 50), image_name, fill="black", font=font)
+        images.append(img)
+
+    width, height = images[0].size
+    combined_image = Image.new("RGB", (width, len(images) * height))
+    for i, img in enumerate(images):
+        combined_image.paste(img, (0, i * height))
+    combined_image.save(os.path.join(output_path, 'crop_overview.png'))
 
 def summarize_spots(spot_table):
     ## Calculate number of spots per gene
@@ -49,63 +69,69 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--sample_id", help="Sample ID.")
     parser.add_argument("-g", "--segmentation_method", help="Segmentation method used.")
     parser.add_argument("--filterqc", required=False, help="QC from mask filter step")
+    parser.add_argument("--png_overview", nargs="+", help="Crop overview image paths")
     parser.add_argument("--version", action="version", version="0.1.0")
 
     args = parser.parse_args()
 
-    ## Read in cellxgene_table table
-    cellxgene_table = pd.read_csv(args.cellxgene, sep=",")
+    if args.png_overview != None:
+        combine_png_files(args.png_overview, args.outdir)
 
-    ## Read in spot table
-    spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
-    duplicated = sum(spots.gene.str.contains("Duplicated"))
-    spots = spots[~spots.gene.str.contains("Duplicated")]
+    else:
 
-    ## Pass on filterqc values
-    filterqc = pd.read_csv(
-        args.filterqc,
-        names=["below_min_area", "below_percentage", "above_max_area", "above_percentage", "total_labels"],
-        header=None,
-    )
+        ## Read in cellxgene_table table
+        cellxgene_table = pd.read_csv(args.cellxgene, sep=",")
 
-    ## Summarize spots table
-    summary_spots = summarize_spots(spots)
-    summary_segmentation = summarize_segmasks(cellxgene_table, summary_spots)
+        ## Read in spot table
+        spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
+        duplicated = sum(spots.gene.str.contains("Duplicated"))
+        spots = spots[~spots.gene.str.contains("Duplicated")]
 
-    ## Create pandas data frame with one row per parameter and write each value in summary_segmentation to a new row in the data frame
-    summary_df = pd.DataFrame(
-        columns=[
-            "sample_id",
-            "segmentation_method",
-            "total_cells",
-            "avg_area",
-            "total_spots",
-            "spot_assign_per_cell",
-            "spot_assign_total",
-            "spot_assign_percent",
-            "duplicated_total",
-            "labels_total",
-            "labels_below_thresh",
-            "labels_above_thresh",
+        ## Pass on filterqc values
+        filterqc = pd.read_csv(
+            args.filterqc,
+            names=["below_min_area", "below_percentage", "above_max_area", "above_percentage", "total_labels"],
+            header=None,
+        )
+
+        ## Summarize spots table
+        summary_spots = summarize_spots(spots)
+        summary_segmentation = summarize_segmasks(cellxgene_table, summary_spots)
+
+        ## Create pandas data frame with one row per parameter and write each value in summary_segmentation to a new row in the data frame
+        summary_df = pd.DataFrame(
+            columns=[
+                "sample_id",
+                "segmentation_method",
+                "total_cells",
+                "avg_area",
+                "total_spots",
+                "spot_assign_per_cell",
+                "spot_assign_total",
+                "spot_assign_percent",
+                "duplicated_total",
+                "labels_total",
+                "labels_below_thresh",
+                "labels_above_thresh",
+            ]
+        )
+        summary_df.loc[0] = [
+            ##args.sample_id,
+            args.sample_id + "_" + args.segmentation_method,
+            args.segmentation_method,
+            summary_segmentation[0],
+            summary_segmentation[1],
+            summary_spots[1],
+            summary_segmentation[2],
+            summary_segmentation[3],
+            summary_segmentation[4],
+            duplicated,
+            filterqc.total_labels[1],
+            filterqc.below_min_area[1],
+            filterqc.above_max_area[1],
         ]
-    )
-    summary_df.loc[0] = [
-        ##args.sample_id,
-        args.sample_id + "_" + args.segmentation_method,
-        args.segmentation_method,
-        summary_segmentation[0],
-        summary_segmentation[1],
-        summary_spots[1],
-        summary_segmentation[2],
-        summary_segmentation[3],
-        summary_segmentation[4],
-        duplicated,
-        filterqc.total_labels[1],
-        filterqc.below_min_area[1],
-        filterqc.above_max_area[1],
-    ]
-    print(args.sample_id)
-    # Write summary_df to a csv file
-    summary_df.to_csv(
-        f"{args.outdir}/{args.sample_id}.{args.segmentation_method}.spot_QC.csv", header=True, index=False
-    )
+        print(args.sample_id)
+        # Write summary_df to a csv file
+        summary_df.to_csv(
+            f"{args.outdir}/{args.sample_id}.{args.segmentation_method}.spot_QC.csv", header=True, index=False
+        )

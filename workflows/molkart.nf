@@ -32,14 +32,15 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CROPTIFF          } from '../modules/local/croptiff'
-include { CROPHDF5 } from '../modules/local/crophdf5'
-include { CREATE_STACK                } from '../modules/local/create_stack'
-include { CLAHE                       } from '../modules/local/clahe_dask'
-include { MASKFILTER                  } from '../modules/local/maskfilter'
-include { MOLKARTQC                   } from '../modules/local/molkartqc'
-include { SPOT2CELL                   } from '../modules/local/spot2cell'
-include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
+include { CROPTIFF      } from '../modules/local/croptiff'
+include { CROPHDF5      } from '../modules/local/crophdf5'
+include { CREATE_STACK  } from '../modules/local/createstack'
+include { CLAHE         } from '../modules/local/clahe'
+include { MASKFILTER    } from '../modules/local/maskfilter'
+include { MOLKARTQC     } from '../modules/local/molkartqc'
+include { MOLKARTQCPNG  } from '../modules/local/molkartqcpng'
+include { SPOT2CELL     } from '../modules/local/spot2cell'
+include { TIFFH5CONVERT } from '../modules/local/tiffh5convert'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -164,6 +165,10 @@ workflow MOLKART {
             tiff_crop.map(it -> tuple(it[0],it[2])),
             )
         ch_versions = ch_versions.mix(CROPTIFF.out.versions)
+        MOLKARTQCPNG(CROPTIFF.out.overview.map{
+                    tuple('matchkey', it[1])
+                    }.groupTuple().map{ it[1]} )
+        ch_versions = ch_versions.mix(MOLKARTQCPNG.out.versions)
     } else {
 
     //
@@ -320,9 +325,8 @@ workflow MOLKART {
     ch_multiqc_files = Channel.empty()
     if ( params.create_training_subset ){
         ch_multiqc_files = ch_multiqc_files.mix(
-            CROPTIFF.out.overview
-            .map{it[1]}
-            .collectFile(name: 'crop_overview.png', storeDir: "${params.outdir}/multiqc"))
+            MOLKARTQCPNG.out.png_overview
+            .collectFile(name: "crop_overview.png", storeDir: "${params.outdir}/multiqc" ))
     } else {
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQC.out.qc.map{it[1]}
