@@ -9,12 +9,13 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 import os
 
+
 def combine_png_files(input_paths, output_path):
     print(input_paths)
     images = []
     for file_path in input_paths:
         img = Image.open(file_path)
-        image_name = os.path.basename(file_path).replace('.ome','').replace('.crop','_crop')
+        image_name = os.path.basename(file_path).replace(".ome", "").replace(".crop", "_crop")
         draw = ImageDraw.Draw(img)
         font_size = 50
         font = ImageFont.load_default(font_size)
@@ -25,7 +26,8 @@ def combine_png_files(input_paths, output_path):
     combined_image = Image.new("RGB", (width, len(images) * height))
     for i, img in enumerate(images):
         combined_image.paste(img, (0, i * height))
-    combined_image.save(os.path.join(output_path, 'crop_overview.png'))
+    combined_image.save(os.path.join(output_path, "crop_overview.png"))
+
 
 def summarize_spots(spot_table):
     ## Calculate number of spots per gene
@@ -78,7 +80,6 @@ if __name__ == "__main__":
         combine_png_files(args.png_overview, args.outdir)
 
     else:
-
         ## Read in cellxgene_table table
         cellxgene_table = pd.read_csv(args.cellxgene, sep=",")
 
