@@ -323,10 +323,15 @@ workflow MOLKART {
     ch_methods_description = Channel.value(methods_description)
 
     ch_multiqc_files = Channel.empty()
+    MOLKARTQCPNG.out.png_overview.view()
     if ( params.create_training_subset ){
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQCPNG.out.png_overview
             .collectFile(name: "crop_overview.png", storeDir: "${params.outdir}/multiqc" ))
+        ch_multiqc_files = ch_multiqc_files.mix(
+            CROPHDF5.out.crop_summary.map{it[1]}
+            .collectFile(name: 'crop_overview.txt', storeDir: "${params.outdir}/multiqc")
+        )
     } else {
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQC.out.qc.map{it[1]}

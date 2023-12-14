@@ -9,7 +9,7 @@ Crop overview is provided to Multiqc - now when create_training_subset is run, m
 
 ### `Added`
 
-- removed CropSummary.txt from published outputs
+- removed CropSummary.txt from published outputs - it gets collected at multiqc step and published there
 - moved crop_overview.png to MultiQC folder
 - gitpod container is nf-core/gitpod:dev instead of latest to include new versions of nf-tools and nf-test
 - MOLKARTQCPNG process to add name to png for multiqc report, and combine if multiple samples are processed

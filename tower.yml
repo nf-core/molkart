@@ -1,5 +1,7 @@
 reports:
   multiqc_report.html:
     display: "MultiQC HTML report"
-  samplesheet.csv:
-    display: "Auto-created samplesheet with collated metadata and FASTQ paths"
+  final_QC.all_samples.csv:
+    display: "QC metrics across all samples and segmentation methods"
+  crop_overview.txt:
+    display: "Crop overview if training subset is created"
