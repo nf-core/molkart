@@ -55,28 +55,37 @@ def get_args():
 
 
 def filter_areas(mask, min_area=None, max_area=None):
-    labeled_mask = label(mask, background=0)  # Start labeling from 1
+    labeled_mask = label(mask, background=0)
     measure_tmp = regionprops(labeled_mask)
     num_cells = len(measure_tmp)
-    if min_area:
-        small_labels = len([prop for prop in measure_tmp if prop.area < min_area])
+    # Create a mapping between label and area
+    label_area_map = {prop.label: prop.area for prop in measure_tmp}
+
+    if min_area and max_area:
+        small_valid_labels = np.array([label for label, area in label_area_map.items() if area >= min_area])
+        large_valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area ])
+        valid_labels = np.intersect1d(small_valid_labels, large_valid_labels)
+        retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
+        small_labels = len(labeled_mask) - len(small_valid_labels)
+        large_labels = len(labeled_mask) - len(large_valid_labels)
+        relabeled_mask = label(retained_masks, background=0)
+    elif min_area:
+        valid_labels = np.array([label for label, area in label_area_map.items() if area >= min_area])
+        retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
+        large_labels = 0
+        small_labels = len(labeled_mask) - len(valid_labels)
+        relabeled_mask = label(retained_masks, background=0)
+    elif max_area:
+        valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area])
+        retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
+        large_labels = len(labeled_mask) - len(valid_labels)
+        relabeled_mask = label(retained_masks, background=0)
     else:
         small_labels = 0
-        min_area = 0
-    if max_area:
-        large_labels = len([prop for prop in measure_tmp if prop.area > max_area])
-    else:
-        max_area = mask.shape[0] * mask.shape[1]
         large_labels = 0
-    # Create an array to store the filtered mask
-    filtered_mask = np.zeros_like(labeled_mask)
-    counter = 1
-    for prop in measure_tmp:
-        if (min_area <= prop.area <= max_area) and (min_area <= prop.area <= max_area):
-            filtered_mask[labeled_mask == prop.label] = counter
-            counter += 1
+        relabeled_mask = labeled_mask
 
-    return filtered_mask, small_labels, large_labels, num_cells
+    return relabeled_mask, small_labels, large_labels, num_cells
 
 
 def main(args):
