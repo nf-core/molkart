@@ -63,7 +63,7 @@ def filter_areas(mask, min_area=None, max_area=None):
 
     if min_area and max_area:
         small_valid_labels = np.array([label for label, area in label_area_map.items() if area >= min_area])
-        large_valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area ])
+        large_valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area])
         valid_labels = np.intersect1d(small_valid_labels, large_valid_labels)
         retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
         small_labels = len(labeled_mask) - len(small_valid_labels)
