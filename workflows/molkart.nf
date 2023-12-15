@@ -323,7 +323,7 @@ workflow MOLKART {
     ch_methods_description = Channel.value(methods_description)
 
     ch_multiqc_files = Channel.empty()
-    MOLKARTQCPNG.out.png_overview.view()
+
     if ( params.create_training_subset ){
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQCPNG.out.png_overview
