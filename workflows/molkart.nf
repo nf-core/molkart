@@ -32,14 +32,15 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CROPTIFF          } from '../modules/local/croptiff'
-include { CROPHDF5 } from '../modules/local/crophdf5'
-include { CREATE_STACK                } from '../modules/local/create_stack'
-include { CLAHE                       } from '../modules/local/clahe_dask'
-include { MASKFILTER                  } from '../modules/local/maskfilter'
-include { MOLKARTQC                   } from '../modules/local/molkartqc'
-include { SPOT2CELL                   } from '../modules/local/spot2cell'
-include { TIFFH5CONVERT               } from '../modules/local/tiffh5convert'
+include { CROPTIFF      } from '../modules/local/croptiff'
+include { CROPHDF5      } from '../modules/local/crophdf5'
+include { CREATE_STACK  } from '../modules/local/createstack'
+include { CLAHE         } from '../modules/local/clahe'
+include { MASKFILTER    } from '../modules/local/maskfilter'
+include { MOLKARTQC     } from '../modules/local/molkartqc'
+include { MOLKARTQCPNG  } from '../modules/local/molkartqcpng'
+include { SPOT2CELL     } from '../modules/local/spot2cell'
+include { TIFFH5CONVERT } from '../modules/local/tiffh5convert'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -109,13 +110,11 @@ workflow MOLKART {
     //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     //
     // CLAHE is either applied to all images, or none.
-    if (!params.skip_clahe) {
-        CLAHE(MINDAGAP_MINDAGAP.out.tiff)
-        ch_versions = ch_versions.mix(CLAHE.out.versions)
-        CLAHE.out.img_clahe.set{ map_for_stacks } // if CLAHE is run, use CLAHE output for next steps
-    } else {
-        MINDAGAP_MINDAGAP.out.tiff.set{ map_for_stacks } // if CLAHE is not run, use MINDAGAP output for next steps
-    }
+    //
+    CLAHE(MINDAGAP_MINDAGAP.out.tiff)
+    ch_versions = ch_versions.mix(CLAHE.out.versions)
+
+    map_for_stacks = !params.skip_clahe ? CLAHE.out.img_clahe : MINDAGAP_MINDAGAP.out.tiff
 
     map_for_stacks
         .map {
@@ -140,19 +139,14 @@ workflow MOLKART {
         }.map{
             [it[0],tuple(it[1],it[2])]
         }.set{ create_stack_in }
+
     //
-    // MODULE: Stack channels if membrane image provided for segmentation (Mesmer does not require it, Cellpose and ilastik do)
+    // MODULE: Stack channels if membrane image provided for segmentation
     //
-    if ((params.segmentation_method.split(',').contains('cellpose') ||
-        params.segmentation_method.split(',').contains('ilastik')  ||
-        params.create_training_subset) &&
-        (create_stack_in.map{it[1].size() == 2})){
-        CREATE_STACK(create_stack_in)
-        ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
-        stack_mix = CREATE_STACK.out.stack.mix(no_stack)
-    } else {
-        stack_mix = no_stack
-    }
+    CREATE_STACK(create_stack_in)
+    ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
+    stack_mix = no_stack.mix(CREATE_STACK.out.stack)
+    //stack_mix = create_stack_in ? CREATE_STACK.out.stack.mix(no_stack) : no_stack
 
     if ( params.create_training_subset ) {
         // Create subsets of the image for training an ilastik model
@@ -161,13 +155,20 @@ workflow MOLKART {
                 it[2] == null ? tuple(it[0], 1) : tuple(it[0], 2)
             } // hardcodes that if membrane channel present, num_channels is 2, otherwise 1
         ).set{ training_in }
+
         CROPHDF5(training_in)
+        ch_versions = ch_versions.mix(CROPHDF5.out.versions)
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
         tiff_crop = stack_mix.join(CROPHDF5.out.crop_summary)
         CROPTIFF(
             tiff_crop.map(it -> tuple(it[0],it[1])),
             tiff_crop.map(it -> tuple(it[0],it[2])),
             )
+        ch_versions = ch_versions.mix(CROPTIFF.out.versions)
+        MOLKARTQCPNG(CROPTIFF.out.overview.map{
+                    tuple('matchkey', it[1])
+                    }.groupTuple().map{ it[1]} )
+        ch_versions = ch_versions.mix(MOLKARTQCPNG.out.versions)
     } else {
 
     //
@@ -304,6 +305,7 @@ workflow MOLKART {
     MOLKARTQC(molkartqc)
     ch_versions = ch_versions.mix(MOLKARTQC.out.versions)
 
+    }
     //
     // MODULE: CUSTOM_DUMPSOFTWAREVERSIONS
     //
@@ -321,7 +323,20 @@ workflow MOLKART {
     ch_methods_description = Channel.value(methods_description)
 
     ch_multiqc_files = Channel.empty()
-    ch_multiqc_files = ch_multiqc_files.mix(MOLKARTQC.out.qc.map{it[1]}.collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
+
+    if ( params.create_training_subset ){
+        ch_multiqc_files = ch_multiqc_files.mix(
+            MOLKARTQCPNG.out.png_overview
+            .collectFile(name: "crop_overview.png", storeDir: "${params.outdir}/multiqc" ))
+        ch_multiqc_files = ch_multiqc_files.mix(
+            CROPHDF5.out.crop_summary.map{it[1]}
+            .collectFile(name: 'crop_overview.txt', storeDir: "${params.outdir}/multiqc")
+        )
+    } else {
+        ch_multiqc_files = ch_multiqc_files.mix(
+            MOLKARTQC.out.qc.map{it[1]}
+            .collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
+    }
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
@@ -333,7 +348,6 @@ workflow MOLKART {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
-    }
 }
 
 /*

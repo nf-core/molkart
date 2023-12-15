@@ -93,10 +93,9 @@ nextflow_pipeline {
             assert file("$outputDir/clahe/nuc_only_nuclear_gridfilled_clahe.tiff").exists()
             assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop0.hdf5").exists()
             assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop1.hdf5").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_CropSummary.txt").exists()
             assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop0.tiff").exists()
             assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe.crop_overview.png").exists()
+            assert file("$outputDir/multiqc/crop_overview.png").exists()
         }
     }
 }

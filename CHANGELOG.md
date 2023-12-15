@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.11]
+
+Crop overview is provided to Multiqc - now when create_training_subset is run, multiqc and customdumpsoftwareversions are also run.
+
+### `Added`
+
+- removed CropSummary.txt from published outputs - it gets collected at multiqc step and published there
+- moved crop_overview.png to MultiQC folder
+- gitpod container is nf-core/gitpod:dev instead of latest to include new versions of nf-tools and nf-test
+- MOLKARTQCPNG process to add name to png for multiqc report, and combine if multiple samples are processed
+
 ## v1.0.1dev - [2023.12.07]
 
 Local module revamp - all should use the same Docker image to save space.
