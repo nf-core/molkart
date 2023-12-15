@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2023.12.15]
+
+### `Added`
+
+- Added config file for full test dataset
+
 ## v1.0.1dev - [2023.12.11]
 
 Crop overview is provided to Multiqc - now when create_training_subset is run, multiqc and customdumpsoftwareversions are also run.
