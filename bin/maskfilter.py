@@ -79,6 +79,7 @@ def filter_areas(mask, min_area=None, max_area=None):
         valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area])
         retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
         large_labels = len(labeled_mask) - len(valid_labels)
+        small_labels = 0
         relabeled_mask = label(retained_masks, background=0)
     else:
         small_labels = 0
