@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - Changed file prefix used in CLAHE to prevent file naming collisions if user used dots in filenames
+- Changed label for CLAHE and MASKFILTER to process_medium to make them pass first try on real life datasets
 
 ## v1.0.1dev - [2023.12.15]
 
