@@ -1,6 +1,6 @@
 process MASKFILTER {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_medium'
 
     container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
