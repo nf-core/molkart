@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+import pandas as pd
+import numpy as np
+from anndata import AnnData
+import argparse
+from argparse import ArgumentParser as AP
+from os.path import abspath
+import time
+from scipy.sparse import csr_matrix
+
+def get_args():
+    # Script description
+    description = """Anndata object creation"""
+
+    # Add parser
+    parser = AP(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    # Sections
+    inputs = parser.add_argument_group(title="Required Input", description="Path to required input file")
+    inputs.add_argument("-i","--input", type=str, help='Path to the spot2cell csv file.')
+    inputs.add_argument("-s","--spatial_cols", nargs='+', help='Column names for location data.')
+    inputs.add_argument("-e","--exclude_cols", nargs='+', help='Column names to exclude from count table.')
+    inputs.add_argument("-o", "--output", dest="output", action="store", required=True, help="Path to output anndata object.")
+    inputs.add_argument("--version", action="version", version="0.1.0")
+    arg = parser.parse_args()
+    arg.input = abspath(arg.input)
+    arg.output = abspath(arg.output)
+    return arg
+
+def create_spatial_anndata(input, spatial_cols, exclude_cols):
+    df = pd.read_csv(input)
+    spatial_coords = np.array(df[args.spatial_cols].values.tolist())
+    count_table = csr_matrix(df.drop(spatial_cols + exclude_cols, axis=1).values.tolist())
+    adata = AnnData(count_table, obsm={"spatial": spatial_coords})
+    return adata
+
+def main(args):
+    adata = create_spatial_anndata(args.input, args.spatial_cols, args.exclude_cols)
+    adata.write(args.output)
+
+if __name__ == "__main__":
+    args = get_args()
+    st = time.time()
+    main(args)
+    rt = time.time() - st
+    print(f"Script finished in {rt // 60:.0f}m {rt % 60:.0f}s")
