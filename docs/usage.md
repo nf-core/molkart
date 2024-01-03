@@ -20,7 +20,7 @@ The pipeline requires that the first column specifies the sample ID. If multiple
 
 A final samplesheet file that can be used to process a full dataset (after segmentation optimization), where a matching membrane image is provided would look like:
 
-```console
+```csv title="samplesheet.csv"
 sample,nuclear_image,spot_table,membrane_image
 SAMPLE1,SAMPLE1.nucleus.tiff,SAMPLE1.spots.txt,SAMPLE1.membrane.tiff
 SAMPLE2,SAMPLE2.nucleus.tiff,SAMPLE2.spots.txt,SAMPLE2.membrane.tiff
