@@ -67,11 +67,9 @@ nextflow run nf-core/molkart \
    --outdir <OUTDIR>
 ```
 
-:::warning
-Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those
-provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
-:::
+> [!WARNING]
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
+> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/molkart/usage) and the [parameter documentation](https://nf-co.re/molkart/parameters).
 
@@ -84,7 +82,7 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/molkart was originally written by [Florian Wuennemann](https://github.com/FloWuenne) and [Kresimir Bestak](https://github.com/kbestak).
+nf-core/molkart was originally written by @kbestak, @FloWuenne.
 
 We thank the [Maxime U Garcia](https://github.com/maxulysse) for his assistance and support in the development of this pipeline.
 
