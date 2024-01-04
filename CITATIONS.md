@@ -10,6 +10,10 @@
 
 ## Pipeline tools
 
+- [anndata](https://anndata.readthedocs.io/en/latest/)
+
+  > Isaac Virshup, Sergei Rybakov, Fabian J. Theis, Philipp Angerer, F. Alexander Wolf anndata: Annotated data > bioRxiv 2021.12.16.473007; doi: https://doi.org/10.1101/2021.12.16.473007
+
 - [Cellpose](https://www.cellpose.org/)
 
   > Stringer, C., Wang, T., Michaelos, M. et al. Cellpose: a generalist algorithm for cellular segmentation. Nat Methods 18, 100–106 (2021). https://doi.org/10.1038/s41592-020-01018-x
