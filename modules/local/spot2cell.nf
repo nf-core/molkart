@@ -3,7 +3,7 @@ process SPOT2CELL{
     tag "$meta.id"
     label 'process_single'
 
-    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.3'
 
     input:
     tuple val(meta) , path(spot_table)
