@@ -16,6 +16,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [segmentation](#segmentation) - Segment single cells from provided image using segmentation method of choice (Cellpose, Mesmer, ilastik) and filter them by size.
 - [Mindagap_duplicatefinder](#Mindagap) - Take a spot table and search for duplicates along grid lines.
 - [Spot2cell](#spot2cell) - Assign non-duplicated spots to segmented cells based on segmentation mask and extract cell shape information.
+- [Create_anndata](#anndata) - Creates a spatial AnnData object as described in the [Squidpy tutorial](https://squidpy.readthedocs.io/en/stable/notebooks/tutorials/tutorial_read_spatial.html).
 - [MolkartQC](#molkartqc) - Produce QC metrics specific to this pipeline.
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline.
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution.
@@ -92,6 +93,18 @@ Create stack is a local module used to merge images into a stack as preparation 
 </details>
 
 Spot2cell is a local module that assigns spots (without Duplicates) to cells via a spot table and segmentation mask.
+
+### Create_anndata
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `anndata/`
+  - `*.adata`: Anndata object containing the spot count table, spatial locations of cells in `adata.obsm` and metadata like 'Area', 'MajorAxisLength', 'MinorAxisLength', 'Eccentricity', 'Solidity', 'Extent', 'Orientation' in `adata.obs`
+
+</details>
+
+CREATE_ANNDATA is a local module that generates an [AnnData object](https://anndata.readthedocs.io/en/latest/) storing expression, metadadata and spatial locations of cells.
 
 ### MolkartQC
 
