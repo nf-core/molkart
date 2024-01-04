@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2024.01.04]
+
+### `Added`
+
+- Added createanndata process to workflow. This process will generate a spatial anndata object from the spot2cell output. The anndata object will be written to /anndata in the output folder.
+
+### `Fixed`
+
+- Updated version numbers for all local modules using the molkart-local container to v0.0.3
+
 ## v1.0.1dev - [2023.12.19]
 
 ### `Fixed`
