@@ -1,6 +1,6 @@
 process CLAHE{
     tag "$meta.id"
-    label 'process_low'
+    label 'process_medium'
 
     container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
 
