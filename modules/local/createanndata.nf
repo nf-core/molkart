@@ -8,7 +8,7 @@ process CREATE_ANNDATA {
     tuple val(meta), path(spot2cell)
 
     output:
-    tuple val(meta), path("*.adata"), emit: stack
+    tuple val(meta), path("*.adata")  , emit: stack
     path "versions.yml"               , emit: versions
 
     when:
@@ -23,7 +23,7 @@ process CREATE_ANNDATA {
         --input ${spot2cell} \\
         --spatial_cols X_centroid Y_centroid \\
         --exclude_cols CellID Area MajorAxisLength MinorAxisLength Eccentricity Solidity Extent Orientation  \\
-        --output test.adata
+        --output ${prefix}.adata
         $args
 
     cat <<-END_VERSIONS > versions.yml

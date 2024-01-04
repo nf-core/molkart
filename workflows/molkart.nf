@@ -41,6 +41,7 @@ include { MOLKARTQC     } from '../modules/local/molkartqc'
 include { MOLKARTQCPNG  } from '../modules/local/molkartqcpng'
 include { SPOT2CELL     } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT } from '../modules/local/tiffh5convert'
+include { CREATE_ANNDATA } from '../modules/local/createanndata'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -287,6 +288,14 @@ workflow MOLKART {
         dedup_spots.map(it -> it[0].segmentation)
     )
     ch_versions = ch_versions.mix(SPOT2CELL.out.versions)
+
+    //
+    // MODULE: create anndata squidpy object from spot2cell table
+    //
+    CREATE_ANNDATA(
+        SPOT2CELL.out.cellxgene_table
+    )
+    ch_versions = ch_versions.mix(CREATE_ANNDATA.out.versions)
 
     //
     // MODULE: MOLKARTQC
