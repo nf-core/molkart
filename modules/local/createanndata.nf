@@ -22,8 +22,7 @@ process CREATE_ANNDATA {
     create_anndata.py \\
         --input ${spot2cell} \\
         --spatial_cols X_centroid Y_centroid \\
-        --exclude_cols CellID Area MajorAxisLength MinorAxisLength Eccentricity Solidity Extent Orientation  \\
-        --output ${prefix}.adata
+        --output ${prefix}.adata \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
