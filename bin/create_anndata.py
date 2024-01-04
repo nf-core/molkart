@@ -34,7 +34,7 @@ def create_spatial_anndata(input, spatial_cols):
     df = pd.read_csv(input)
     spatial_coords = np.array(df[args.spatial_cols].values.tolist())
     # Find the index of 'Y_centroid' column
-    y_centroid_index = df.columns.get_loc('X_centroid')
+    y_centroid_index = df.columns.get_loc("X_centroid")
     # Create a list of all columns from 'Y_centroid' to the end
     metadata_cols = df.columns[y_centroid_index:]
     # Extract the excluded columns as metadata
