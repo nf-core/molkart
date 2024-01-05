@@ -2,7 +2,7 @@ process CROPHDF5 {
     tag "$meta.id"
     label 'process_single'
 
-    container 'ghcr.io/schapirolabor/molkart-local:v0.0.3'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.4'
 
     input:
     tuple val(meta), path(image_stack), val(num_channels)
