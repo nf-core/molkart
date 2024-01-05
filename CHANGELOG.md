@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - Added createanndata process to workflow. This process will generate a spatial anndata object from the spot2cell output. The anndata object will be written to /anndata in the output folder.
+- added tests for createanndata
 
 ### `Fixed`
 
 - Updated version numbers for all local modules using the molkart-local container to v0.0.3
+- spot2cell - removed tag, output name now required, output name defined in modules.config
+- output documentation for create training subset
+- formatting in local modules
 
 ## v1.0.1dev - [2023.12.19]
 

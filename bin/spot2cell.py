@@ -111,7 +111,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--spot_table", help="Spot table to project.")
     parser.add_argument("-c", "--cell_mask", help="Sample ID.")
-    parser.add_argument("--tag", type=str, help="Additional tag to append to filename")
     parser.add_argument("--output", type=str, help="Output path")
     parser.add_argument("--version", action="version", version="0.1.0")
 
@@ -126,11 +125,4 @@ if __name__ == "__main__":
 
     gene_counts_df, background = assign_spots2cell(spot_data, cell_mask)
 
-    if args.output:
-        outpath = args.output
-
-    else:
-        basename = os.path.basename(args.spot_table)
-        basename = os.path.splitext(basename)[0]
-        outpath = f"{basename}.{args.tag}.cellxgene.csv"
-    gene_counts_df.to_csv(outpath, sep=",", header=True, index=False)
+    gene_counts_df.to_csv(args.output, sep=",", header=True, index=False)

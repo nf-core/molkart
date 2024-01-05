@@ -8,14 +8,14 @@ process CREATE_ANNDATA {
     tuple val(meta), path(spot2cell)
 
     output:
-    tuple val(meta), path("*.adata")  , emit: stack
-    path "versions.yml"               , emit: versions
+    tuple val(meta), path("*.adata") , emit: stack
+    path "versions.yml"              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
+    def args   = task.ext.args   ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
