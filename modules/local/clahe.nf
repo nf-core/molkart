@@ -2,7 +2,7 @@ process CLAHE{
     tag "$meta.id"
     label 'process_medium'
 
-    container 'ghcr.io/schapirolabor/molkart-local:v0.0.1'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.3'
 
     input:
     tuple val(meta), path(image)
@@ -15,7 +15,7 @@ process CLAHE{
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
+    def args   = task.ext.args   ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     apply_clahe.dask.py \\

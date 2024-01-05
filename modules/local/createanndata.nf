@@ -1,15 +1,15 @@
-process CREATE_STACK {
+process CREATE_ANNDATA {
     tag "$meta.id"
     label 'process_low'
 
     container 'ghcr.io/schapirolabor/molkart-local:v0.0.3'
 
     input:
-    tuple val(meta), path(image)
+    tuple val(meta), path(spot2cell)
 
     output:
-    tuple val(meta), path("*.ome.tif") , emit: stack
-    path "versions.yml"                , emit: versions
+    tuple val(meta), path("*.adata") , emit: stack
+    path "versions.yml"              , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -19,14 +19,15 @@ process CREATE_STACK {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    stack.py \\
-        --input ${image} \\
-        --output ${prefix}.ome.tif \\
+    create_anndata.py \\
+        --input ${spot2cell} \\
+        --spatial_cols X_centroid Y_centroid \\
+        --output ${prefix}.adata \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        molkart_stack: \$(stack.py --version)
+        molkart_createanndata: \$(create_anndata.py --version)
     END_VERSIONS
     """
 }

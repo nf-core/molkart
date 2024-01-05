@@ -32,15 +32,16 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CROPTIFF      } from '../modules/local/croptiff'
-include { CROPHDF5      } from '../modules/local/crophdf5'
-include { CREATE_STACK  } from '../modules/local/createstack'
-include { CLAHE         } from '../modules/local/clahe'
-include { MASKFILTER    } from '../modules/local/maskfilter'
-include { MOLKARTQC     } from '../modules/local/molkartqc'
-include { MOLKARTQCPNG  } from '../modules/local/molkartqcpng'
-include { SPOT2CELL     } from '../modules/local/spot2cell'
-include { TIFFH5CONVERT } from '../modules/local/tiffh5convert'
+include { CROPTIFF       } from '../modules/local/croptiff'
+include { CROPHDF5       } from '../modules/local/crophdf5'
+include { CREATE_ANNDATA } from '../modules/local/createanndata'
+include { CREATE_STACK   } from '../modules/local/createstack'
+include { CLAHE          } from '../modules/local/clahe'
+include { MASKFILTER     } from '../modules/local/maskfilter'
+include { MOLKARTQC      } from '../modules/local/molkartqc'
+include { MOLKARTQCPNG   } from '../modules/local/molkartqcpng'
+include { SPOT2CELL      } from '../modules/local/spot2cell'
+include { TIFFH5CONVERT  } from '../modules/local/tiffh5convert'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -283,10 +284,17 @@ workflow MOLKART {
 
     SPOT2CELL(
         dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> tuple(it[0],it[2])),
-        dedup_spots.map(it -> it[0].segmentation)
+        dedup_spots.map(it -> tuple(it[0],it[2]))
     )
     ch_versions = ch_versions.mix(SPOT2CELL.out.versions)
+
+    //
+    // MODULE: create anndata squidpy object from spot2cell table
+    //
+    CREATE_ANNDATA(
+        SPOT2CELL.out.cellxgene_table
+    )
+    ch_versions = ch_versions.mix(CREATE_ANNDATA.out.versions)
 
     //
     // MODULE: MOLKARTQC
