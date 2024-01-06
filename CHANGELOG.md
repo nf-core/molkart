@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1dev - [2024.01.06]
+
+### `Fixed`
+
+- Updated version numbers for all local modules to molkart-local container v0.0.4 due to a bug in version v0.0.3 that prevented the modules to be properly run with singularity.
+
 ## v1.0.1dev - [2024.01.04]
 
 ### `Added`

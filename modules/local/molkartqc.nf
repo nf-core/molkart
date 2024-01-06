@@ -2,7 +2,7 @@ process MOLKARTQC{
     tag "$meta.id"
     label 'process_single'
 
-    container 'ghcr.io/schapirolabor/molkart-local:v0.0.3'
+    container 'ghcr.io/schapirolabor/molkart-local:v0.0.4'
 
     input:
     tuple val(meta), path(spot_table), path(cellxgene_table), val(segmethod), path(filterqc)
