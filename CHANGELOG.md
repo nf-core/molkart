@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - Fixed a bug in maskfilter for calculating the number of filtered objects.
-- Changed values in multiqc table for filtered object
+- Changed naming of columns in multiqc table for filtered cells
 
 ## v1.0.1dev - [2024.01.06]
 
