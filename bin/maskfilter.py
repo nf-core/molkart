@@ -66,19 +66,19 @@ def filter_areas(mask, min_area=None, max_area=None):
         large_valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area])
         valid_labels = np.intersect1d(small_valid_labels, large_valid_labels)
         retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
-        small_labels = len(labeled_mask) - len(small_valid_labels)
-        large_labels = len(labeled_mask) - len(large_valid_labels)
+        small_labels = num_cells - len(small_valid_labels)
+        large_labels = num_cells - len(large_valid_labels)
         relabeled_mask = label(retained_masks, background=0)
     elif min_area:
         valid_labels = np.array([label for label, area in label_area_map.items() if area >= min_area])
         retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
         large_labels = 0
-        small_labels = len(labeled_mask) - len(valid_labels)
+        small_labels = num_cells - len(valid_labels)
         relabeled_mask = label(retained_masks, background=0)
     elif max_area:
         valid_labels = np.array([label for label, area in label_area_map.items() if area <= max_area])
         retained_masks = np.isin(labeled_mask, valid_labels) * labeled_mask
-        large_labels = len(labeled_mask) - len(valid_labels)
+        large_labels = num_cells - len(valid_labels)
         small_labels = 0
         relabeled_mask = label(retained_masks, background=0)
     else:
