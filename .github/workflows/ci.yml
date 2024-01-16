@@ -101,6 +101,7 @@ jobs:
           nf-test test \
             --profile="test,${{ matrix.profile }}" \
             ${{ matrix.test }} \
+            --tag ${{ matrix.tags }} \
             --junitxml=${{ matrix.test }}-${{ matrix.profile }}.xml
 
       - name: Publish Test Report
