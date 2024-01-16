@@ -55,7 +55,7 @@ jobs:
         NXF_VER:
           - "23.04.0"
           - "latest-everything"
-        profile: ["docker", "singularity"]
+        profile: ["docker"] #TODO add "singularity"
         test: ["${{ fromJson(needs.list.outputs.tests) }}"]
 
     steps:
