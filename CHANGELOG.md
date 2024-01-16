@@ -3,7 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.1dev - [2024.01.08
+## v1.0.1dev - [2024.01.16]
+
+### `Added`
+
+- mindagap_boxsize, mindagap_loopnum, mindagap_edges parameters
+- updated mindagap version and adapted molkart.nf and modules.config to match updated mindagap module version
+
+## v1.0.1dev - [2024.01.08]
 
 ### `Fixed`
 
