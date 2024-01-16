@@ -88,14 +88,6 @@ jobs:
         with:
           singularity-version: 3.7.1
 
-      # Test the module
-      - name: Run nf-test
-        run: |
-          nf-test test \
-            --profile=${{ matrix.profile }} \
-            --tag ${{ matrix.tags }} \
-            --verbose
-
       - name: Run nf-test
         run: |
           nf-test test \
