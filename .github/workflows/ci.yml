@@ -82,6 +82,12 @@ jobs:
           wget -qO- https://code.askimed.com/install/nf-test | bash
           sudo mv nf-test /usr/local/bin/
 
+      - name: Set up Singularity
+        if: matrix.profile == 'singularity'
+        uses: eWaterCycle/setup-singularity@v5
+        with:
+          singularity-version: 3.7.1
+
       # Test the module
       - name: Run nf-test
         run: |
@@ -90,18 +96,11 @@ jobs:
             --tag ${{ matrix.tags }} \
             --verbose
 
-      - name: Set up Singularity
-        if: matrix.profile == 'singularity'
-        uses: eWaterCycle/setup-singularity@v5
-        with:
-          singularity-version: 3.7.1
-
       - name: Run nf-test
         run: |
           nf-test test \
             --profile="test,${{ matrix.profile }}" \
             ${{ matrix.test }} \
-            --tag ${{ matrix.tags }} \
             --junitxml=${{ matrix.test }}-${{ matrix.profile }}.xml
 
       - name: Publish Test Report
@@ -115,29 +114,3 @@ jobs:
         run: |
           sudo apt install bat > /dev/null
           batcat --decorations=always --color=always ${{ github.workspace }}/.nf-test/tests/*/output/pipeline_info/software_versions.yml
-
-##  nftest:
-#    name: Run pipeline with test data
-# Only run on push if this is the nf-core dev branch (merged PRs)
-#    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/molkart') }}"
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        NXF_VER:
-#          - "23.04.0"
-#          - "latest-everything"
-#    steps:
-#      - name: Check out pipeline code
-#        uses: actions/checkout@v4
-
-#      - name: Install Nextflow
-#        uses: nf-core/setup-nextflow@v1
-#        with:
-#          version: "${{ matrix.NXF_VER }}"#
-
-#      - name: Run pipeline with test data
-# TODO nf-core: You can customise CI pipeline run tests as required
-# For example: adding multiple test runs with different parameters
-# Remember that you can parallelise this by using strategy.matrix
-#        run: |
-#          nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results
