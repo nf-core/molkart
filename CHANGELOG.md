@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - mindagap_boxsize, mindagap_loopnum, mindagap_edges parameters
 - updated mindagap version and adapted molkart.nf and modules.config to match updated mindagap module version
+- CI testing with nf-test
+- updated base.config to account for ilastik's high memory use
 
 ## v1.0.1dev - [2024.01.08]
 
