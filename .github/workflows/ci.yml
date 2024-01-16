@@ -57,12 +57,6 @@ jobs:
           - "latest-everything"
         profile: ["docker", "singularity"]
         test: ["${{ fromJson(needs.list.outputs.tests) }}"]
-        exclude:
-          - tag: "custom/dumpsoftwareversions"
-          - tag: "deepcell/mesmer"
-          - tag: "mindagap"
-          - tag: "custom/dumpsoftwareversions"
-          - tag: "multiqc"
 
     steps:
       - name: Check out pipeline code
