@@ -58,9 +58,11 @@ jobs:
         profile: ["docker", "singularity"]
         test: ["${{ fromJson(needs.list.outputs.tests) }}"]
         exclude:
-          - test: "tests/subworkflows/local/grohmm/main.nf.test@3508b8c9"
-          - test: "tests/subworkflows/local/grohmm/main.nf.test@716555be"
-          - test: "tests/subworkflows/local/grohmm/main.nf.test@306b4b15"
+          - tag: "custom/dumpsoftwareversions"
+          - tag: "deepcell/mesmer"
+          - tag: "mindagap"
+          - tag: "custom/dumpsoftwareversions"
+          - tag: "multiqc"
 
     steps:
       - name: Check out pipeline code
@@ -73,7 +75,7 @@ jobs:
           path: |
             /usr/local/bin/nf-test
             /home/runner/.nf-test/nf-test.jar
-          key: methylseq-${{ runner.os }}-${{ matrix.NXF_VER }}
+          key: molkart-${{ runner.os }}-${{ matrix.NXF_VER }}
 
       - name: Install Nextflow
         uses: nf-core/setup-nextflow@v1
@@ -92,7 +94,6 @@ jobs:
           nf-test test \
             --profile=${{ matrix.profile }} \
             --tag ${{ matrix.tags }} \
-            --tap=test.tap \
             --verbose
 
       - name: Set up Singularity
