@@ -13,7 +13,7 @@
             "properties": {
                 "segmentation_method": {
                     "type": "string",
-                    "description": "List of segmentation tools to apply to the image",
+                    "description": "List of segmentation tools to apply to the image written as a comma separated string: mesmer,cellpose,ilastik would run all three options.",
                     "default": "mesmer",
                     "fa_icon": "fas fa-border-all"
                 },
@@ -108,6 +108,18 @@
             "default": "",
             "fa_icon": "fas fa-adjust",
             "properties": {
+                "mindagap_boxsize": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Box size used by Mindagap to overcome gaps, a larger number allows to overcome large gaps, but results in less fine details in the filled grid.",
+                    "fa_icon": "fab fa-dropbox"
+                },
+                "mindagap_loopnum": {
+                    "type": "integer",
+                    "default": 40,
+                    "description": "Loop number performed by Mindagap. Lower values are faster, but the result is less good.",
+                    "fa_icon": "fas fa-circle-notch"
+                },
                 "clahe_cliplimit": {
                     "type": "number",
                     "default": 0.01,
@@ -142,6 +154,12 @@
                     "default": 2144,
                     "description": "Tile size (distance between gridlines) for Mindagap.",
                     "fa_icon": "fas fa-th",
+                    "hidden": true
+                },
+                "mindagap_edges": {
+                    "type": "boolean",
+                    "description": "Should Mindagap blur area around grid for smoother transitions between tiles with different exposures.",
+                    "fa_icon": "fas fa-th-large",
                     "hidden": true
                 },
                 "clahe_pyramid_tile": {
