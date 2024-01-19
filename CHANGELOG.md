@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated mindagap version and adapted molkart.nf and modules.config to match updated mindagap module version
 - CI testing with nf-test
 - updated base.config to account for ilastik's high memory use
-- updated metromap and logos
 
 ## v1.0.1dev - [2024.01.08]
 
