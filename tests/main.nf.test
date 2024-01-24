@@ -14,6 +14,8 @@ nextflow_pipeline {
                 outdir = "$outputDir"
                 skip_clahe = true
                 mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
                 segmentation_method = "cellpose,mesmer"
             }
         }
@@ -45,6 +47,8 @@ nextflow_pipeline {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
                 outdir = "$outputDir"
                 mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
                 clahe_pyramid_tile = 368
                 segmentation_method = "cellpose,mesmer"
                 }
@@ -81,6 +85,8 @@ nextflow_pipeline {
                 input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
                 outdir = "$outputDir"
                 mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
                 clahe_pyramid_tile = 368
                 create_training_subset = true
                 crop_amount = 2

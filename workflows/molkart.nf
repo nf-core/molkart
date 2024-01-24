@@ -104,12 +104,11 @@ workflow MOLKART {
     // MODULE: Run Mindagap_mindagap
     //
     mindagap_in = membrane_tuple.mix(image_tuple) // mindagap input contains both membrane and nuclear images
-    MINDAGAP_MINDAGAP(mindagap_in, 7, 100) // runs MINDAGAP_MINDAGAP, hardcoded boxsize and loopnumber parameters; TODO: make mindagap_mindagap more compliant with nf-core guidelines
+    MINDAGAP_MINDAGAP(mindagap_in)
     ch_versions = ch_versions.mix(MINDAGAP_MINDAGAP.out.versions)
 
     //
-    //MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
-    //
+    // MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     // CLAHE is either applied to all images, or none.
     //
     CLAHE(MINDAGAP_MINDAGAP.out.tiff)
@@ -147,7 +146,6 @@ workflow MOLKART {
     CREATE_STACK(create_stack_in)
     ch_versions = ch_versions.mix(CREATE_STACK.out.versions)
     stack_mix = no_stack.mix(CREATE_STACK.out.stack)
-    //stack_mix = create_stack_in ? CREATE_STACK.out.stack.mix(no_stack) : no_stack
 
     if ( params.create_training_subset ) {
         // Create subsets of the image for training an ilastik model

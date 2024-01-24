@@ -98,6 +98,9 @@ mesmer_compartment: "whole-cell"
 ilastik_pixel_project: null
 ilastik_multicut_project: null
 mindagap_tilesize: 2144
+mindagap_boxsize: 3
+mindagap_loopnum: 40
+mindagap_edges: false
 skip_clahe: false
 clahe_cliplimit: 0.01
 clahe_nbins: 256
