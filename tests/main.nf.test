@@ -1,0 +1,111 @@
+nextflow_pipeline {
+
+    name "Test Workflow main.nf"
+    script "../main.nf"
+    config "./nextflow.config"
+    tag "pipeline"
+    tag "pipeline_molkart"
+
+    test("Nuclear channel, mesmer and cellpose, without clahe") {
+
+        when {
+            params {
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
+                outdir = "$outputDir"
+                skip_clahe = true
+                mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
+                segmentation_method = "cellpose,mesmer"
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                path("$outputDir/mindagap/nuc_only_nuclear_gridfilled.tiff"),
+                path("$outputDir/mindagap/nuc_only_spots_markedDups.txt"),
+                path("$outputDir/segmentation/cellpose/nuc_only_cellpose_mask.tif"),
+                path("$outputDir/segmentation/mesmer/nuc_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/nuc_only_mesmer_filtered.tif"),
+                path("$outputDir/segmentation/filtered_masks/nuc_only_cellpose_filtered.tif"),
+                path("$outputDir/spot2cell/cellxgene_nuc_only_cellpose.csv"),
+                path("$outputDir/spot2cell/cellxgene_nuc_only_mesmer.csv"),
+                path("$outputDir/anndata/nuc_only_cellpose.adata"),
+                path("$outputDir/anndata/nuc_only_mesmer.adata"),
+                path("$outputDir/molkartqc/nuc_only.cellpose.spot_QC.csv"),
+                path("$outputDir/molkartqc/nuc_only.mesmer.spot_QC.csv")
+            ).match()
+            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+        }
+    }
+
+    test("Two channels, mesmer and cellpose, with clahe") {
+
+        when {
+            params {
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
+                outdir = "$outputDir"
+                mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
+                clahe_pyramid_tile = 368
+                segmentation_method = "cellpose,mesmer"
+                }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                path("$outputDir/mindagap/mem_only_membrane_gridfilled.tiff"),
+                path("$outputDir/mindagap/mem_only_nuclear_gridfilled.tiff"),
+                path("$outputDir/mindagap/mem_only_spots_markedDups.txt"),
+                path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
+                path("$outputDir/segmentation/mesmer/mem_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/mem_only_mesmer_filtered.tif"),
+                path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_filtered.tif"),
+                path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
+                path("$outputDir/spot2cell/cellxgene_mem_only_mesmer.csv"),
+                path("$outputDir/anndata/mem_only_cellpose.adata"),
+                path("$outputDir/anndata/mem_only_mesmer.adata"),
+                path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
+                path("$outputDir/molkartqc/mem_only.mesmer.spot_QC.csv"),
+            ).match()
+            assert file("$outputDir/stack/mem_only_stack.ome.tif").exists()
+            assert file("$outputDir/clahe/mem_only_membrane_gridfilled_clahe.tiff").exists()
+            assert file("$outputDir/clahe/mem_only_nuclear_gridfilled_clahe.tiff").exists()
+            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+        }
+    }
+
+    test("Create training subset") {
+
+        when {
+            params {
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
+                outdir = "$outputDir"
+                mindagap_tilesize = 90
+                mindagap_boxsize = 7
+                mindagap_loopnum = 100
+                clahe_pyramid_tile = 368
+                create_training_subset = true
+                crop_amount = 2
+                crop_size_x = 10
+                crop_size_y = 10
+                }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                path("$outputDir/mindagap/nuc_only_nuclear_gridfilled.tiff"),
+            ).match()
+            assert file("$outputDir/clahe/nuc_only_nuclear_gridfilled_clahe.tiff").exists()
+            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop0.hdf5").exists()
+            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop1.hdf5").exists()
+            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop0.tiff").exists()
+            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff").exists()
+            assert file("$outputDir/multiqc/crop_overview.png").exists()
+        }
+    }
+}

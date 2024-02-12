@@ -5,19 +5,44 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
-                    "custom/dumpsoftwareversions": {
+                    "cellpose": {
                         "branch": "master",
-                        "git_sha": "76cc4938c1f6ea5c7d83fed1eeffc146787f9543",
+                        "git_sha": "0975c63a8ce4488c3259f595270b3f0d419abafe",
                         "installed_by": ["modules"]
                     },
-                    "fastqc": {
+                    "custom/dumpsoftwareversions": {
                         "branch": "master",
-                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
+                        "installed_by": ["modules"]
+                    },
+                    "deepcell/mesmer": {
+                        "branch": "master",
+                        "git_sha": "81fcaa73c7f1668a1c289464da88bf5eff582bcd",
+                        "installed_by": ["modules"]
+                    },
+                    "ilastik/multicut": {
+                        "branch": "master",
+                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "installed_by": ["modules"]
+                    },
+                    "ilastik/pixelclassification": {
+                        "branch": "master",
+                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "installed_by": ["modules"]
+                    },
+                    "mindagap/duplicatefinder": {
+                        "branch": "master",
+                        "git_sha": "cdc42519bf7d6d2cac9b5f14cb56e0060477c69c",
+                        "installed_by": ["modules"]
+                    },
+                    "mindagap/mindagap": {
+                        "branch": "master",
+                        "git_sha": "97dbec551f491ee562721008cdecd1e7a9a56b14",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "f2d63bd5b68925f98f572eed70993d205cc694b7",
+                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
                         "installed_by": ["modules"]
                     }
                 }

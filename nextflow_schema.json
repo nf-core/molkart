@@ -5,6 +5,210 @@
     "description": "An analysis pipeline for Molecular Cartography data from Resolve Biosciences.",
     "type": "object",
     "definitions": {
+        "segmentation_methods_and_options": {
+            "title": "Segmentation methods and options",
+            "type": "object",
+            "description": "Define which segmentation methods should be used and how.",
+            "default": "",
+            "properties": {
+                "segmentation_method": {
+                    "type": "string",
+                    "description": "List of segmentation tools to apply to the image written as a comma separated string: mesmer,cellpose,ilastik would run all three options.",
+                    "default": "mesmer",
+                    "fa_icon": "fas fa-border-all"
+                },
+                "segmentation_min_area": {
+                    "type": "integer",
+                    "description": "Minimum area size (in pixels) for segmentation masks.",
+                    "fa_icon": "fas fa-chart-area"
+                },
+                "segmentation_max_area": {
+                    "type": "integer",
+                    "description": "Maximum area size (in pixels) for segmenation masks.",
+                    "fa_icon": "fas fa-chart-area"
+                },
+                "cellpose_diameter": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "Cell diameter, if 0 will use the diameter of the training labels used in the model, or with built-in model will estimate diameter for each image.",
+                    "fa_icon": "far fa-circle"
+                },
+                "cellpose_chan": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Specifies the channel to be segmented by Cellpose.",
+                    "fa_icon": "fas fa-dice-one"
+                },
+                "cellpose_chan2": {
+                    "type": "integer",
+                    "description": "Specifies nuclear channel index for Cellpose if using pretrained models such as cyto.",
+                    "fa_icon": "fas fa-dice-two"
+                },
+                "cellpose_pretrained_model": {
+                    "type": "string",
+                    "default": "cyto",
+                    "description": "Pretrained Cellpose model to be used for segmentation.",
+                    "fa_icon": "fas fa-address-card"
+                },
+                "cellpose_custom_model": {
+                    "type": "string",
+                    "description": "Custom Cellpose model can be provided by the user.",
+                    "fa_icon": "far fa-address-card"
+                },
+                "cellpose_flow_threshold": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Flow error threshold for Cellpose.",
+                    "fa_icon": "fas fa-border-style"
+                },
+                "cellpose_edge_exclude": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Should cells detected near image edges be excluded.",
+                    "fa_icon": "fas fa-border-none"
+                },
+                "cellpose_save_flows": {
+                    "type": "boolean",
+                    "description": "Should flow fields from Cellpose be saved?",
+                    "fa_icon": "fas fa-arrows-alt",
+                    "hidden": true
+                },
+                "mesmer_image_mpp": {
+                    "type": "number",
+                    "default": 0.138,
+                    "description": "Pixel size in microns for segmentation with Mesmer.",
+                    "fa_icon": "fas fa-camera"
+                },
+                "mesmer_compartment": {
+                    "type": "string",
+                    "default": "whole-cell",
+                    "description": "Compartment to be segmented with Mesmer (nuclear, whole-cell)",
+                    "fa_icon": "fas fa-border-all"
+                },
+                "ilastik_pixel_project": {
+                    "type": "string",
+                    "description": "Provide ilastik with a pixel classification project to produce probability maps.",
+                    "format": "file-path",
+                    "fa_icon": "fas fa-camera"
+                },
+                "ilastik_multicut_project": {
+                    "type": "string",
+                    "description": "Provide ilastik with a multicut project to create segmentation masks.",
+                    "format": "file-path",
+                    "fa_icon": "fas fa-cut"
+                }
+            },
+            "required": ["segmentation_method"],
+            "fa_icon": "fas fa-border-all"
+        },
+        "image_preprocessing": {
+            "title": "Image preprocessing",
+            "type": "object",
+            "description": "Defines gridsize for Mindagap and should contrast adjustment be applied and how.",
+            "default": "",
+            "fa_icon": "fas fa-adjust",
+            "properties": {
+                "mindagap_boxsize": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Box size used by Mindagap to overcome gaps, a larger number allows to overcome large gaps, but results in less fine details in the filled grid.",
+                    "fa_icon": "fab fa-dropbox"
+                },
+                "mindagap_loopnum": {
+                    "type": "integer",
+                    "default": 40,
+                    "description": "Loop number performed by Mindagap. Lower values are faster, but the result is less good.",
+                    "fa_icon": "fas fa-circle-notch"
+                },
+                "clahe_cliplimit": {
+                    "type": "number",
+                    "default": 0.01,
+                    "description": "Contrast limit for localized changes in contrast by CLAHE.",
+                    "fa_icon": "fas fa-border-style"
+                },
+                "clahe_nbins": {
+                    "type": "integer",
+                    "default": 256,
+                    "description": "Number of histogram bins to be used by CLAHE.",
+                    "fa_icon": "fas fa-ruler-combined"
+                },
+                "clahe_pixel_size": {
+                    "type": "number",
+                    "default": 0.138,
+                    "description": "Pixel size to be used by CLAHE.",
+                    "fa_icon": "fas fa-camera"
+                },
+                "clahe_kernel": {
+                    "type": "number",
+                    "default": 25,
+                    "description": "Kernel size to be used by CLAHE.",
+                    "fa_icon": "far fa-object-group"
+                },
+                "skip_clahe": {
+                    "type": "boolean",
+                    "description": "Specifies whether contrast-limited adaptive histogram equalization should be skipped.",
+                    "fa_icon": "fab fa-buromobelexperte"
+                },
+                "mindagap_tilesize": {
+                    "type": "integer",
+                    "default": 2144,
+                    "description": "Tile size (distance between gridlines) for Mindagap.",
+                    "fa_icon": "fas fa-th",
+                    "hidden": true
+                },
+                "mindagap_edges": {
+                    "type": "boolean",
+                    "description": "Should Mindagap blur area around grid for smoother transitions between tiles with different exposures.",
+                    "fa_icon": "fas fa-th-large",
+                    "hidden": true
+                },
+                "clahe_pyramid_tile": {
+                    "type": "integer",
+                    "description": "Tile size used for pyramid generation (must be divisible by 16).",
+                    "fa_icon": "fas fa-cubes",
+                    "hidden": true,
+                    "default": 1072
+                }
+            }
+        },
+        "training_subset_options": {
+            "title": "Training subset options",
+            "type": "object",
+            "description": "Define whether a cropped training set for segmentation methods should be created.",
+            "default": "",
+            "fa_icon": "fas fa-running",
+            "properties": {
+                "create_training_subset": {
+                    "type": "boolean",
+                    "description": "Create subset for training a segmentation model.",
+                    "fa_icon": "fas fa-running"
+                },
+                "crop_size_x": {
+                    "type": "integer",
+                    "default": 400,
+                    "description": "Indicates crop size on x axis.",
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "crop_size_y": {
+                    "type": "integer",
+                    "default": 400,
+                    "description": "Indicates crop size on y axis.",
+                    "fa_icon": "fas fa-crop-alt"
+                },
+                "crop_amount": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Number of crops you would like to extract.",
+                    "fa_icon": "fas fa-hashtag"
+                },
+                "crop_nonzero_fraction": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Indicates fraction of pixels per crop above global threshold to ensure tissue and not only background is selected.",
+                    "fa_icon": "fas fa-percentage"
+                }
+            }
+        },
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -15,12 +219,13 @@
                 "input": {
                     "type": "string",
                     "format": "file-path",
+                    "exists": true,
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
-                    "schema": "assets/schema_input.json",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
                     "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/molkart/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-file-csv",
+                    "schema": "/assets/schema_input.json"
                 },
                 "outdir": {
                     "type": "string",
@@ -40,45 +245,8 @@
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
-            }
-        },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {
-                "genome": {
-                    "type": "string",
-                    "description": "Name of iGenomes reference.",
-                    "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
-                },
-                "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
-                },
-                "igenomes_base": {
-                    "type": "string",
-                    "format": "directory-path",
-                    "description": "Directory / URL base for iGenomes references.",
-                    "default": "s3://ngi-igenomes/igenomes",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
-                },
-                "igenomes_ignore": {
-                    "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
-                }
-            }
+            },
+            "help_text": ""
         },
         "institutional_config_options": {
             "title": "Institutional config options",
@@ -157,7 +325,7 @@
                     "description": "Maximum amount of time that can be requested for any single job.",
                     "default": "240.h",
                     "fa_icon": "far fa-clock",
-                    "pattern": "^(\\d+\\.?\\s*(s|m|h|day)\\s*)+$",
+                    "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
                     "hidden": true,
                     "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
                 }
@@ -228,6 +396,7 @@
                 },
                 "multiqc_config": {
                     "type": "string",
+                    "format": "file-path",
                     "description": "Custom config file to supply to MultiQC.",
                     "fa_icon": "fas fa-cog",
                     "hidden": true
@@ -243,13 +412,6 @@
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
                     "fa_icon": "fas fa-cog"
                 },
-                "tracedir": {
-                    "type": "string",
-                    "description": "Directory to keep pipeline Nextflow logs and reports.",
-                    "default": "${params.outdir}/pipeline_info",
-                    "fa_icon": "fas fa-cogs",
-                    "hidden": true
-                },
                 "validate_params": {
                     "type": "boolean",
                     "description": "Boolean whether to validate parameters against the schema at runtime",
@@ -257,22 +419,42 @@
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
                 },
-                "show_hidden_params": {
+                "validationShowHiddenParams": {
                     "type": "boolean",
                     "fa_icon": "far fa-eye-slash",
                     "description": "Show all params when using `--help`",
                     "hidden": true,
                     "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
+                },
+                "validationFailUnrecognisedParams": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-check-circle",
+                    "description": "Validation of parameters fails when an unrecognised parameter is found.",
+                    "hidden": true,
+                    "help_text": "By default, when an unrecognised parameter is found, it returns a warinig."
+                },
+                "validationLenientMode": {
+                    "type": "boolean",
+                    "fa_icon": "far fa-check-circle",
+                    "description": "Validation of parameters in lenient more.",
+                    "hidden": true,
+                    "help_text": "Allows string values that are parseable as numbers or booleans. For further information see [JSONSchema docs](https://github.com/everit-org/json-schema#lenient-mode)."
                 }
             }
         }
     },
     "allOf": [
         {
-            "$ref": "#/definitions/input_output_options"
+            "$ref": "#/definitions/segmentation_methods_and_options"
         },
         {
-            "$ref": "#/definitions/reference_genome_options"
+            "$ref": "#/definitions/image_preprocessing"
+        },
+        {
+            "$ref": "#/definitions/training_subset_options"
+        },
+        {
+            "$ref": "#/definitions/input_output_options"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
