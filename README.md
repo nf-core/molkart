@@ -1,7 +1,7 @@
 # ![nf-core/molkart](docs/images/nf-core-molkart_logo_light.png#gh-light-mode-only) ![nf-core/molkart](docs/images/nf-core-molkart_logo_dark.png#gh-dark-mode-only)
 
 [![GitHub Actions CI Status](https://github.com/nf-core/molkart/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/molkart/actions?query=workflow%3A%22nf-core+CI%22)
-[![GitHub Actions Linting Status](https://github.com/nf-core/molkart/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/molkart/actions?query=workflow%3A%22nf-core+linting%22)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/molkart/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/molkart/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/molkart/actions?query=workflow%3A%22nf-core+linting%22)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/molkart/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.10650749-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.10650749)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
@@ -91,8 +91,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/molkart for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use nf-core/molkart for your analysis, please cite it using the following doi: [10.5281/zenodo.10650749](https://doi.org/10.5281/zenodo.10650749)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
