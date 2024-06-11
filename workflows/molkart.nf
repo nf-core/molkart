@@ -344,7 +344,6 @@ workflow MOLKART {
             MOLKARTQC.out.qc.map{it[1]}
             .collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
     }
-    ch_multiqc_files.view()
 
     MULTIQC (
         ch_multiqc_files.collect(),
