@@ -1,21 +1,41 @@
 {
-    "versions": {
+    "multiqc_versions_single": {
         "content": [
             [
-                "versions.yml:md5,14e9a2661241abd828f4f06a7b5c222d"
+                "versions.yml:md5,ddbc971a8307f9b9b7b973714cde29d0"
             ]
         ],
-        "timestamp": "2024-01-09T23:02:49.911994"
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "24.04.2"
+        },
+        "timestamp": "2024-06-10T11:50:10.874341679"
     },
-    "sarscov2 single-end [fastqc] - stub": {
+    "multiqc_stub": {
         "content": [
             [
                 "multiqc_report.html",
                 "multiqc_data",
                 "multiqc_plots",
-                "versions.yml:md5,14e9a2661241abd828f4f06a7b5c222d"
+                "versions.yml:md5,ddbc971a8307f9b9b7b973714cde29d0"
             ]
         ],
-        "timestamp": "2024-01-09T23:03:14.524346"
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "24.04.2"
+        },
+        "timestamp": "2024-06-10T11:50:49.271943761"
+    },
+    "multiqc_versions_config": {
+        "content": [
+            [
+                "versions.yml:md5,ddbc971a8307f9b9b7b973714cde29d0"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "24.04.2"
+        },
+        "timestamp": "2024-06-10T11:50:34.046706025"
     }
 }

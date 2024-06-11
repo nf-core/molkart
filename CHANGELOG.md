@@ -3,6 +3,21 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2024.06.11]
+
+### `Added`
+
+- Template update 2.11 --> 2.14.1
+- Input validation change based on template update
+- Updated Cellpose, Mesmer and MultiQC
+- Updated pipeline tests to account for Cellpose3 changes
+- Introduced bug - new MultiQC does not read the custom files - fix ASAP
+- updated Zenodo doi to cite all versions
+
+### `Removed`
+
+- CUSTOMDUMPSOFTWAREVERSIONS based on template update
+
 ## v1.0.1dev - [2024.01.16]
 
 ### `Added`
