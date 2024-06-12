@@ -1,34 +1,6 @@
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    PRINT PARAMS SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-include { paramsSummaryLog; paramsSummaryMap; fromSamplesheet } from 'plugin/nf-validation'
-
-def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
-def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
-def summary_params = paramsSummaryMap(workflow)
-
-// Print parameter summary log to screen
-log.info logo + paramsSummaryLog(workflow) + citation
-
-WorkflowMolkart.initialise(params, log)
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONFIG FILES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-ch_multiqc_config                     = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-ch_multiqc_custom_config              = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
-ch_multiqc_logo                       = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
-ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT LOCAL MODULES/SUBWORKFLOWS
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
@@ -43,27 +15,17 @@ include { MOLKARTQCPNG   } from '../modules/local/molkartqcpng'
 include { SPOT2CELL      } from '../modules/local/spot2cell'
 include { TIFFH5CONVERT  } from '../modules/local/tiffh5convert'
 
-//
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
-//
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT NF-CORE MODULES/SUBWORKFLOWS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// MODULE: Installed directly from nf-core/modules
-//
 include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
 include { ILASTIK_MULTICUT            } from '../modules/nf-core/ilastik/multicut/main'
 include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelclassification/main'
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/nf-core/mindagap/duplicatefinder/main'
 include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { paramsSummaryMap            } from 'plugin/nf-validation'
+include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText      } from '../subworkflows/local/utils_nfcore_molkart_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,33 +33,42 @@ include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Info required for completion email and summary
-def multiqc_report = []
-
 workflow MOLKART {
 
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+
+    main:
+
     ch_versions = Channel.empty()
-
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-    //ch_from_samplesheet = Channel.fromSamplesheet("input")
-
-    ch_from_samplesheet = Channel.fromSamplesheet("input")
+    ch_multiqc_files = Channel.empty()
 
     // stain: "1" denotes membrane, stain: "0" denotes nuclear image
     // this is used to preserve the order later
-    ch_from_samplesheet
+    ch_samplesheet
         .map {
-            it[3] != [] ? tuple([id:it[0],stain:"1"], it[3]) : null
+            meta, nuclear, spots, membrane ->
+            def new_meta = meta.clone()
+            new_meta.stain = "1"
+            return membrane != [] ? [new_meta, membrane] : null
+            //it[3] != [] ? tuple([id:it[0],stain:"1"], it[3]) : null
         }.set { membrane_tuple } // if a membrane image is provided, return membrane image channel tuple (meta, path)
 
-    ch_from_samplesheet
-        .map { it -> tuple([id:it[0],stain:"0"], it[1]) }
+    ch_samplesheet
+        .map {
+            meta, nuclear, spots, membrane ->
+            def new_meta = meta.clone()
+            new_meta.stain = "0"
+            return [new_meta, nuclear]
+        }
         .set { image_tuple } // creates nuclear image channel tuple (meta, path)
 
-    ch_from_samplesheet
-        .map { it -> tuple([id:it[0]], it[2]) }
+    ch_samplesheet
+        .map {
+            meta, nuclear, spots, membrane ->
+            def new_meta = meta.clone()
+            return [meta, spots]
+        }
         .set { spot_tuple } // creates spot table channel tuple (meta, path)
 
     //
@@ -312,24 +283,54 @@ workflow MOLKART {
     ch_versions = ch_versions.mix(MOLKARTQC.out.versions)
 
     }
-    //
-    // MODULE: CUSTOM_DUMPSOFTWAREVERSIONS
-    //
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
+    //
+    // Collate and save software versions
+    //
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_pipeline_software_mqc_versions.yml',
+            sort: true,
+            newLine: true
+        ).set { ch_collated_versions }
 
     //
     // MODULE: MultiQC
     //
-    workflow_summary       = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
-    ch_workflow_summary    = Channel.value(workflow_summary)
-    methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    ch_methods_description = Channel.value(methods_description)
+    //workflow_summary       = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
+    //ch_workflow_summary    = Channel.value(workflow_summary)
+    //methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
+    //ch_methods_description = Channel.value(methods_description)
 
-    ch_multiqc_files = Channel.empty()
+    ch_multiqc_config        = Channel.fromPath(
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ?
+        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        Channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo ?
+        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        Channel.empty()
 
+    summary_params      = paramsSummaryMap(
+        workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+
+    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
+        file(params.multiqc_methods_description, checkIfExists: true) :
+        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+    ch_methods_description                = Channel.value(
+        methodsDescriptionText(ch_multiqc_custom_methods_description))
+
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_methods_description.collectFile(
+            name: 'methods_description_mqc.yaml',
+            sort: true
+        )
+    )
     if ( params.create_training_subset ){
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQCPNG.out.png_overview
@@ -343,9 +344,6 @@ workflow MOLKART {
             MOLKARTQC.out.qc.map{it[1]}
             .collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
     }
-    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 
     MULTIQC (
         ch_multiqc_files.collect(),
@@ -353,24 +351,10 @@ workflow MOLKART {
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList()
     )
-    multiqc_report = MULTIQC.out.report.toList()
-}
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    COMPLETION EMAIL AND SUMMARY
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-workflow.onComplete {
-    if (params.email || params.email_on_fail) {
-        NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-    }
-    NfcoreTemplate.dump_parameters(workflow, params)
-    NfcoreTemplate.summary(workflow, params, log)
-    if (params.hook_url) {
-        NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
-    }
+    emit:
+    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
 
 /*

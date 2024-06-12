@@ -7,17 +7,12 @@
                 "nf-core": {
                     "cellpose": {
                         "branch": "master",
-                        "git_sha": "0975c63a8ce4488c3259f595270b3f0d419abafe",
-                        "installed_by": ["modules"]
-                    },
-                    "custom/dumpsoftwareversions": {
-                        "branch": "master",
-                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
+                        "git_sha": "7c1543a730197e2f0b8ca5141f851c4a2b08bed6",
                         "installed_by": ["modules"]
                     },
                     "deepcell/mesmer": {
                         "branch": "master",
-                        "git_sha": "81fcaa73c7f1668a1c289464da88bf5eff582bcd",
+                        "git_sha": "298406de7fb599b3a7acfed1dddb606ec182d4b6",
                         "installed_by": ["modules"]
                     },
                     "ilastik/multicut": {
@@ -42,8 +37,27 @@
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
+                        "git_sha": "8f2062e7b4185590fb9f43c275381a31a6544fc0",
                         "installed_by": ["modules"]
+                    }
+                }
+            },
+            "subworkflows": {
+                "nf-core": {
+                    "utils_nextflow_pipeline": {
+                        "branch": "master",
+                        "git_sha": "5caf7640a9ef1d18d765d55339be751bb0969dfa",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "utils_nfcore_pipeline": {
+                        "branch": "master",
+                        "git_sha": "92de218a329bfc9a9033116eb5f65fd270e72ba3",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "utils_nfvalidation_plugin": {
+                        "branch": "master",
+                        "git_sha": "5caf7640a9ef1d18d765d55339be751bb0969dfa",
+                        "installed_by": ["subworkflows"]
                     }
                 }
             }

@@ -1,12 +1,18 @@
-# ![nf-core/molkart](docs/images/nf-core-molkart_logo_light.png#gh-light-mode-only) ![nf-core/molkart](docs/images/nf-core-molkart_logo_dark.png#gh-dark-mode-only)
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/nf-core-molkart_logo_dark.png">
+    <img alt="nf-core/molkart" src="docs/images/nf-core-molkart_logo_light.png">
+  </picture>
+</h1>
 
-[![GitHub Actions CI Status](https://github.com/nf-core/molkart/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/molkart/actions?query=workflow%3A%22nf-core+CI%22)
-[![GitHub Actions Linting Status](https://github.com/nf-core/molkart/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/molkart/actions?query=workflow%3A%22nf-core+linting%22)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/molkart/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.10650749-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.10650749)
+[![GitHub Actions CI Status](https://github.com/nf-core/molkart/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/molkart/actions/workflows/ci.yml)
+[![GitHub Actions Linting Status](https://github.com/nf-core/molkart/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/molkart/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/molkart/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.10650748-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.10650748)
+[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-[![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/nf-core/molkart)
+[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/molkart)
 
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23molkart-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/molkart)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
 
@@ -41,8 +47,11 @@ Quality control
 
 ## Usage
 
-> [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+:::note
+If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how
+to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
+with `-profile test` before running the workflow on actual data.
+:::
 
 First, prepare a samplesheet with your input data that looks as follows:
 
