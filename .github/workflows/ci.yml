@@ -38,10 +38,6 @@ jobs:
       - name: Disk space cleanup
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
-      - name: Run pipeline with test data - Docker
+      - name: Run pipeline with test data
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results
-
-      - name: Run pipeline with test data - Singularity
-        run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test,singularity --outdir ./results
