@@ -3,6 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.1.1dev - [2024.09.09]
+
+### `Added`
+
+- Added parameters necessary for create_training_subset to run with test.config for easier use.
+- For easier testing in Gitpod, moved the Seqera Container for MultiQC to test.config instead of modules.config (as the Biocontainer cannot be pulled in Gitpod).
+- .nf-test.log to .gitignore
+
+### `Fixed`
+
+- MultiQC report issue
+
 ## v1.1.0dev - [2024.06.11]
 
 ### `Added`
