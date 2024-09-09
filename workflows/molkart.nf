@@ -298,11 +298,6 @@ workflow MOLKART {
     //
     // MODULE: MultiQC
     //
-    //workflow_summary       = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
-    //ch_workflow_summary    = Channel.value(workflow_summary)
-    //methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    //ch_methods_description = Channel.value(methods_description)
-
     ch_multiqc_config        = Channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_custom_config = params.multiqc_config ?
