@@ -78,6 +78,32 @@ nextflow_pipeline {
         }
     }
 
+    test("Skip mindagap - clahe - cellpose") {
+
+        when {
+            params {
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
+                outdir = "$outputDir"
+                clahe_pyramid_tile = 368
+                segmentation_method = "cellpose"
+                skip_mindagap = true
+                }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(
+                path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
+                path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_filtered.tif"),
+                path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
+                path("$outputDir/anndata/mem_only_cellpose.adata"),
+                path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
+            ).match()
+            assert file("$outputDir/stack/mem_only_stack.ome.tif").exists()
+            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+        }
+    }
+
     test("Create training subset") {
 
         when {

@@ -42,6 +42,20 @@
         },
         "timestamp": "2024-06-11T11:47:51.185058276"
     },
+    "Skip mindagap - clahe - cellpose": {
+        "content": [
+            "mem_only_cellpose_mask.tif:md5,8faad3e707aba96d3b93d9419311e843",
+            "mem_only_cellpose_filtered.tif:md5,5c566683d7af62721415329799ad2ac1",
+            "cellxgene_mem_only_cellpose.csv:md5,925f5fabeeafc520fe839cabc79fa9ce",
+            "mem_only_cellpose.adata:md5,a0aa767a32929417f7f3253d12278f3a",
+            "mem_only.cellpose.spot_QC.csv:md5,e393966b17effbc05c1b93bb590d7e80"
+        ],
+        "meta": {
+            "nf-test": "0.8.4",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-09-10T15:07:17.243436747"
+    },
     "Create training subset": {
         "content": [
             "nuc_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1"
