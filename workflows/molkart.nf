@@ -82,10 +82,11 @@ workflow MOLKART {
     // MODULE: Apply Contrast-limited adaptive histogram equalization (CLAHE)
     // CLAHE is either applied to all images, or none.
     //
-    CLAHE(MINDAGAP_MINDAGAP.out.tiff)
+    clahe_in = params.skip_mindagap ? mindagap_in : MINDAGAP_MINDAGAP.out.tiff
+    CLAHE(clahe_in)
     ch_versions = ch_versions.mix(CLAHE.out.versions)
 
-    map_for_stacks = !params.skip_clahe ? CLAHE.out.img_clahe : MINDAGAP_MINDAGAP.out.tiff
+    map_for_stacks = params.skip_clahe ? clahe_in : CLAHE.out.img_clahe
 
     map_for_stacks
         .map {
@@ -148,8 +149,7 @@ workflow MOLKART {
     MINDAGAP_DUPLICATEFINDER(spot_tuple)
     ch_versions = ch_versions.mix(MINDAGAP_DUPLICATEFINDER.out.versions)
 
-    qc_spots = MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
-
+    qc_spots = params.skip_mindagap ? spot_tuple : MINDAGAP_DUPLICATEFINDER.out.marked_dups_spots
     //
     // MODULE: DeepCell Mesmer segmentation
     //
@@ -278,7 +278,6 @@ workflow MOLKART {
     qc_spots
         .combine(spot2cell_out, by: 0)
         .set{ molkartqc }
-
     MOLKARTQC(molkartqc)
     ch_versions = ch_versions.mix(MOLKARTQC.out.versions)
 
