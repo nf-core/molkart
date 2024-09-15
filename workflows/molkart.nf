@@ -298,11 +298,6 @@ workflow MOLKART {
     //
     // MODULE: MultiQC
     //
-    //workflow_summary       = WorkflowMolkart.paramsSummaryMultiqc(workflow, summary_params)
-    //ch_workflow_summary    = Channel.value(workflow_summary)
-    //methods_description    = WorkflowMolkart.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    //ch_methods_description = Channel.value(methods_description)
-
     ch_multiqc_config        = Channel.fromPath(
         "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_custom_config = params.multiqc_config ?
@@ -310,7 +305,7 @@ workflow MOLKART {
         Channel.empty()
     ch_multiqc_logo          = params.multiqc_logo ?
         Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
+        Channel.fromPath("$projectDir/assets/nf-core-molkart_logo_light.png", checkIfExists: true)
 
     summary_params      = paramsSummaryMap(
         workflow, parameters_schema: "nextflow_schema.json")
@@ -342,14 +337,16 @@ workflow MOLKART {
     } else {
         ch_multiqc_files = ch_multiqc_files.mix(
             MOLKARTQC.out.qc.map{it[1]}
-            .collectFile(name: 'final_QC.all_samples.csv', keepHeader: true, storeDir: "${params.outdir}/multiqc"))
+            .collectFile())
     }
 
     MULTIQC (
         ch_multiqc_files.collect(),
         ch_multiqc_config.toList(),
         ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList()
+        ch_multiqc_logo.toList(),
+        [],
+        []
     )
 
     emit:
