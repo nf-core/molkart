@@ -108,6 +108,11 @@
             "default": "",
             "fa_icon": "fas fa-adjust",
             "properties": {
+                "skip_mindagap": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-th-large",
+                    "description": "Skip mindagap if your data does not contain gaps between tiles."
+                },
                 "mindagap_boxsize": {
                     "type": "integer",
                     "default": 3,

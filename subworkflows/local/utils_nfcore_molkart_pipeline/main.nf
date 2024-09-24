@@ -170,7 +170,7 @@ def toolCitationText() {
     // Uncomment function in methodsDescriptionText to render in MultiQC report
     def citation_text = [
             "Tools used in the workflow included:",
-            "Mindagap (Guerreiro et al. 2023),",
+            params.skip_mindagap ? "" : "Mindagap (Guerreiro et al. 2023),",
             params.segmentation_method.split(',').contains('mesmer')   ? "Mesmer (Greenwald et al. 2021)," : "",
             params.segmentation_method.split(',').contains('ilastik')  ? "ilastik (Berg et al. 2019),"     : "",
             params.segmentation_method.split(',').contains('cellpose') ? "Cellpose (Stringer et al. 2021; Pachitariu et al 2022)," : "",
@@ -184,7 +184,7 @@ def toolBibliographyText() {
     // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
     // Uncomment function in methodsDescriptionText to render in MultiQC report
     def reference_text = [
-        "<li>Ricardo Guerreiro, Florian Wuennemann, & pvtodorov. (2023). ViriatoII/MindaGap: v0.0.3 (0.0.3). Zenodo. https://doi.org/10.5281/zenodo.8120559",
+        params.skip_mindagap ? "" : "<li>Ricardo Guerreiro, Florian Wuennemann, & pvtodorov. (2023). ViriatoII/MindaGap: v0.0.3 (0.0.3). Zenodo. https://doi.org/10.5281/zenodo.8120559",
         params.segmentation_method.split(',').contains('mesmer')   ? "<li>Greenwald, N.F., Miller, G., Moen, E. et al. Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning. Nat Biotechnol 40, 555–565 (2022). https://doi.org/10.1038/s41587-021-01094-0</li>" : "",
         params.segmentation_method.split(',').contains('ilastik')  ? "<li>Berg, S., Kutra, D., Kroeger, T. et al. ilastik: interactive machine learning for (bio)image analysis. Nat Methods 16, 1226–1232 (2019). https://doi.org/10.1038/s41592-019-0582-9</li>" : "",
         params.segmentation_method.split(',').contains('cellpose') ? "<li>Stringer, C., Wang, T., Michaelos, M. et al. Cellpose: a generalist algorithm for cellular segmentation. Nat Methods 18, 100–106 (2021). https://doi.org/10.1038/s41592-020-01018-x</li>" : "",
