@@ -22,6 +22,7 @@ include { ILASTIK_PIXELCLASSIFICATION } from '../modules/nf-core/ilastik/pixelcl
 include { MINDAGAP_DUPLICATEFINDER    } from '../modules/nf-core/mindagap/duplicatefinder/main'
 include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
+include { STARDIST                    } from '../modules/nf-core/stardist/main'
 include { paramsSummaryMap            } from 'plugin/nf-validation'
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -112,6 +113,10 @@ workflow MOLKART {
             [it[0],tuple(it[1],it[2])]
         }.set{ create_stack_in }
 
+    grouped_map_stack.map{
+        [it[0], it[1]]
+    }.set{ nuclear_only } // for segmentation options that only accept one channel
+
     //
     // MODULE: Stack channels if membrane image provided for segmentation
     //
@@ -165,6 +170,18 @@ workflow MOLKART {
         segmentation_masks = segmentation_masks
             .mix(DEEPCELL_MESMER.out.mask
                 .combine(Channel.of('mesmer')))
+    }
+    //
+    // MODULE: Stardist segmentation
+    //
+    if (params.segmentation_method.split(',').contains('stardist')) {
+        STARDIST(
+            nuclear_only,
+            )
+        ch_versions = ch_versions.mix(STARDIST.out.versions)
+        segmentation_masks = segmentation_masks
+            .mix(STARDIST.out.mask
+                .combine(Channel.of('stardist')))
     }
     //
     // MODULE: Cellpose segmentation
