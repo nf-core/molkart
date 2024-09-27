@@ -21,13 +21,15 @@
         },
         "timestamp": "2024-06-11T11:48:45.961121703"
     },
-    "Nuclear channel, mesmer and cellpose, without clahe": {
+    "Nuclear channel, stardist, mesmer and cellpose, without clahe": {
         "content": [
             "nuc_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
             "nuc_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
             "nuc_only_cellpose_mask.tif:md5,29947c9cc51a9dd791452710e00ea6d6",
             "nuc_only_mesmer_mask.tif:md5,e9719f53651b4bf76a37e9374db7f4e4",
+            "nuc_only_stardist_mask.tif:md5,89baf7c188fd640f236dbf8b116664e5",
             "nuc_only_mesmer_filtered.tif:md5,5a6761c80ea65d41ce00d06d3414c96b",
+            "nuc_only_stardist_filtered.tif:md5,bd988411c7c6221d304f4cf398503bf1",
             "nuc_only_cellpose_filtered.tif:md5,29947c9cc51a9dd791452710e00ea6d6",
             "cellxgene_nuc_only_cellpose.csv:md5,87b0816ae6fca91a789d08528d2deb87",
             "cellxgene_nuc_only_mesmer.csv:md5,425cfb90a60b564e4bfff09ac5ea94c7",
@@ -38,9 +40,9 @@
         ],
         "meta": {
             "nf-test": "0.8.4",
-            "nextflow": "24.04.2"
+            "nextflow": "24.04.4"
         },
-        "timestamp": "2024-06-11T11:47:51.185058276"
+        "timestamp": "2024-09-27T08:46:57.464933353"
     },
     "Skip mindagap - clahe - cellpose": {
         "content": [

@@ -96,6 +96,25 @@
                     "description": "Provide ilastik with a multicut project to create segmentation masks.",
                     "format": "file-path",
                     "fa_icon": "fas fa-cut"
+                },
+                "stardist_model": {
+                    "type": "string",
+                    "default": "2D_versatile_fluo",
+                    "fa_icon": "fas fa-user-cog",
+                    "enum": ["2D_versatile_fluo", "2D_paper_dsb2018", "2D_versatile_he"],
+                    "description": "Model to use for segmentation with stardist."
+                },
+                "stardist_n_tiles_x": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Number of tiles on the X axis for Stardist.",
+                    "fa_icon": "fas fa-th"
+                },
+                "stardist_n_tiles_y": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Number of tiles on the Y axis for Stardist.",
+                    "fa_icon": "fas fa-th"
                 }
             },
             "required": ["segmentation_method"],

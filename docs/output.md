@@ -73,6 +73,8 @@ Create stack is a local module used to merge images into a stack as preparation 
     - `*_ilastik_mask.tif`: Segmentation masks created by ilastik's Boundary prediction with Multicut workflow.
   - `mesmer/`:
     - `*_mesmer_mask.tif`: Segmentation masks created by Mesmer.
+  - `stardist/`:
+    - `*_stardist_mask.tif`: Nuclear segmentation masks created by Stardist.
   - `filtered_masks/` - `*_method_filtered.tif`: Segmentation masks filtered based on provided area limits.
   </details>
 
@@ -81,6 +83,8 @@ Create stack is a local module used to merge images into a stack as preparation 
 [ilastik](https://www.ilastik.org) is an interactive learning and segmentation toolkit, with its application here envisioned as - create training subset (`hdf5`), create Pixel Classifier and Boundary prediction with Multicut projects with specified parameters. Within Molkart, the project files can be given and batch processing would be applied on the full images.
 
 [Mesmer](https://deepcell.readthedocs.io/en/master/API/deepcell.applications.html#mesmer) is a segmentation tool that provides pretrained models for whole-cell and nuclear segmentation.
+
+[Stardist](https://github.com/stardist/stardist) is an object detection tool using star-convex shapes.
 
 ### Spot2cell
 

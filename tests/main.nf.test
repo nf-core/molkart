@@ -6,7 +6,7 @@ nextflow_pipeline {
     tag "pipeline"
     tag "pipeline_molkart"
 
-    test("Nuclear channel, mesmer and cellpose, without clahe") {
+    test("Nuclear channel, stardist, mesmer and cellpose, without clahe") {
 
         when {
             params {
@@ -16,7 +16,7 @@ nextflow_pipeline {
                 mindagap_tilesize = 90
                 mindagap_boxsize = 7
                 mindagap_loopnum = 100
-                segmentation_method = "cellpose,mesmer"
+                segmentation_method = "cellpose,mesmer,stardist"
             }
         }
 
@@ -27,7 +27,9 @@ nextflow_pipeline {
                 path("$outputDir/mindagap/nuc_only_spots_markedDups.txt"),
                 path("$outputDir/segmentation/cellpose/nuc_only_cellpose_mask.tif"),
                 path("$outputDir/segmentation/mesmer/nuc_only_mesmer_mask.tif"),
+                path("$outputDir/segmentation/stardist/nuc_only_stardist_mask.tif"),
                 path("$outputDir/segmentation/filtered_masks/nuc_only_mesmer_filtered.tif"),
+                path("$outputDir/segmentation/filtered_masks/nuc_only_stardist_filtered.tif"),
                 path("$outputDir/segmentation/filtered_masks/nuc_only_cellpose_filtered.tif"),
                 path("$outputDir/spot2cell/cellxgene_nuc_only_cellpose.csv"),
                 path("$outputDir/spot2cell/cellxgene_nuc_only_mesmer.csv"),
