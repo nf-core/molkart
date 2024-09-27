@@ -32,7 +32,7 @@ Image preprocessing
 
 Cell segmentation
 
-- Apply cell segmentation based on provided images, available options are: - [`Cellpose`](https://www.cellpose.org/) - [`Mesmer`](https://deepcell.readthedocs.io/en/master/API/deepcell.applications.html#mesmer) - [`ilastik`](https://www.ilastik.org/)
+- Apply cell segmentation based on provided images, available options are: - [`Cellpose`](https://www.cellpose.org/) - [`Mesmer`](https://deepcell.readthedocs.io/en/master/API/deepcell.applications.html#mesmer) - [`ilastik`](https://www.ilastik.org/) - [`Stardist`](https://github.com/stardist/stardist)
 - Filter cells based on cell size to remove artifacts
 
 Spot processing
