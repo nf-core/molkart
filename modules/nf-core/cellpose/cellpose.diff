@@ -1,0 +1,23 @@
+Changes in module 'nf-core/cellpose'
+Changes in 'cellpose/main.nf':
+--- modules/nf-core/cellpose/main.nf
++++ modules/nf-core/cellpose/main.nf
+@@ -1,8 +1,10 @@
+ process CELLPOSE {
+     tag "$meta.id"
+     label 'process_medium'
++    label 'process_gpu'
+ 
+-    container "docker.io/biocontainers/cellpose:3.0.1_cv1"
++    container "${ task.ext.use_gpu ? 'docker.io/kbestak/cellpose:3.0.1_cuda12.2.0' : 
++        'docker.io/biocontainers/cellpose:3.0.1_cv1'}"
+ 
+     input:
+     tuple val(meta), path(image)
+
+'modules/nf-core/cellpose/meta.yml' is unchanged
+'modules/nf-core/cellpose/tests/main.nf.test' is unchanged
+'modules/nf-core/cellpose/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/cellpose/tests/nextflow_wflows.config' is unchanged
+'modules/nf-core/cellpose/tests/tags.yml' is unchanged
+************************************************************
