@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated pipeline tests to account for Cellpose3 changes
 - Introduced bug - new MultiQC does not read the custom files - fix ASAP
 - updated Zenodo doi to cite all versions
+- GPU support for Cellpose
 
 ### `Removed`
 
