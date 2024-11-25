@@ -23,7 +23,6 @@ include { MINDAGAP_DUPLICATEFINDER    } from '../modules/nf-core/mindagap/duplic
 include { MINDAGAP_MINDAGAP           } from '../modules/nf-core/mindagap/mindagap/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { STARDIST                    } from '../modules/nf-core/stardist/main'
-include { paramsSummaryMap            } from 'plugin/nf-validation'
 include { paramsSummaryMultiqc        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText      } from '../subworkflows/local/utils_nfcore_molkart_pipeline'
