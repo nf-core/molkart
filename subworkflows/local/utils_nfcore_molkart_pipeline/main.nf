@@ -170,7 +170,7 @@ def toolCitationText() {
     // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
     // Uncomment function in methodsDescriptionText to render in MultiQC report
     def citation_text = [
-            "Tools used in the workflow included:",
+            "Tools used in the workflow included: ",
             params.skip_mindagap ? "" : "Mindagap (Guerreiro et al. 2023),",
             params.segmentation_method.split(',').contains('mesmer')   ? "Mesmer (Greenwald et al. 2021)," : "",
             params.segmentation_method.split(',').contains('ilastik')  ? "ilastik (Berg et al. 2019),"     : "",
