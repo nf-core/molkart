@@ -96,6 +96,7 @@ mesmer_image_mpp: 0.138
 mesmer_compartment: "whole-cell"
 ilastik_pixel_project: null
 ilastik_multicut_project: null
+skip_mindagap: false
 mindagap_tilesize: 2144
 mindagap_boxsize: 3
 mindagap_loopnum: 40
@@ -126,6 +127,57 @@ After training a Cellpose 2.0 model, or creating ilastik Pixel Classification an
 ```bash
 nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --segmentation_method cellpose,ilastik --cellpose_custom_model /path/to/model --ilastik_pixel_project /path/to/pixel_classifier.ilp --ilastik_multicut_project /path/to/multicut.ilp
 ```
+
+### Skipping preprocessing steps
+
+:::tip If gaps are not present in the input data, MINDAGAP functionality can be turned off. :::
+
+Depending on the usecase, Mindagap (both MINDAGAP/MINDAGAP and MINDAGAP/DUPLICATEFINDER) can be skipped if input data does not contain gaps. It should be noted the default action is to perform Mindagap, if not needed, it can be skipped by specifying the `skip_mindagap` parameter.
+
+:::tip If signal intensity is even across the input image, CLAHE can be skipped. Usage of CLAHE is a recommendation for membrane channels with highly specific, but uneven signal. :::
+
+Contrast-limited adaptive histogram equalization (CLAHE) is run by default. Care should be taken to provide correct parameters for local histogram adjustment. If signal intensity is even across the input image, CLAHE can be skipped by specifying the `skip_clahe` parameter.
+
+### GPU acceleration
+
+:::warning{title="Experimental feature"} This is an experimental feature and may produce errors. If you encounter any issues, please report them on the nf-core/molkart GitHub repository. :::
+
+- GPU acceleration has only been tested with Docker
+- CUDA 12.2 is required.
+
+Tools with GPU acceleration support within the pipeline:
+
+- Cellpose
+
+To utilize GPU acceleration, you need to specify the gpu profile. This will make the tool steps use cuda-enabled environments and it will tell the tools to use the GPU. All processes which support GPU acceleration are marked with the process_gpu label.
+
+You also need to make sure that the tasks are run on a machine with a GPU. If all tasks are run on a machine with a GPU, no further action is needed. If you are running the pipeline on a slurm cluster, where there is dedicated queue for GPU jobs, you need additional configuration that might look like this:
+
+```
+process {
+  withLabel:process_gpu {
+    queue = '<gpu-queue>'
+    clusterOptions = '--gpus 1'
+  }
+}
+```
+
+:::tip More information on how to configure Slurm in Nextflow can be found here. Depending on your cluster configuration, you might need to adjust the clusterOptions to one of the following:
+
+    --gpus 1 (as in the example above)
+    --gpus-per-node=1
+    --gres=gpu:1
+
+:::
+
+:::tip If your jobs get assigned to the correct nodes, but the GPU is not utilized, you might need to add the following configuration:
+`singularity.runOptions = '--no-mount tmp --writable-tmpfs --nv --env CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES --env ROCR_VISIBLE_DEVICES=$ROCR_VISIBLE_DEVICES --env ZE_AFFINITY_MASK=$ZE_AFFINITY_MASK --env NVIDIA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES`
+
+The first part (--no-mount tmp --writable-tmpfs --nv) is set by default in the gpu profile. The rest of this configuration is needed in some cases to make the GPU visible to the container. :::
+
+For different executors, the configuration might look different. Once a wider range of users have tested the GPU support, we will provide more detailed instructions for different executors.
+
+:::tip Many thanks to the nf-core/scdownstream pipeline contributors with providing detailed explanations on having gpu profiles within nf-core pipelines :::
 
 ### Updating the pipeline
 
@@ -188,6 +240,8 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer. Currently not supported.
+- `gpu`
+  - Configuration profile for GPU acceleration. Note the limitations and additional configurations needed for GPU usage. Currently only supporting Cellpose.
 
 ### `-resume`
 

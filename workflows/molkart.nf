@@ -131,8 +131,8 @@ workflow MOLKART {
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
         tiff_crop = stack_mix.join(CROPHDF5.out.crop_summary)
         CROPTIFF(
-            tiff_crop.map(it -> tuple(it[0],it[1])),
-            tiff_crop.map(it -> tuple(it[0],it[2])),
+            tiff_crop.map{ it -> tuple(it[0],it[1]) },
+            tiff_crop.map{ it -> tuple(it[0],it[2]) },
             )
         ch_versions = ch_versions.mix(CROPTIFF.out.versions)
         MOLKARTQCPNG(CROPTIFF.out.overview.map{
@@ -221,8 +221,8 @@ workflow MOLKART {
                 .combine(Channel.of('ilastik')))
     }
     segmentation_masks.map{
-        meta, mask, segmentation ->
-        new_meta = meta.clone()
+        def (meta, mask, segmentation) = it
+        def new_meta = meta.clone()
         new_meta.segmentation = segmentation
         [new_meta, mask]
     }.set { matched_segmasks }
@@ -243,16 +243,16 @@ workflow MOLKART {
     qc_spots
         .combine(filtered_masks, by: 0)
         .map {
-            meta, spots_table, mask, segmethod ->
-            new_meta = meta.clone()
+            def (meta, spots_table, mask, segmethod) = it
+            def new_meta = meta.clone()
             new_meta.segmentation = segmethod
             [new_meta, spots_table, mask]
             }
         .set { dedup_spots }
 
     SPOT2CELL(
-        dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> tuple(it[0],it[2]))
+        dedup_spots.map{ it -> tuple(it[0],it[1]) },
+        dedup_spots.map{ it -> tuple(it[0],it[2]) }
     )
     ch_versions = ch_versions.mix(SPOT2CELL.out.versions)
 
