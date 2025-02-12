@@ -7,37 +7,37 @@
                 "nf-core": {
                     "cellpose": {
                         "branch": "master",
-                        "git_sha": "7c1543a730197e2f0b8ca5141f851c4a2b08bed6",
+                        "git_sha": "5bca12d66725b17a486edc24d1d2381d4170da25",
                         "installed_by": ["modules"]
                     },
                     "deepcell/mesmer": {
                         "branch": "master",
-                        "git_sha": "298406de7fb599b3a7acfed1dddb606ec182d4b6",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
                         "installed_by": ["modules"]
                     },
                     "ilastik/multicut": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "a4d916a39231897a49c903089a548704c09b8ef3",
                         "installed_by": ["modules"]
                     },
                     "ilastik/pixelclassification": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "a4d916a39231897a49c903089a548704c09b8ef3",
                         "installed_by": ["modules"]
                     },
                     "mindagap/duplicatefinder": {
                         "branch": "master",
-                        "git_sha": "cdc42519bf7d6d2cac9b5f14cb56e0060477c69c",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
                     },
                     "mindagap/mindagap": {
                         "branch": "master",
-                        "git_sha": "08108058ea36a63f141c25c4e75f9f872a5b2296",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "f0719ae309075ae4a291533883847c3f7c441dad",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
                     }
                 }
