@@ -246,11 +246,7 @@ workflow MOLKART {
             [new_meta, spots_table, mask]
             }
         .set { dedup_spots }
-
-    SPOT2CELL(
-        dedup_spots.map(it -> tuple(it[0],it[1])),
-        dedup_spots.map(it -> tuple(it[0],it[2]))
-    )
+    SPOT2CELL(dedup_spots)
     ch_versions = ch_versions.mix(SPOT2CELL.out.versions)
 
     //
