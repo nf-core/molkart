@@ -92,6 +92,9 @@ cellpose_pretrained_model: "cyto"
 cellpose_custom_model: null
 cellpose_flow_threshold: 0.4
 cellpose_edge_exclude: true
+stardist_model: "2D_versatile_fluo"
+stardist_n_tiles_x: 3
+stardist_n_tiles_y: 3
 mesmer_image_mpp: 0.138
 mesmer_compartment: "whole-cell"
 ilastik_pixel_project: null
@@ -120,6 +123,10 @@ To run the pipeline so that the training subset is created with default values, 
 ```bash
 nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --create_training_subset
 ```
+
+:::note
+Stardist segmentation currently only support nuclear segmentation and the additional marker will not be used.
+:::
 
 After training a Cellpose 2.0 model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
 
