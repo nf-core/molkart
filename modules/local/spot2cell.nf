@@ -6,8 +6,7 @@ process SPOT2CELL{
     container 'ghcr.io/schapirolabor/molkart-local:v0.0.4'
 
     input:
-    tuple val(meta) , path(spot_table)
-    tuple val(meta2), path(cell_mask)
+    tuple val(meta), path(spot_table), path(cell_mask)
 
     output:
     tuple val(meta), path("*.csv"), emit: cellxgene_table

@@ -17,13 +17,12 @@ process CREATE_ANNDATA {
     script:
     def args   = task.ext.args   ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-
     """
     create_anndata.py \\
         --input ${spot2cell} \\
         --spatial_cols X_centroid Y_centroid \\
         --output ${prefix}.adata \\
-        $args
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

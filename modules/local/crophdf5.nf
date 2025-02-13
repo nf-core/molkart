@@ -16,15 +16,13 @@ process CROPHDF5 {
     task.ext.when == null || task.ext.when
 
     script:
-    def args   = task.ext.args   ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
+    def args = task.ext.args ?: ''
     """
     crop_hdf5.py \\
-        --input $image_stack \\
+        --input ${image_stack} \\
         --output . \\
-        --num_channels $num_channels \\
-        $args
+        --num_channels ${num_channels} \\
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
