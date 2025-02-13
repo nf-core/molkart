@@ -44,31 +44,21 @@ workflow MOLKART {
 
     // stain: "1" denotes membrane, stain: "0" denotes nuclear image
     // this is used to preserve the order later
-    ch_samplesheet
-        .map {
-            meta, nuclear, spots, membrane ->
-            def new_meta = meta.clone()
-            new_meta.stain = "1"
-            return membrane != [] ? [new_meta, membrane] : null
-            //it[3] != [] ? tuple([id:it[0],stain:"1"], it[3]) : null
-        }.set { membrane_tuple } // if a membrane image is provided, return membrane image channel tuple (meta, path)
-
-    ch_samplesheet
-        .map {
-            meta, nuclear, spots, membrane ->
-            def new_meta = meta.clone()
-            new_meta.stain = "0"
-            return [new_meta, nuclear]
+    membrane_tuple = ch_samplesheet
+        .filter { it[3] } // filter samples with membrane
+        .map {meta, _nuclear, _spots, membrane ->
+            [meta + [stain: '1'], membrane]
         }
-        .set { image_tuple } // creates nuclear image channel tuple (meta, path)
 
-    ch_samplesheet
-        .map {
-            meta, nuclear, spots, membrane ->
-            def new_meta = meta.clone()
-            return [meta, spots]
+    image_tuple = ch_samplesheet
+        .map {meta, nuclear, _spots, _membrane ->
+            [meta + [stain: '0'], nuclear]
         }
-        .set { spot_tuple } // creates spot table channel tuple (meta, path)
+
+    spot_tuple = ch_samplesheet
+        .map {meta, _nuclear, spots, _membrane ->
+            [meta, spots]
+        }
 
     //
     // MODULE: Run Mindagap_mindagap
@@ -88,27 +78,25 @@ workflow MOLKART {
     map_for_stacks = params.skip_clahe ? clahe_in : CLAHE.out.img_clahe
 
     map_for_stacks
-        .map {
-            meta, tiff -> [meta.subMap("id"), tiff, meta.stain] // creates a channel containing only the sample id in meta, path to preprocessed image and the stain value ("0" or "1")
-        }.groupTuple() // combines based on meta
+        .map { meta, tiff ->
+            [ meta.subMap("id"), tiff, meta.stain ]
+        }
+        .groupTuple(by: 0)
+        .map { id, tiffs, stains ->
+            def sorted = [tiffs, stains].transpose().sort { it[1] }
+            def nuclear = sorted[0]
+            def membrane = sorted.size() > 1 ? sorted[1] : null
+            membrane ? [id, nuclear[0], membrane[0]] : [id, nuclear[0]]
+        }
+        .set{ grouped_map_stack }
+
+    grouped_map_stack.filter { !it[2] } // for rows without a present membrane image, set channel to no_stack
+        .set{ no_stack }
+
+    grouped_map_stack.filter{ it[2] }      // for rows where the membrane image is present, create a list of images to be stacked
         .map{
-            meta, paths, stains -> [meta, [paths[0], stains[0]], [paths[1], stains[1]]] // reorganizes to match path and stain
-        }.map{
-            meta, stain1, stain2 -> [meta, [stain1, stain2].sort{ it[1] }] // sort by stain index (0 for nuclear, 1 for other)
-        }.map{
-            meta, list -> [meta, list[0], list[1]] // sorted will have null as first list
-        }.map{
-            it[1][0] != null ? [it[0],it[1][0],it[2][0]] : [it[0],it[2][0]] // if null, only return the valid nuclear path value, otherwise return both nuclear and membrane paths
-        }.set { grouped_map_stack }
-
-    grouped_map_stack.filter{ // for rows without a present membrane image, set channel to no_stack
-        it[2] == null
-        }.set{ no_stack }
-
-    grouped_map_stack.filter{ // for rows where the membrane image is present, make it compliant with STACK inputs
-        it[2] != null
-        }.map{
-            [it[0],tuple(it[1],it[2])]
+            id, nuclear, membrane ->
+            [id, tuple(nuclear, membrane)]
         }.set{ create_stack_in }
 
     //
@@ -219,7 +207,7 @@ workflow MOLKART {
     }
     segmentation_masks.map{
         meta, mask, segmentation ->
-        new_meta = meta.clone()
+        def new_meta = meta.clone()
         new_meta.segmentation = segmentation
         [new_meta, mask]
     }.set { matched_segmasks }
@@ -241,7 +229,7 @@ workflow MOLKART {
         .combine(filtered_masks, by: 0)
         .map {
             meta, spots_table, mask, segmethod ->
-            new_meta = meta.clone()
+            def new_meta = meta.clone()
             new_meta.segmentation = segmethod
             [new_meta, spots_table, mask]
             }
