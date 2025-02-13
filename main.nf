@@ -15,7 +15,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { MOLKART  } from './workflows/molkart'
+include { MOLKART                 } from './workflows/molkart'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_molkart_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_molkart_pipeline'
 
