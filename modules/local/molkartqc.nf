@@ -20,13 +20,13 @@ process MOLKARTQC{
 
     """
     collect_QC.py \\
-        --cellxgene $cellxgene_table \\
-        --spots $spot_table \\
-        --sample_id $prefix \\
-        --segmentation_method $segmethod \\
-        --filterqc $filterqc \\
+        --cellxgene ${cellxgene_table} \\
+        --spots ${spot_table} \\
+        --sample_id ${prefix} \\
+        --segmentation_method ${segmethod} \\
+        --filterqc ${filterqc} \\
         --outdir . \\
-        $args
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -35,7 +35,6 @@ process MOLKARTQC{
     """
 
     stub:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """

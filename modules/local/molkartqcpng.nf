@@ -18,9 +18,9 @@ process MOLKARTQCPNG {
 
     """
     collect_QC.py \\
-        --png_overview $png \\
+        --png_overview ${png} \\
         --outdir . \\
-        $args
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -29,9 +29,7 @@ process MOLKARTQCPNG {
     """
 
     stub:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
+    def prefix = task.ext.prefix ?: ( png.name.toString().tokenize('.')[0] )
     """
     touch ${prefix}.png
 

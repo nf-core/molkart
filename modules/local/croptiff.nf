@@ -16,12 +16,12 @@ process CROPTIFF {
     task.ext.when == null || task.ext.when
 
     script:
-    def args   = task.ext.args   ?: ''
+    def args = task.ext.args ?: ''
     """
     crop_tiff.py \\
-        --input $image_stack \\
-        --crop_summary $crop_summary \\
-        $args
+        --input ${image_stack} \\
+        --crop_summary ${crop_summary} \\
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

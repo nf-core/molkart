@@ -17,12 +17,11 @@ process CREATE_STACK {
     script:
     def args   = task.ext.args   ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-
     """
     stack.py \\
         --input ${image} \\
         --output ${prefix}.ome.tif \\
-        $args
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

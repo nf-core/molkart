@@ -15,15 +15,13 @@ process TIFFH5CONVERT {
     task.ext.when == null || task.ext.when
 
     script:
-    def args   = task.ext.args   ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
+    def args = task.ext.args ?: ''
     """
     crop_hdf5.py \\
-        --input $image \\
+        --input ${image} \\
         --output . \\
-        --num_channels $num_channels \\
-        $args
+        --num_channels ${num_channels} \\
+        ${args}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
