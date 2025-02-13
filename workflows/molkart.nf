@@ -130,10 +130,7 @@ workflow MOLKART {
         ch_versions = ch_versions.mix(CROPHDF5.out.versions)
         // Combine images with crop_summary for making the same training tiff stacks as ilastik
         tiff_crop = stack_mix.join(CROPHDF5.out.crop_summary)
-        CROPTIFF(
-            tiff_crop.map(it -> tuple(it[0],it[1])),
-            tiff_crop.map(it -> tuple(it[0],it[2])),
-            )
+        CROPTIFF(tiff_crop)
         ch_versions = ch_versions.mix(CROPTIFF.out.versions)
         MOLKARTQCPNG(CROPTIFF.out.overview.map{
                     tuple('matchkey', it[1])

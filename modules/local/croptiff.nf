@@ -5,8 +5,7 @@ process CROPTIFF {
     container 'ghcr.io/schapirolabor/molkart-local:v0.0.4'
 
     input:
-    tuple val(meta), path(image_stack)
-    tuple val(meta), path(crop_summary)
+    tuple val(meta), path(image_stack), path(crop_summary)
 
     output:
     tuple val(meta), path("*.tiff"), emit: crop_tiff
@@ -18,8 +17,6 @@ process CROPTIFF {
 
     script:
     def args   = task.ext.args   ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
     """
     crop_tiff.py \\
         --input $image_stack \\
