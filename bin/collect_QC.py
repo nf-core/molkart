@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-
+#### Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license.
 #### This script takes regionprops_tabe output from mcquant and the raw spot tables from Resolve bioscience as input
 #### and calculates some QC metrics for masks and spot assignments
-### If png files are provided, it combines them into one
+#### If png files are provided, it combines them into one
 
 import argparse
 import pandas as pd

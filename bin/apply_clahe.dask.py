@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+## Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license.
 from __future__ import print_function, division
 from distutils.log import error
 import time

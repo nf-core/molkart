@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+## Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license.
 import pandas as pd
 import numpy as np
 from anndata import AnnData
