@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+## Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license
 import tifffile
 import numpy as np
 import h5py
