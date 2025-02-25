@@ -3,20 +3,32 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.1.0dev - [2024.06.11]
+## v1.1.0
 
-### `Added`
+### Credits
 
-- Template update 2.11 --> 2.14.1
-- Input validation change based on template update
-- Updated Cellpose, Mesmer and MultiQC
-- Updated pipeline tests to account for Cellpose3 changes
-- Introduced bug - new MultiQC does not read the custom files - fix ASAP
-- updated Zenodo doi to cite all versions
+Contributions to the release:
 
-### `Removed`
+- [Kresimir Bestak](https://github.com/kbestak)
+- [Florian Wuennemann](https://github.com/flowuenne)
 
-- CUSTOMDUMPSOFTWAREVERSIONS based on template update
+### Enhancements & fixes
+
+- [PR #71](https://github.com/nf-core/molkart/pull/71), [PR #88](https://github.com/nf-core/molkart/pull/88), [PR #94](https://github.com/nf-core/molkart/pull/94) - template updates from 2.11.1 to 3.2.0
+- [PR #76](https://github.com/nf-core/molkart/pull/76) - Fix issue with custom content in MultiQC output
+- [PR #78](https://github.com/nf-core/molkart/pull/78) - Allow for Mindagap to be skipped
+- [PR #98](https://github.com/nf-core/molkart/pull/98) - Update all nf-core modules
+- [PR #81](https://github.com/nf-core/molkart/pull/81) - Add Stardist as a segmentation method
+- [PR #99](https://github.com/nf-core/molkart/pull/99), [PR #100](https://github.com/nf-core/molkart/pull/100) - Clean up code to adhere to language server standards and add author and licence information to all bin scripts
+
+### Parameters
+
+| Old parameter | New parameter          |
+| ------------- | ---------------------- |
+|               | `--stardist_model`     |
+|               | `--stardist_n_tiles_x` |
+|               | `--stardist_n_tiles_y` |
+|               | `--skip_mindagap`      |
 
 ## v1.0.1dev - [2024.01.16]
 
