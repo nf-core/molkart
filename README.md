@@ -18,7 +18,7 @@
 
 ## Introduction
 
-**nf-core/molkart** is a pipeline for processing Molecular Cartography data from Resolve Bioscience (combinatorial FISH). It takes as input a table of FISH spot positions (x,y,z,gene), a corresponding DAPI image (`tiff` format) and optionally a membrane staining image in the `tiff` format. nf-core/molkart performs end-to-end processing of the data including image processing, QC filtering of spots, cell segmentation, spot-to-cell assignment and reports quality metrics such as the spot assignment rate, average spots per cell and segmentation mask size ranges.
+**nf-core/molkart** is a pipeline for processing Molecular Cartography data from Resolve Bioscience (combinatorial FISH). It takes as input a table of FISH spot positions (x,y,z,gene), a corresponding DAPI image (`TIFF` format) and optionally an additional staining image in the `TIFF` format. nf-core/molkart performs end-to-end processing of the data including image processing, QC filtering of spots, cell segmentation, spot-to-cell assignment and reports quality metrics such as the spot assignment rate, average spots per cell and segmentation mask size ranges.
 
 <p align="center">
     <img title="Molkart Workflow" src="docs/images/molkart_workflow.png" width=100%>
@@ -62,7 +62,7 @@ sample,nuclear_image,spot_locations,membrane_image
 sample0,sample0_DAPI.tiff,sample0_spots.txt,sample0_WGA.tiff
 ```
 
-Each row represents an FOV (field-of-view). Columns represent the sample ID (all must be unique), the path to the respective nuclear image, the spot table, and optionally the path to the respective membrane image (or any second image).
+Each row represents an FOV (field-of-view). Columns represent the sample ID (all must be unique), the path to the respective nuclear image, the spot table, and optionally the path to the respective membrane image (or any additional image to improve segmentation).
 
 Now, you can run the pipeline using all default values with:
 
