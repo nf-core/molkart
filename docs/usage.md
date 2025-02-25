@@ -28,12 +28,12 @@ SAMPLE3,SAMPLE3.nucleus.tiff,SAMPLE3.spots.txt,SAMPLE3.membrane.tiff
 SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 ```
 
-| Column           | Description                                                                                                                                                  |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces. |
-| `nuclear_image`  | Full path to nuclear image (DAPI, Hoechst).                                                                                                                  |
-| `spot_table`     | Full path to tsv or txt spot table provided by Resolve. Separator must be `\t`.                                                                              |
-| `membrane_image` | Full path to membrane image (e.g WGA) or second channel to help with segmentation (optional).                                                                |
+| Column           | Description                                                                                                                                                                        |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces.                       |
+| `nuclear_image`  | Full path to the nuclear stain image (DAPI, Hoechst). Must be in **TIFF** format (`.tiff` or `.tif`).                                                                              |
+| `spot_table`     | Full path to the **spot table** (`.tsv` or `.txt`). The table must contain **x, y, z position columns and a gene column**, with **no header** and **tab-separated values (`\t`)**. |
+| `membrane_image` | Full path to the membrane stain image (e.g., WGA) or a second channel to assist with segmentation. Must be in **TIFF** format (`.tiff` or `.tif`). _(Optional)_                    |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -73,14 +73,14 @@ with:
 
 ```yaml
 input: "./samplesheet.csv"
-outdir: "./results/"
+outdir: "./results"
 ```
 
 Additionally, `params.yaml` can contain optional parameters:
 
 ```yaml
 input: "./samplesheet.csv"
-outdir: "./results/"
+outdir: "./results"
 segmentation_method: "mesmer"
 segmentation_min_area: null
 segmentation_max_area: null
@@ -99,6 +99,7 @@ mesmer_image_mpp: 0.138
 mesmer_compartment: "whole-cell"
 ilastik_pixel_project: null
 ilastik_multicut_project: null
+skip_mindagap: false
 mindagap_tilesize: 2144
 mindagap_boxsize: 3
 mindagap_loopnum: 40
@@ -118,21 +119,47 @@ crop_size_y: 400
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
-To run the pipeline so that the training subset is created with default values, run:
+### Utilizing the create training subset subworkflow
+
+To run the pipeline so that the training subset is created with default values, run the following:
 
 ```bash
 nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --create_training_subset
 ```
 
-:::note
-Stardist segmentation currently only support nuclear segmentation and the additional marker will not be used.
-:::
+The number of crops, fraction of non-zero pixels in the crops, and crop size can be adjusted through parameters.
+This process generates both `TIFF` and `HDF5` files that are compatible with the Cellpose and ilastik GUIs for model training. The trained models can then be fed back into the pipeline for automated processing.
 
-After training a Cellpose 2.0 model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
+After training a Cellpose model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
 
 ```bash
 nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --segmentation_method cellpose,ilastik --cellpose_custom_model /path/to/model --ilastik_pixel_project /path/to/pixel_classifier.ilp --ilastik_multicut_project /path/to/multicut.ilp
 ```
+
+### Segmentation approaches
+
+The four segmentation approaches (Mesmer, Cellpose, Stardist, ilastik) can be chosen using the `segmentation_method` parameter. If multiple are given (comma-separated, no whitespace), the pipeline will apply them in parallel. For parameter-based model options, please check the original tool's documentation. These can be provided with `mesmer_compartment`, `cellpose_pretrained_model`, and `stardist_model` for Mesmer, Cellpose and Stardist respectively.
+
+:::note
+If a custom Cellpose model is provided via the `cellpose_custom_model` parameter as a path, the `cellpose_pretrained_model` parameter is ignored.
+:::
+:::note
+Stardist segmentation currently only supports nuclear segmentation and the additional marker will not be used.
+:::
+:::note
+Stardist is the only tool that natively supports tiling. Make sure to adapt requested resources based on the size of the input image(s).
+:::
+:::note
+ilastik segmentation requires user-provided Pixel Classification and Multicut project files. The user must ensure that the training files have the same axes as the segmentation input files to ensure compatibility.
+:::
+
+### Skipping processes
+
+By default, both Mindagap and CLAHE are run, however both can be skipped when running the pipeline using the `skip_mindagap` and `skip_clahe` parameters.
+
+Local contrast enhancement might not be needed for every dataset and parameters should be chosen carefully depending on the data.
+
+Similarly, if the data does not have the grid pattern characteristic for Molecular Cartography data, Mindagap can be skipped (e.g. for Merscope data) meaning both grid-filling and Duplicatefinder would not be applied to the data.
 
 ### Updating the pipeline
 
