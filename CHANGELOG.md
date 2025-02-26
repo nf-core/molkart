@@ -17,9 +17,12 @@ Contributions to the release:
 - [PR #71](https://github.com/nf-core/molkart/pull/71), [PR #88](https://github.com/nf-core/molkart/pull/88), [PR #94](https://github.com/nf-core/molkart/pull/94) - template updates from 2.11.1 to 3.2.0
 - [PR #76](https://github.com/nf-core/molkart/pull/76) - Fix issue with custom content in MultiQC output
 - [PR #78](https://github.com/nf-core/molkart/pull/78) - Allow for Mindagap to be skipped
-- [PR #98](https://github.com/nf-core/molkart/pull/98) - Update all nf-core modules
 - [PR #81](https://github.com/nf-core/molkart/pull/81) - Add Stardist as a segmentation method
-- [PR #99](https://github.com/nf-core/molkart/pull/99), [PR #100](https://github.com/nf-core/molkart/pull/100) - Clean up code to adhere to language server standards and add author and licence information to all bin scripts
+- [PR #98](https://github.com/nf-core/molkart/pull/98) - Update all nf-core modules
+- [PR #99](https://github.com/nf-core/molkart/pull/99) - Clean up code to adhere to language server standards
+- [PR #100](https://github.com/nf-core/molkart/pull/100) - Added author and license information to all bin scripts
+- [PR #101](https://github.com/nf-core/molkart/pull/101) - Updated manifest and author information
+- [PR #102](https://github.com/nf-core/molkart/pull/102) - Updated documentation
 
 ### Parameters
 
