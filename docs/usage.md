@@ -119,7 +119,7 @@ crop_size_y: 400
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
-### Utilizing the create training subset subworkflow
+### Utilizing the create training feature
 
 To run the pipeline so that the training subset is created with default values, run the following:
 
