@@ -164,7 +164,7 @@
                 },
                 "clahe_kernel": {
                     "type": "number",
-                    "default": 25,
+                    "default": 25.0,
                     "description": "Kernel size to be used by CLAHE.",
                     "fa_icon": "far fa-object-group"
                 },
