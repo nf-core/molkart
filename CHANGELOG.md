@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PR #76](https://github.com/nf-core/molkart/pull/76) - Fix issue with custom content in MultiQC output (@kbestak)
 
+### Dependencies
+
+| Tool     | Previous version | New version |
+| -------- | ---------------- | ----------- |
+| Cellpose | 2.2.2            | 3.0.1       |
+| Stardist |                  | 0.9.1       |
+| MultiQC  | 1.19             | 1.27        |
+
 ## 1.0.0
 
 First release of nf-core/molkart.
