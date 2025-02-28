@@ -4,16 +4,16 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CROPTIFF       } from '../modules/local/croptiff'
-include { CROPHDF5       } from '../modules/local/crophdf5'
-include { CREATE_ANNDATA } from '../modules/local/createanndata'
-include { CREATE_STACK   } from '../modules/local/createstack'
-include { CLAHE          } from '../modules/local/clahe'
-include { MASKFILTER     } from '../modules/local/maskfilter'
-include { MOLKARTQC      } from '../modules/local/molkartqc'
-include { MOLKARTQCPNG   } from '../modules/local/molkartqcpng'
-include { SPOT2CELL      } from '../modules/local/spot2cell'
-include { TIFFH5CONVERT  } from '../modules/local/tiffh5convert'
+include { CROPTIFF       } from '../modules/local/croptiff/main'
+include { CROPHDF5       } from '../modules/local/crophdf5/main'
+include { CREATE_ANNDATA } from '../modules/local/createanndata/main'
+include { CREATE_STACK   } from '../modules/local/createstack/main'
+include { CLAHE          } from '../modules/local/clahe/main'
+include { MASKFILTER     } from '../modules/local/maskfilter/main'
+include { MOLKARTQC      } from '../modules/local/molkartqc/main'
+include { MOLKARTQCPNG   } from '../modules/local/molkartqcpng/main'
+include { SPOT2CELL      } from '../modules/local/spot2cell/main'
+include { TIFFH5CONVERT  } from '../modules/local/tiffh5convert/main'
 
 include { CELLPOSE                    } from '../modules/nf-core/cellpose/main'
 include { DEEPCELL_MESMER             } from '../modules/nf-core/deepcell/mesmer/main'
