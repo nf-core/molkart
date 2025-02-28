@@ -1,6 +1,6 @@
 lint:
   files_unchanged:
-    - .gitignore
+  - .gitignore
 nf_core_version: 3.2.0
 repository_type: pipeline
 template:
@@ -11,4 +11,4 @@ template:
   name: molkart
   org: nf-core
   outdir: .
-  version: 1.1.0dev
+  version: 1.1.0
