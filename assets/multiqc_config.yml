@@ -21,7 +21,7 @@ report_section_order:
 export_plots: true
 
 run_module:
-- custom_content
+  - custom_content
 
 custom_data:
   my_custom_content_image:
