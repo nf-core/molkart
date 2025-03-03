@@ -35,7 +35,13 @@ jobs:
           - "singularity"
         test_name:
           - "test"
-
+        isMaster:
+          - ${{ github.base_ref == 'master' }}
+        # Exclude conda overall and singularity on dev
+        exclude:
+          - profile: "conda"
+          - isMaster: false
+            profile: "singularity"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -64,8 +70,3 @@ jobs:
         if: matrix.profile != 'conda'
         run: |
           nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.test_name }},${{ matrix.profile }} --outdir ./results
-
-      - name: "Skip conda test"
-        if: matrix.profile == 'conda'
-        run: |
-          echo "Skipping conda test"
