@@ -2,7 +2,6 @@ nextflow_pipeline {
 
     name "Test Workflow main.nf"
     script "../main.nf"
-    config "./nextflow.config"
     tag "pipeline"
     tag "pipeline_molkart"
 
@@ -21,24 +20,24 @@ nextflow_pipeline {
         }
 
         then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
             assert workflow.success
-            assert snapshot(
-                path("$outputDir/mindagap/nuc_only_nuclear_gridfilled.tiff"),
-                path("$outputDir/mindagap/nuc_only_spots_markedDups.txt"),
-                path("$outputDir/segmentation/cellpose/nuc_only_cellpose_mask.tif"),
-                path("$outputDir/segmentation/mesmer/nuc_only_mesmer_mask.tif"),
-                path("$outputDir/segmentation/stardist/nuc_only_stardist_mask.tif"),
-                path("$outputDir/segmentation/filtered_masks/nuc_only_mesmer_filtered.tif"),
-                path("$outputDir/segmentation/filtered_masks/nuc_only_stardist_filtered.tif"),
-                path("$outputDir/segmentation/filtered_masks/nuc_only_cellpose_filtered.tif"),
-                path("$outputDir/spot2cell/cellxgene_nuc_only_cellpose.csv"),
-                path("$outputDir/spot2cell/cellxgene_nuc_only_mesmer.csv"),
-                path("$outputDir/anndata/nuc_only_cellpose.adata"),
-                path("$outputDir/anndata/nuc_only_mesmer.adata"),
-                path("$outputDir/molkartqc/nuc_only.cellpose.spot_QC.csv"),
-                path("$outputDir/molkartqc/nuc_only.mesmer.spot_QC.csv")
-            ).match()
-            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we tests pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_molkart_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
         }
     }
 
@@ -57,26 +56,24 @@ nextflow_pipeline {
         }
 
         then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
             assert workflow.success
-            assert snapshot(
-                path("$outputDir/mindagap/mem_only_membrane_gridfilled.tiff"),
-                path("$outputDir/mindagap/mem_only_nuclear_gridfilled.tiff"),
-                path("$outputDir/mindagap/mem_only_spots_markedDups.txt"),
-                path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
-                path("$outputDir/segmentation/mesmer/mem_only_mesmer_mask.tif"),
-                path("$outputDir/segmentation/filtered_masks/mem_only_mesmer_filtered.tif"),
-                path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_filtered.tif"),
-                path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
-                path("$outputDir/spot2cell/cellxgene_mem_only_mesmer.csv"),
-                path("$outputDir/anndata/mem_only_cellpose.adata"),
-                path("$outputDir/anndata/mem_only_mesmer.adata"),
-                path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
-                path("$outputDir/molkartqc/mem_only.mesmer.spot_QC.csv"),
-            ).match()
-            assert file("$outputDir/stack/mem_only_stack.ome.tif").exists()
-            assert file("$outputDir/clahe/mem_only_membrane_gridfilled_clahe.tiff").exists()
-            assert file("$outputDir/clahe/mem_only_nuclear_gridfilled_clahe.tiff").exists()
-            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we tests pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_molkart_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
         }
     }
 
@@ -93,16 +90,24 @@ nextflow_pipeline {
         }
 
         then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
             assert workflow.success
-            assert snapshot(
-                path("$outputDir/segmentation/cellpose/mem_only_cellpose_mask.tif"),
-                path("$outputDir/segmentation/filtered_masks/mem_only_cellpose_filtered.tif"),
-                path("$outputDir/spot2cell/cellxgene_mem_only_cellpose.csv"),
-                path("$outputDir/anndata/mem_only_cellpose.adata"),
-                path("$outputDir/molkartqc/mem_only.cellpose.spot_QC.csv"),
-            ).match()
-            assert file("$outputDir/stack/mem_only_stack.ome.tif").exists()
-            assert file("$outputDir/multiqc/multiqc_report.html").exists()
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we tests pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_molkart_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
         }
     }
 
@@ -124,16 +129,24 @@ nextflow_pipeline {
         }
 
         then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
             assert workflow.success
-            assert snapshot(
-                path("$outputDir/mindagap/nuc_only_nuclear_gridfilled.tiff"),
-            ).match()
-            assert file("$outputDir/clahe/nuc_only_nuclear_gridfilled_clahe.tiff").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop0.hdf5").exists()
-            assert file("$outputDir/training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop1.hdf5").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop0.tiff").exists()
-            assert file("$outputDir/training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff").exists()
-            assert file("$outputDir/multiqc/crop_overview.png").exists()
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // Number of successful tasks
+                    workflow.trace.succeeded().size(),
+                    // pipeline versions.yml file for multiqc from which Nextflow version is removed because we tests pipelines on multiple Nextflow versions
+                    removeNextflowVersion("$outputDir/pipeline_info/nf_core_molkart_software_mqc_versions.yml"),
+                    // All stable path name, with a relative path
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
         }
     }
 }
