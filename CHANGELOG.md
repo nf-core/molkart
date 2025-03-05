@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PR #100](https://github.com/nf-core/molkart/pull/100) - Added author and license information to all bin scripts (@FloWuenne)
 - [PR #101](https://github.com/nf-core/molkart/pull/101) - Updated manifest and author information (@FloWuenne)
 - [PR #102](https://github.com/nf-core/molkart/pull/102) - Updated documentation (@kbestak)
+- [PR #107](https://github.com/nf-core/molkart/pull/107) - Updated nf-tests to use nft-utils (@FloWuenne)
 
 ### Fixed
 
