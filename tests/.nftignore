@@ -1,0 +1,15 @@
+.DS_Store
+pipeline_info/*.{html,json,txt,yml}
+multiqc/multiqc_data/multiqc_data.json
+multiqc/multiqc_data/multiqc.log
+multiqc/multiqc_plots/pdf/*
+multiqc/multiqc_plots/png/*
+multiqc/multiqc_plots/svg/*
+multiqc/multiqc_report.html
+multiqc/crop_overview.png
+multiqc/crop_overview.txt
+clahe/*.tiff
+stack/*.tif
+molkartqc/crop_overview.png
+training_subset/hdf5/*
+training_subset/tiff/*

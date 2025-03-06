@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-
+#### Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license.
 #### This script takes regionprops_tabe output from mcquant and the raw spot tables from Resolve bioscience as input
 #### and calculates some QC metrics for masks and spot assignments
-### If png files are provided, it combines them into one
+#### If png files are provided, it combines them into one
 
 import argparse
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 import os
+import numpy as np
 
 
 def combine_png_files(input_paths, output_path):
@@ -85,6 +86,13 @@ if __name__ == "__main__":
 
         ## Read in spot table
         spots = pd.read_table(args.spots, sep="\t", names=["x", "y", "z", "gene"])
+        # below code had to be added to account for the spots.txt inputs if mindagap is skipped
+        if (([val for val in spots.index.values] == [val for val in range(len(spots.index.values))]) == False):
+            spots["gene"] = spots["z"]
+            spots["z"] = spots["y"]
+            spots["y"] = spots["x"]
+            spots["x"] = spots.index
+            spots.index = range(len(spots))
         duplicated = sum(spots.gene.str.contains("Duplicated"))
         spots = spots[~spots.gene.str.contains("Duplicated")]
 

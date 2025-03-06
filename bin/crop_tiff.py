@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+## Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license
 import ast
 import tifffile as tiff
 import os

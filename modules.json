@@ -7,43 +7,62 @@
                 "nf-core": {
                     "cellpose": {
                         "branch": "master",
-                        "git_sha": "0975c63a8ce4488c3259f595270b3f0d419abafe",
-                        "installed_by": ["modules"]
-                    },
-                    "custom/dumpsoftwareversions": {
-                        "branch": "master",
-                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
+                        "git_sha": "5bca12d66725b17a486edc24d1d2381d4170da25",
                         "installed_by": ["modules"]
                     },
                     "deepcell/mesmer": {
                         "branch": "master",
-                        "git_sha": "81fcaa73c7f1668a1c289464da88bf5eff582bcd",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
                         "installed_by": ["modules"]
                     },
                     "ilastik/multicut": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "a4d916a39231897a49c903089a548704c09b8ef3",
                         "installed_by": ["modules"]
                     },
                     "ilastik/pixelclassification": {
                         "branch": "master",
-                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "git_sha": "a4d916a39231897a49c903089a548704c09b8ef3",
                         "installed_by": ["modules"]
                     },
                     "mindagap/duplicatefinder": {
                         "branch": "master",
-                        "git_sha": "cdc42519bf7d6d2cac9b5f14cb56e0060477c69c",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
                     },
                     "mindagap/mindagap": {
                         "branch": "master",
-                        "git_sha": "97dbec551f491ee562721008cdecd1e7a9a56b14",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "8ec825f465b9c17f9d83000022995b4f7de6fe93",
+                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
                         "installed_by": ["modules"]
+                    },
+                    "stardist": {
+                        "branch": "master",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+                        "installed_by": ["modules"]
+                    }
+                }
+            },
+            "subworkflows": {
+                "nf-core": {
+                    "utils_nextflow_pipeline": {
+                        "branch": "master",
+                        "git_sha": "c2b22d85f30a706a3073387f30380704fcae013b",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "utils_nfcore_pipeline": {
+                        "branch": "master",
+                        "git_sha": "51ae5406a030d4da1e49e4dab49756844fdd6c7a",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "utils_nfschema_plugin": {
+                        "branch": "master",
+                        "git_sha": "2fd2cd6d0e7b273747f32e465fdc6bcc3ae0814e",
+                        "installed_by": ["subworkflows"]
                     }
                 }
             }

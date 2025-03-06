@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+## Written by Kresimir Bestak and Florian Wuennemann and released under the MIT license
 
 ## Import packages
 import pandas as pd
