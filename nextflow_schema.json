@@ -70,8 +70,13 @@
                 "cellpose_save_flows": {
                     "type": "boolean",
                     "description": "Should flow fields from Cellpose be saved?",
-                    "fa_icon": "fas fa-arrows-alt",
-                    "hidden": true
+                    "fa_icon": "fas fa-arrows-alt"
+                },
+                "cellpose_cellprob_threshold": {
+                    "type": "integer",
+                    "default": 0,
+                    "fa_icon": "fas fa-border-style",
+                    "description": "Cell probability threshold for Cellpose"
                 },
                 "mesmer_image_mpp": {
                     "type": "number",
@@ -164,7 +169,7 @@
                 },
                 "clahe_kernel": {
                     "type": "number",
-                    "default": 25.0,
+                    "default": 25,
                     "description": "Kernel size to be used by CLAHE.",
                     "fa_icon": "far fa-object-group"
                 },
