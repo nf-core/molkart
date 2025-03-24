@@ -117,7 +117,7 @@ def detect_pixel_size(img_path, pixel_size=None):
     if pixel_size is None:
         print("Pixel size overwrite not specified")
         try:
-            metadata = ome_types.from_tiff(img_path)
+            metadata = from_tiff(img_path)
             pixel_size = metadata.images[0].pixels.physical_size_x
         except Exception as err:
             print(err)

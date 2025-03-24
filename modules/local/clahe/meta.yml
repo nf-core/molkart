@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "clahe"
+description: Contrast-limited adjusted histogram equalization (CLAHE) on single-channel
+  tif images.
+keywords:
+  - clahe
+  - histogram
+  - imaging
+  - correction
+tools:
+  - "molkart":
+      description: "Local modules used within the nf-core/molkart pipeline"
+      homepage: https://nf-co.re/molkart/master/
+      documentation: https://nf-co.re/molkart/master/
+      tool_dev_url: https://github.com/nf-core/molkart/blob/master/bin/apply_clahe.dask.py
+      licence: ["MIT"]
+      identifier: ""
+
+input:
+  # Only when we have meta
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1']`
+    - image:
+        type: file
+        description: Single-channel tiff file to be corrected.
+        pattern: "*.{tif,tiff}"
+output:
+  #Only when we have meta
+  - img_clahe:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'sample1']`
+      - "*.tiff":
+          type: file
+          description: CLAHE corrected tiff file.
+          pattern: "*.{tiff}"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+authors:
+  - "@kbestak"
+maintainers:
+  - "@kbestak"
