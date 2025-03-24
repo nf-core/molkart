@@ -122,10 +122,12 @@ def IlastikPrepOME(
         full_h5 = h5py.File(pathlib.Path(os.path.join(output, h5_name)), "r")
         im_nuc = full_h5[str(im_stem)][:, :, :, nuclei_index]
         im = full_h5[str(im_stem)][:, :, :, :]
+        # Track previous crops as (h_up, h_down, w_lt, w_rt) tuples
+        previous_crops = []
         indices = {}
-        count = 0
+        count = 1
         thresh = filters.threshold_otsu(im_nuc[:, :, :])
-        while count < crop_amount:
+        while count < crop_amount+1:
             # Get random height value that falls within crop range of the edges
             extension_h = crop_size[0] // 2
             h = random.randint(extension_h, im_nuc.shape[1] - extension_h)
@@ -134,6 +136,16 @@ def IlastikPrepOME(
             extension_w = crop_size[1] // 2
             w = random.randint(extension_w, im_nuc.shape[2] - extension_w)
             w_lt, w_rt = w - extension_w, w + extension_w
+            # Check if the new crop overlaps with any previous crop
+            overlap = False
+            for prev_crop in previous_crops:
+                prev_h_up, prev_h_down, prev_w_lt, prev_w_rt = prev_crop
+                if not (h_down <= prev_h_up or h_up >= prev_h_down or w_rt <= prev_w_lt or w_lt >= prev_w_rt):
+                    overlap = True
+                    break
+            # If overlap, try again. Otherwise, save the crop and continue
+            if overlap:
+                continue
             # Crop the image with these coordinates expanding from center
             crop = im_nuc[:, h_up:h_down, w_lt:w_rt]
             crop_name = pathlib.Path(os.path.join(output, (im_stem + "_crop" + str(count) + ".hdf5")))
@@ -147,7 +159,9 @@ def IlastikPrepOME(
                 h5_crop.close()
                 print("Finished exporting " + crop_name.stem + ".hdf5")
                 # Add one to the counter
-                count = count + 1
+                count += 1
+                # Add the current crop coordinates to the list of previous crops
+                previous_crops.append((h_up, h_down, w_lt, w_rt))
                 # Add the indices to a table to store the cropped indices
                 indices.update({crop_name.stem: [(h_up, h_down), (w_lt, w_rt)]})
         # Export the indices to a text file to track the cropped regions
