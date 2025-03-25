@@ -22,7 +22,7 @@
                 "type": "string",
                 "pattern": "^\\S+\\.(txt|tsv)$",
                 "format": "file-path",
-                "errorMessage": "Spot table must be provided, has to have shape x,y,z,gene with sep = '\t', cannot contain spaces and must have extension '.txt'"
+                "errorMessage": "Spot table must be provided, has to have shape x,y,z,gene with sep = '\t' without a header, cannot contain spaces and must have extension '.txt'"
             },
             "membrane_image": {
                 "errorMessage": "Membrane image is optional, and cannot contain spaces and must have extension '.tif' or '.tiff'",

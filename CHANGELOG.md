@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [PR #109](https://github.com/nf-core/molkart/pull/109) - Added cellpose_cellprob_threshold parameter (@felixS27)
+
 ### Changed
 
+- [PR #111](https://github.com/nf-core/molkart/pull/111) - Updated json schemas (@kbestak)
+
 ### Fixed
+
+- [PR #110](https://github.com/nf-core/molkart/pull/110) - Fixed starting index of created crops (0->1) (@miri-2000)
 
 ### Dependencies
 

@@ -13,7 +13,7 @@
             "properties": {
                 "segmentation_method": {
                     "type": "string",
-                    "description": "List of segmentation tools to apply to the image written as a comma separated string: mesmer,cellpose,ilastik would run all three options.",
+                    "description": "List of segmentation tools to apply to the image. Allowed values: mesmer, cellpose, stardist, ilastik. Use a comma-separated string without whitespaces for multiple methods.",
                     "default": "mesmer",
                     "fa_icon": "fas fa-border-all"
                 },
@@ -169,7 +169,7 @@
                 },
                 "clahe_kernel": {
                     "type": "number",
-                    "default": 25,
+                    "default": 25.0,
                     "description": "Kernel size to be used by CLAHE.",
                     "fa_icon": "far fa-object-group"
                 },
@@ -412,6 +412,12 @@
                     "description": "Base URL or local path to location of pipeline test dataset files",
                     "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
                     "hidden": true
+                },
+                "modules_testdata_base_path": {
+                    "type": "string",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/",
+                    "fa_icon": "fas fa-check-circle",
+                    "description": "URL or local path to location of module test dataset files"
                 },
                 "trace_report_suffix": {
                     "type": "string",
