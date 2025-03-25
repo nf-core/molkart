@@ -362,11 +362,11 @@
                 "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
                 "training_subset",
                 "training_subset/hdf5",
-                "training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop0.hdf5",
                 "training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop1.hdf5",
+                "training_subset/hdf5/nuc_only_nuclear_gridfilled_clahe_crop2.hdf5",
                 "training_subset/tiff",
-                "training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop0.tiff",
-                "training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff"
+                "training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop1.tiff",
+                "training_subset/tiff/nuc_only_nuclear_gridfilled_clahe_crop2.tiff"
             ],
             [
                 "nuc_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
@@ -379,6 +379,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-03-05T17:00:52.037627778"
+        "timestamp": "2025-03-25T10:00:57.349249698"
     }
 }
