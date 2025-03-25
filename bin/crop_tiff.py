@@ -10,7 +10,7 @@ import numpy as np
 
 # Create a function to create crops from a tiff image and a dictionary of crop coordinates
 def create_crops(tiff_image, crop_dict):
-    for index, (crop_name, crop) in enumerate(crop_dict.items()):
+    for index, (crop_name, crop) in enumerate(crop_dict.items(), start=1):
         crop_image = tiff_image[:, crop[0][0] : crop[0][1], crop[1][0] : crop[1][1]]
         basename = os.path.basename(args.input)
         basename = os.path.splitext(basename)[0]
