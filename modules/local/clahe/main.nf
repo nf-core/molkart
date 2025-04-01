@@ -29,4 +29,15 @@ process CLAHE{
     END_VERSIONS
     """
 
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.tiff
+
+        cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_clahe: \$(apply_clahe.dask.py --version)
+    END_VERSIONS
+    """
+
 }

@@ -29,4 +29,15 @@ process CREATE_ANNDATA {
         molkart_createanndata: \$(create_anndata.py --version)
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.adata
+
+        cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_createanndata: \$(create_anndata.py --version)
+    END_VERSIONS
+    """
 }

@@ -28,4 +28,15 @@ process TIFFH5CONVERT {
         molkart_crophdf5: \$(crop_hdf5.py --version)
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.hdf5
+
+        cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_crophdf5: \$(crop_hdf5.py --version)
+    END_VERSIONS
+    """
 }

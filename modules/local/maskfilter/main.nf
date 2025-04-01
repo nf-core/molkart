@@ -37,6 +37,7 @@ process MASKFILTER {
 
     """
     touch ${prefix}.tif
+    touch ${prefix}.csv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
