@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- [PR #112](https://github.com/nf-core/molkart/pull/112) - Added stub section for local modules (@kbestak)
+- [PR #115](https://github.com/nf-core/molkart/pull/115) - Added stub section for local modules (@kbestak)
 - [PR #110](https://github.com/nf-core/molkart/pull/110) - Fixed starting index of created crops (0->1) (@miri-2000)
 
 ### Dependencies
