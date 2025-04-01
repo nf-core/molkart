@@ -150,15 +150,15 @@ nextflow_pipeline {
         }
     }
 
-    test("Nuclear channel, stardist and cellpose, clahe - stub") {
+    test("Two channels, stardist, mesmer, cellpose, clahe - stub") {
 
         options "-stub"
 
         when {
             params {
-                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
                 outdir = "$outputDir"
-                segmentation_method = "cellpose,stardist"
+                segmentation_method = "cellpose,stardist,mesmer"
             }
         }
 
@@ -190,7 +190,7 @@ nextflow_pipeline {
 
         when {
             params {
-                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_nuclear.csv'
+                input = 'https://raw.githubusercontent.com/nf-core/test-datasets/molkart/test_data/samplesheets/samplesheet_membrane.csv'
                 outdir = "$outputDir"
                 create_training_subset = true
                 crop_amount = 2

@@ -113,9 +113,9 @@
         },
         "timestamp": "2025-03-26T15:09:22.923283861"
     },
-    "Nuclear channel, stardist and cellpose, clahe - stub": {
+    "Two channels, stardist, mesmer, cellpose, clahe - stub": {
         "content": [
-            14,
+            22,
             {
                 "CELLPOSE": {
                     "cellpose": "3.0.1"
@@ -125,6 +125,12 @@
                 },
                 "CREATE_ANNDATA": {
                     "molkart_createanndata": "0.1.0"
+                },
+                "CREATE_STACK": {
+                    "molkart_createanndata": "0.1.0"
+                },
+                "DEEPCELL_MESMER": {
+                    "deepcell_mesmer": "0.4.1"
                 },
                 "MASKFILTER": {
                     "molkart_maskfilter": "0.1.0"
@@ -153,15 +159,18 @@
             },
             [
                 "anndata",
-                "anndata/nuc_only_cellpose.adata",
-                "anndata/nuc_only_stardist.adata",
+                "anndata/mem_only_cellpose.adata",
+                "anndata/mem_only_mesmer.adata",
+                "anndata/mem_only_stardist.adata",
                 "clahe",
-                "clahe/nuc_only_nuclear_gridfilled_clahe.tiff",
+                "clahe/mem_only_membrane_gridfilled_clahe.tiff",
+                "clahe/mem_only_nuclear_gridfilled_clahe.tiff",
                 "mindagap",
-                "mindagap/nuc_only_nuclear_gridfilled.tiff",
-                "mindagap/nuc_only_spots_markedDups.txt",
+                "mindagap/mem_only_membrane_gridfilled.tiff",
+                "mindagap/mem_only_nuclear_gridfilled.tiff",
+                "mindagap/mem_only_spots_markedDups.txt",
                 "molkartqc",
-                "molkartqc/nuc_only.csv",
+                "molkartqc/mem_only.csv",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_plots",
@@ -170,39 +179,52 @@
                 "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
                 "segmentation",
                 "segmentation/cellpose",
-                "segmentation/cellpose/nuc_only_cellpose_mask.tif",
+                "segmentation/cellpose/mem_only_cellpose_mask.tif",
                 "segmentation/filtered_masks",
-                "segmentation/filtered_masks/nuc_only_cellpose_filtered.csv",
-                "segmentation/filtered_masks/nuc_only_cellpose_filtered.tif",
-                "segmentation/filtered_masks/nuc_only_stardist_filtered.csv",
-                "segmentation/filtered_masks/nuc_only_stardist_filtered.tif",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.csv",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.tif",
+                "segmentation/filtered_masks/mem_only_mesmer_filtered.csv",
+                "segmentation/filtered_masks/mem_only_mesmer_filtered.tif",
+                "segmentation/filtered_masks/mem_only_stardist_filtered.csv",
+                "segmentation/filtered_masks/mem_only_stardist_filtered.tif",
+                "segmentation/mesmer",
+                "segmentation/mesmer/mem_only_mesmer_mask.tif",
                 "segmentation/stardist",
-                "segmentation/stardist/nuc_only_stardist_mask.tif",
+                "segmentation/stardist/mem_only_stardist_mask.tif",
                 "spot2cell",
-                "spot2cell/cellxgene_nuc_only_cellpose.csv",
-                "spot2cell/cellxgene_nuc_only_stardist.csv"
+                "spot2cell/cellxgene_mem_only_cellpose.csv",
+                "spot2cell/cellxgene_mem_only_mesmer.csv",
+                "spot2cell/cellxgene_mem_only_stardist.csv",
+                "stack",
+                "stack/mem_only_stack.ome.tif"
             ],
             [
-                "nuc_only_cellpose.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_stardist.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_spots_markedDups.txt:md5,ef8ae4bc5ab898c5538daacd59897f86",
-                "nuc_only.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_cellpose_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_cellpose_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_cellpose_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_stardist_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_stardist_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_stardist_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "cellxgene_nuc_only_cellpose.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "cellxgene_nuc_only_stardist.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                "mem_only_cellpose.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_mesmer.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_stardist.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_membrane_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_spots_markedDups.txt:md5,ef8ae4bc5ab898c5538daacd59897f86",
+                "mem_only.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_cellpose_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_cellpose_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_cellpose_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_mesmer_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_mesmer_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_stardist_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_stardist_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_mesmer_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_stardist_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "cellxgene_mem_only_cellpose.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "cellxgene_mem_only_mesmer.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "cellxgene_mem_only_stardist.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-01T15:24:53.262810149"
+        "timestamp": "2025-04-01T15:38:25.466827537"
     },
     "Nuclear channel, stardist, mesmer and cellpose, without clahe": {
         "content": [
@@ -474,10 +496,13 @@
     },
     "Create training subset - stub": {
         "content": [
-            6,
+            9,
             {
                 "CLAHE": {
                     "molkart_clahe": "0.1.0"
+                },
+                "CREATE_STACK": {
+                    "molkart_createanndata": "0.1.0"
                 },
                 "CROPHDF5": {
                     "molkart_crophdf5": "Stub version"
@@ -497,11 +522,13 @@
             },
             [
                 "clahe",
-                "clahe/nuc_only_nuclear_gridfilled_clahe.tiff",
+                "clahe/mem_only_membrane_gridfilled_clahe.tiff",
+                "clahe/mem_only_nuclear_gridfilled_clahe.tiff",
                 "mindagap",
-                "mindagap/nuc_only_nuclear_gridfilled.tiff",
+                "mindagap/mem_only_membrane_gridfilled.tiff",
+                "mindagap/mem_only_nuclear_gridfilled.tiff",
                 "molkartqc",
-                "molkartqc/nuc_only_stack.png",
+                "molkartqc/mem_only_stack.png",
                 "multiqc",
                 "multiqc/crop_overview.png",
                 "multiqc/crop_overview.txt",
@@ -510,23 +537,26 @@
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
+                "stack",
+                "stack/mem_only_stack.ome.tif",
                 "training_subset",
                 "training_subset/hdf5",
-                "training_subset/hdf5/nuc_only_crop1.hdf5",
-                "training_subset/hdf5/nuc_only_crop2.hdf5",
+                "training_subset/hdf5/mem_only_crop1.hdf5",
+                "training_subset/hdf5/mem_only_crop2.hdf5",
                 "training_subset/tiff",
-                "training_subset/tiff/nuc_only_stack.ome_crop1.tiff",
-                "training_subset/tiff/nuc_only_stack.ome_crop2.tiff"
+                "training_subset/tiff/mem_only_stack.ome_crop1.tiff",
+                "training_subset/tiff/mem_only_stack.ome_crop2.tiff"
             ],
             [
-                "nuc_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "nuc_only_stack.png:md5,d41d8cd98f00b204e9800998ecf8427e"
+                "mem_only_membrane_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_stack.png:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-01T15:23:49.983218577"
+        "timestamp": "2025-04-01T15:44:02.134133452"
     }
 }
