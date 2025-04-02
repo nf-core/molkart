@@ -110,7 +110,7 @@ jobs:
         run: |
           nf-test test \
             --verbose ${{ matrix.nf_test_files }} \
-            --profile "+${{ matrix.profile }}" \
+            --profile "+${{ matrix.profile }},test" \
             --junitxml=test.xml \
             --tap=test.tap
 
