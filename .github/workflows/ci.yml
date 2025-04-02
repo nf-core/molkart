@@ -51,7 +51,7 @@ jobs:
     strategy:
       matrix:
         NXF_VER:
-          - "24.04.2"
+          - "24.10.5"
           - "latest-everything"
         nf_test_files: ["${{ fromJson(needs.nf-test-changes.outputs.nf_test_files) }}"]
         profile:
