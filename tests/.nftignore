@@ -2,6 +2,7 @@
 pipeline_info/*.{html,json,txt,yml}
 multiqc/multiqc_data/multiqc_data.json
 multiqc/multiqc_data/multiqc.log
+multiqc/multiqc_data/multiqc_software_versions.txt
 multiqc/multiqc_plots/pdf/*
 multiqc/multiqc_plots/png/*
 multiqc/multiqc_plots/svg/*
