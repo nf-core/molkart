@@ -27,12 +27,12 @@
                     },
                     "mindagap/duplicatefinder": {
                         "branch": "master",
-                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
+                        "git_sha": "a84e5d699986fac96d7d7f01044a339a343af827",
                         "installed_by": ["modules"]
                     },
                     "mindagap/mindagap": {
                         "branch": "master",
-                        "git_sha": "81880787133db07d9b4c1febd152c090eb8325dc",
+                        "git_sha": "a84e5d699986fac96d7d7f01044a339a343af827",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
