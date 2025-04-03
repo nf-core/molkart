@@ -90,6 +90,7 @@
                 "mem_only_mesmer.adata:md5,530649647a3466316ea52dde9dede4ab",
                 "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
                 "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
+                "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
                 "mem_only.cellpose.spot_QC.csv:md5,2090a0bc4307e9712a6150bafeb38ec5",
                 "mem_only.mesmer.spot_QC.csv:md5,3273bd6fecf93a3d240614d1b38831c9",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
@@ -109,7 +110,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-02T20:47:04.260240556"
+        "timestamp": "2025-04-03T11:20:29.322813595"
     },
     "Two channels, stardist, mesmer, cellpose, clahe - stub": {
         "content": [
@@ -202,6 +203,7 @@
                 "mem_only_stardist.adata:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_membrane_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
+                "mem_only_spots_markedDups.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_cellpose_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_cellpose_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -221,7 +223,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-02T20:49:08.578801698"
+        "timestamp": "2025-04-03T11:23:15.483620486"
     },
     "Nuclear channel, stardist, mesmer and cellpose, without clahe": {
         "content": [
@@ -315,6 +317,7 @@
                 "nuc_only_mesmer.adata:md5,cd20ab6db5274bb85c960ea3bd8d2619",
                 "nuc_only_stardist.adata:md5,ba86d85b0ba0902dea90c719434a21db",
                 "nuc_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
+                "nuc_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
                 "nuc_only.cellpose.spot_QC.csv:md5,671d25520018573aaf6d7e5706dc8bc3",
                 "nuc_only.mesmer.spot_QC.csv:md5,f8f4eb85bb8269341ac072ac78962ed4",
                 "nuc_only.stardist.spot_QC.csv:md5,9b77da0f85fc445ff36769d28d337898",
@@ -339,7 +342,7 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.5"
         },
-        "timestamp": "2025-04-02T20:45:59.843833675"
+        "timestamp": "2025-04-03T11:18:38.364774708"
     },
     "Skip mindagap - clahe - cellpose": {
         "content": [

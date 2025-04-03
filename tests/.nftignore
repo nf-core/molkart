@@ -9,7 +9,6 @@ multiqc/multiqc_plots/svg/*
 multiqc/multiqc_report.html
 multiqc/crop_overview.png
 multiqc/crop_overview.txt
-mindagap/*.txt
 clahe/*.tiff
 stack/*.tif
 molkartqc/crop_overview.png
