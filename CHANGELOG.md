@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.2.0dev [unreleased]
+## v1.2.0dev - [date]
 
 ### Added
 
@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PR #111](https://github.com/nf-core/molkart/pull/111) - Updated json schemas (@kbestak)
 - [PR #116](https://github.com/nf-core/molkart/pull/116) - Update CI to use nf-test on changed files (@kbestak)
+- [PR #118](https://github.com/nf-core/molkart/pull/118) - Template update (@kbestak)
 
 ### Fixed
 
