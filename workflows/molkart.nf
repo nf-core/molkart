@@ -344,9 +344,11 @@ workflow MOLKART {
         [],
         []
     )
+    ch_multiqc_report = MULTIQC.out.report
 
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    emit:
+    multiqc_report = ch_multiqc_report     // channel: /path/to/multiqc_report.html
+    versions       = ch_versions           // channel: [ path(versions.yml) ]
 
 }
 
