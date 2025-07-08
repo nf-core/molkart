@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/molkart/master/nextflow_schema.json",
     "title": "nf-core/molkart pipeline parameters",
-    "description": "An analysis pipeline for Molecular Cartography data from Resolve Biosciences.",
+    "description": "An analysis pipeline for processing Molecular Cartography data.",
     "type": "object",
     "$defs": {
         "input_output_options": {
