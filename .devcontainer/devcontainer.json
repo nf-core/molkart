@@ -4,6 +4,12 @@
     "remoteUser": "gitpod",
     "runArgs": ["--privileged"],
 
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "version": "latest"
+        }
+    },
+
     // Configure tool-specific properties.
     "customizations": {
         // Configure properties specific to VS Code.
