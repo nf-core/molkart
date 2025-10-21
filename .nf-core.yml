@@ -7,10 +7,10 @@ lint:
     - assets/nf-core-molkart_logo_light.png
     - docs/images/nf-core-molkart_logo_dark.png
     - docs/images/nf-core-molkart_logo_light.png
-nf_core_version: 3.2.1
+nf_core_version: 3.4.1
 repository_type: pipeline
 template:
-  author: "Kresimir Bestak, Florian Wuennemann"
+  author: Kresimir Bestak, Florian Wuennemann
   description: An analysis pipeline for processing Molecular Cartography data.
   force: false
   is_nfcore: true
