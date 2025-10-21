@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [PR #111](https://github.com/nf-core/molkart/pull/111) - Updated json schemas (@kbestak)
 - [PR #116](https://github.com/nf-core/molkart/pull/116) - Update CI to use nf-test on changed files (@kbestak)
 - [PR #118](https://github.com/nf-core/molkart/pull/118) - Template update (@kbestak)
-- [PR #121](https://github.com/nf-core/molkart/pull/121) - Template update (@kbestak)
+- [PR #124](https://github.com/nf-core/molkart/pull/124) - Template update (@kbestak)
 
 ### Fixed
 
