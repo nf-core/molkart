@@ -28,8 +28,7 @@ jobs:
   nf-test-changes:
     name: nf-test-changes
     runs-on: # use self-hosted runners
-      - runs-on=${{github.run_id}}-nf-test-changes
-      - runner=4cpu-linux-x64/disk=large
+      - runs-on=${{github.run_id}}-nf-test-changes/runner=4cpu-linux-x64/disk=large
     outputs:
       shard: ${{ steps.set-shards.outputs.shard }}
       total_shards: ${{ steps.set-shards.outputs.total_shards }}
@@ -62,8 +61,7 @@ jobs:
     needs: [nf-test-changes]
     if: ${{ needs.nf-test-changes.outputs.total_shards != '0' }}
     runs-on: # use self-hosted runners
-      - runs-on=${{ github.run_id }}-nf-test
-      - runner=4cpu-linux-x64
+      - runs-on=${{ github.run_id }}-nf-test/runner=4cpu-linux-x64/disk=large
     strategy:
       fail-fast: false
       matrix:
