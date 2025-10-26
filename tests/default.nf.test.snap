@@ -100,9 +100,6 @@
                 "stack/mem_only_stack.ome.tif"
             ],
             [
-                "mem_only_cellpose.adata:md5,834903214d6cdcc7dd2e10b1ee1b22a3",
-                "mem_only_mesmer.adata:md5,530649647a3466316ea52dde9dede4ab",
-                "mem_only_stardist.adata:md5,274d0716031a44f7d2948c62c0211824",
                 "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
                 "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
                 "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
@@ -119,16 +116,13 @@
                 "mem_only_stardist_filtered.csv:md5,68ab417273f2f77a738891c773eb931a",
                 "mem_only_stardist_filtered.tif:md5,0d124514cca74cb809b9adcca4a45e03",
                 "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
-                "mem_only_stardist_mask.tif:md5,527ada48b8127622300952ab163ef0a8",
-                "cellxgene_mem_only_cellpose.csv:md5,dc8349194322a72bd87e5118040c427f",
-                "cellxgene_mem_only_mesmer.csv:md5,198b187d5f151077437aa591f5991b22",
-                "cellxgene_mem_only_stardist.csv:md5,f6cc61b4c21149a65c8f93724c5a5d73"
+                "mem_only_stardist_mask.tif:md5,527ada48b8127622300952ab163ef0a8"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.04.6"
         },
-        "timestamp": "2025-10-26T14:04:45.010875837"
+        "timestamp": "2025-10-26T14:28:30.864747147"
     }
 }

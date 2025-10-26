@@ -1,4 +1,6 @@
 .DS_Store
+spot2cell/*.csv
+anndata/*.adata
 clahe/*.tiff
 stack/*.tif
 molkartqc/crop_overview.png
