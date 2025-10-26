@@ -39,7 +39,7 @@
                     "tifffile": "2022.4.8"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0dev"
+                    "nf-core/molkart": "v1.2.0"
                 }
             },
             [
@@ -123,6 +123,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.6"
         },
-        "timestamp": "2025-10-26T14:28:30.864747147"
+        "timestamp": "2025-10-26T22:59:02.887763208"
     }
 }
