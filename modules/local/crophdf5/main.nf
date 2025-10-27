@@ -29,4 +29,18 @@ process CROPHDF5 {
         molkart_crophdf5: \$(crop_hdf5.py --version)
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    echo "Running in stub mode"
+    touch ${prefix}_crop1.hdf5
+    touch ${prefix}_crop2.hdf5
+    touch ${prefix}_CropSummary.txt
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_crophdf5: \$(echo "Stub version")
+    END_VERSIONS
+    """
 }

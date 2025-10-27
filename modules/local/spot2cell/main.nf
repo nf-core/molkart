@@ -18,7 +18,6 @@ process SPOT2CELL{
     script:
     def args   = task.ext.args   ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-
     """
     spot2cell.py \\
         --spot_table ${spot_table} \\
@@ -27,6 +26,17 @@ process SPOT2CELL{
         $args
 
     cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_spot2cell: \$(spot2cell.py --version)
+    END_VERSIONS
+    """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.csv
+
+        cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         molkart_spot2cell: \$(spot2cell.py --version)
     END_VERSIONS

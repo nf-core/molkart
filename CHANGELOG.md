@@ -3,6 +3,26 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.0dev - [date]
+
+### Added
+
+- [PR #109](https://github.com/nf-core/molkart/pull/109) - Added cellpose_cellprob_threshold parameter (@felixS27)
+
+### Changed
+
+- [PR #111](https://github.com/nf-core/molkart/pull/111) - Updated json schemas (@kbestak)
+- [PR #116](https://github.com/nf-core/molkart/pull/116) - Update CI to use nf-test on changed files (@kbestak)
+- [PR #118](https://github.com/nf-core/molkart/pull/118) - Template update (@kbestak)
+- [PR #124](https://github.com/nf-core/molkart/pull/124) - Template update (@kbestak)
+
+### Fixed
+
+- [PR #115](https://github.com/nf-core/molkart/pull/115) - Added stub section for local modules (@kbestak)
+- [PR #110](https://github.com/nf-core/molkart/pull/110) - Fixed starting index of created crops (0->1) (@miri-2000)
+
+### Dependencies
+
 ## 1.1.0 - Resolution Road
 
 ### Added

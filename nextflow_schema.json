@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/molkart/master/nextflow_schema.json",
     "title": "nf-core/molkart pipeline parameters",
-    "description": "An analysis pipeline for Molecular Cartography data from Resolve Biosciences.",
+    "description": "An analysis pipeline for processing Molecular Cartography data.",
     "type": "object",
     "$defs": {
         "segmentation_methods_and_options": {
@@ -13,7 +13,7 @@
             "properties": {
                 "segmentation_method": {
                     "type": "string",
-                    "description": "List of segmentation tools to apply to the image written as a comma separated string: mesmer,cellpose,ilastik would run all three options.",
+                    "description": "List of segmentation tools to apply to the image. Allowed values: mesmer, cellpose, stardist, ilastik. Use a comma-separated string without whitespaces for multiple methods.",
                     "default": "mesmer",
                     "fa_icon": "fas fa-border-all"
                 },
@@ -70,8 +70,13 @@
                 "cellpose_save_flows": {
                     "type": "boolean",
                     "description": "Should flow fields from Cellpose be saved?",
-                    "fa_icon": "fas fa-arrows-alt",
-                    "hidden": true
+                    "fa_icon": "fas fa-arrows-alt"
+                },
+                "cellpose_cellprob_threshold": {
+                    "type": "integer",
+                    "default": 0,
+                    "fa_icon": "fas fa-border-style",
+                    "description": "Cell probability threshold for Cellpose"
                 },
                 "mesmer_image_mpp": {
                     "type": "number",
@@ -408,11 +413,29 @@
                     "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
                     "hidden": true
                 },
+                "modules_testdata_base_path": {
+                    "type": "string",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/",
+                    "fa_icon": "fas fa-check-circle",
+                    "description": "URL or local path to location of module test dataset files"
+                },
                 "trace_report_suffix": {
                     "type": "string",
                     "fa_icon": "far calendar",
                     "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
+                },
+                "help": {
+                    "type": ["boolean", "string"],
+                    "description": "Display the help message."
+                },
+                "help_full": {
+                    "type": "boolean",
+                    "description": "Display the full detailed help message."
+                },
+                "show_hidden": {
+                    "type": "boolean",
+                    "description": "Display hidden parameters in the help message (only works when --help or --help_full are provided)."
                 }
             }
         }

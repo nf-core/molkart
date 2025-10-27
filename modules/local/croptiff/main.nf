@@ -28,4 +28,17 @@ process CROPTIFF {
         molkart_croptiff: \$(crop_tiff.py --version)
     END_VERSIONS
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}_stack.ome_crop1.tiff
+    touch ${prefix}_stack.ome_crop2.tiff
+    touch ${prefix}_stack.ome.crop_overview.png
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        molkart_croptiff: \$(crop_tiff.py --version)
+    END_VERSIONS
+    """
 }

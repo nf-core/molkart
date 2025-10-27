@@ -1,0 +1,128 @@
+{
+    "-profile test": {
+        "content": [
+            {
+                "CELLPOSE": {
+                    "cellpose": "3.0.1"
+                },
+                "CLAHE": {
+                    "molkart_clahe": "0.1.0"
+                },
+                "CREATE_ANNDATA": {
+                    "molkart_createanndata": "0.1.0"
+                },
+                "CREATE_STACK": {
+                    "molkart_stack": "0.1.0"
+                },
+                "DEEPCELL_MESMER": {
+                    "deepcell_mesmer": "0.4.1"
+                },
+                "MASKFILTER": {
+                    "molkart_maskfilter": "0.1.0"
+                },
+                "MINDAGAP_DUPLICATEFINDER": {
+                    "mindagap": "0.0.2"
+                },
+                "MINDAGAP_MINDAGAP": {
+                    "mindagap": "0.0.2"
+                },
+                "MOLKARTQC": {
+                    "molkartqc": "0.1.0"
+                },
+                "SPOT2CELL": {
+                    "molkart_spot2cell": "0.1.0"
+                },
+                "STARDIST": {
+                    "stardist": "0.9.1",
+                    "python": "3.9.15",
+                    "tensorflow": "2.10.0",
+                    "tifffile": "2022.4.8"
+                },
+                "Workflow": {
+                    "nf-core/molkart": "v1.2.0"
+                }
+            },
+            [
+                "anndata",
+                "anndata/mem_only_cellpose.adata",
+                "anndata/mem_only_mesmer.adata",
+                "anndata/mem_only_stardist.adata",
+                "clahe",
+                "clahe/mem_only_membrane_gridfilled_clahe.tiff",
+                "clahe/mem_only_nuclear_gridfilled_clahe.tiff",
+                "mindagap",
+                "mindagap/mem_only_membrane_gridfilled.tiff",
+                "mindagap/mem_only_nuclear_gridfilled.tiff",
+                "mindagap/mem_only_spots_markedDups.txt",
+                "molkartqc",
+                "molkartqc/mem_only.cellpose.spot_QC.csv",
+                "molkartqc/mem_only.mesmer.spot_QC.csv",
+                "molkartqc/mem_only.stardist.spot_QC.csv",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_segmentation_stats.txt",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/segmentation_stats.pdf",
+                "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/segmentation_stats.png",
+                "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/segmentation_stats.svg",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
+                "segmentation",
+                "segmentation/cellpose",
+                "segmentation/cellpose/mem_only_cellpose_mask.tif",
+                "segmentation/filtered_masks",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.csv",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.tif",
+                "segmentation/filtered_masks/mem_only_mesmer_filtered.csv",
+                "segmentation/filtered_masks/mem_only_mesmer_filtered.tif",
+                "segmentation/filtered_masks/mem_only_stardist_filtered.csv",
+                "segmentation/filtered_masks/mem_only_stardist_filtered.tif",
+                "segmentation/mesmer",
+                "segmentation/mesmer/mem_only_mesmer_mask.tif",
+                "segmentation/stardist",
+                "segmentation/stardist/mem_only_stardist_mask.tif",
+                "spot2cell",
+                "spot2cell/cellxgene_mem_only_cellpose.csv",
+                "spot2cell/cellxgene_mem_only_mesmer.csv",
+                "spot2cell/cellxgene_mem_only_stardist.csv",
+                "stack",
+                "stack/mem_only_stack.ome.tif"
+            ],
+            [
+                "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
+                "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
+                "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
+                "mem_only.cellpose.spot_QC.csv:md5,2090a0bc4307e9712a6150bafeb38ec5",
+                "mem_only.mesmer.spot_QC.csv:md5,3273bd6fecf93a3d240614d1b38831c9",
+                "mem_only.stardist.spot_QC.csv:md5,1b7a3870e08576b07cb5466ffad9da52",
+                "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
+                "multiqc_segmentation_stats.txt:md5,387be8d95a9bdcb52a13acedb2b9bd99",
+                "mem_only_cellpose_mask.tif:md5,d962bae7277cc7ad8cf96708a806b418",
+                "mem_only_cellpose_filtered.csv:md5,4cd99d408b527fb0e74074cbd1880f52",
+                "mem_only_cellpose_filtered.tif:md5,33f1f2e79dec6ebb27e2761413c55696",
+                "mem_only_mesmer_filtered.csv:md5,d489b06c9cd6cc4218f13e17b1fc5ba3",
+                "mem_only_mesmer_filtered.tif:md5,5751b2e39393a9c8221396f5ef592035",
+                "mem_only_stardist_filtered.csv:md5,68ab417273f2f77a738891c773eb931a",
+                "mem_only_stardist_filtered.tif:md5,0d124514cca74cb809b9adcca4a45e03",
+                "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
+                "mem_only_stardist_mask.tif:md5,527ada48b8127622300952ab163ef0a8"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-10-26T22:59:02.887763208"
+    }
+}
