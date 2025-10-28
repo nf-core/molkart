@@ -5,6 +5,8 @@ nextflow_pipeline {
     tag "pipeline"
     tag "pipeline_molkart"
 
+    // FIXME
+    // adding text to trigger test
     test("Nuclear channel, stardist, mesmer and cellpose, without clahe") {
 
         when {
