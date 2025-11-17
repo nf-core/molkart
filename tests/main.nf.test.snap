@@ -34,7 +34,7 @@
                     "molkart_spot2cell": "0.1.0"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -150,7 +150,7 @@
                     "tifffile": "2022.4.8"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -239,7 +239,7 @@
                     "tifffile": "2022.4.8"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -326,7 +326,7 @@
                     "tifffile": "2022.4.8"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -431,7 +431,7 @@
                     "molkart_spot2cell": "0.1.0"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -508,7 +508,7 @@
                     "molkartqc": "0.1.0"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
@@ -574,7 +574,7 @@
                     "molkartqc": "0.1.0"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.2.0"
+                    "nf-core/molkart": "v1.3.0dev"
                 }
             },
             [
