@@ -28,12 +28,12 @@ SAMPLE3,SAMPLE3.nucleus.tiff,SAMPLE3.spots.txt,SAMPLE3.membrane.tiff
 SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 ```
 
-| Column           | Description|
+| Column           | Description                                                                                                                                                                                                                                                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces.|
-| `nuclear_image`  | Full path to the nuclear stain image (DAPI, Hoechst). Must be in **TIFF** format (`.tiff` or `.tif`). |
+| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces.                                                                                                                                                       |
+| `nuclear_image`  | Full path to the nuclear stain image (DAPI, Hoechst). Must be in **TIFF** format (`.tiff` or `.tif`).                                                                                                                                                                                                              |
 | `spot_table`     | Full path to the **spot table** (`.tsv` or `.txt`). The table must contain **x, y, z position columns and a gene column**, with **no header** and **tab-separated values (`\t`)**. Note that the first four columns of the provided file are interpreted as `x`, `y`, `z`, and `gene`, while others are discarded. |
-| `membrane_image` | Full path to the membrane stain image (e.g., WGA) or a second channel to assist with segmentation. Must be in **TIFF** format (`.tiff` or `.tif`). _(Optional)_ |
+| `membrane_image` | Full path to the membrane stain image (e.g., WGA) or a second channel to assist with segmentation. Must be in **TIFF** format (`.tiff` or `.tif`). _(Optional)_                                                                                                                                                    |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
