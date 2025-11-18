@@ -119,8 +119,10 @@ if __name__ == "__main__":
 
     ## Read in spot table
     spot_data = pd.read_csv(
-        args.spot_table, names=["x", "y", "z", "gene", "empty"], sep="\t", header=None, index_col=None
+        args.spot_table, sep="\t", header=None, index_col=None
     )
+    spot_data = spot_data.iloc[:, :4] # drop any column if it exists beyond the first 4 columns (relevant for new MC data)
+    spot_data.columns = ["x", "y", "z", "gene"]
 
     cell_mask = tiff.imread(args.cell_mask)
 
