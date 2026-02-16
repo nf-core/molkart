@@ -6,58 +6,43 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
-
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns (4th column optional), and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline requires that the first column specifies the sample ID. If multiple rows are provided, their sample tags must be different. The samplesheet needs to have the three column names exactly as specified below, with the optional fourth column specifying the `membrane_image` (it does not have to be a membrane image necessarily, but the second image can be provided here to help with segmentation).
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+A final samplesheet file that can be used to process a full dataset (after segmentation optimization), where a matching membrane image is provided would look like:
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample,nuclear_image,spot_table,membrane_image
+SAMPLE1,SAMPLE1.nucleus.tiff,SAMPLE1.spots.txt,SAMPLE1.membrane.tiff
+SAMPLE2,SAMPLE2.nucleus.tiff,SAMPLE2.spots.txt,SAMPLE2.membrane.tiff
+SAMPLE3,SAMPLE3.nucleus.tiff,SAMPLE3.spots.txt,SAMPLE3.membrane.tiff
+SAMPLE4,SAMPLE4.nucleus.tiff,SAMPLE4.spots.txt,SAMPLE4.membrane.tiff
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| Column           | Description                                                                                                                                                                                                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sample`         | Custom sample name. If multiple field-of-views (FOVs) are being processed for the same sample, their sample tags must be different. Must not contain spaces.                                                                                                                                                       |
+| `nuclear_image`  | Full path to the nuclear stain image (DAPI, Hoechst). Must be in **TIFF** format (`.tiff` or `.tif`).                                                                                                                                                                                                              |
+| `spot_table`     | Full path to the **spot table** (`.tsv` or `.txt`). The table must contain **x, y, z position columns and a gene column**, with **no header** and **tab-separated values (`\t`)**. Note that the first four columns of the provided file are interpreted as `x`, `y`, `z`, and `gene`, while others are discarded. |
+| `membrane_image` | Full path to the membrane stain image (e.g., WGA) or a second channel to assist with segmentation. Must be in **TIFF** format (`.tiff` or `.tif`). _(Optional)_                                                                                                                                                    |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
 ## Running the pipeline
 
-The typical command for running the pipeline is as follows:
+The typical command for running the pipeline with default values is as follows:
 
 ```bash
-nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -86,14 +71,95 @@ nextflow run nf-core/molkart -profile docker -params-file params.yaml
 
 with:
 
-```yaml title="params.yaml"
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
-<...>
+```yaml
+input: "./samplesheet.csv"
+outdir: "./results"
+```
+
+Additionally, `params.yaml` can contain optional parameters:
+
+```yaml
+input: "./samplesheet.csv"
+outdir: "./results"
+segmentation_method: "mesmer"
+segmentation_min_area: null
+segmentation_max_area: null
+cellpose_save_flows: false
+cellpose_diameter: 30
+cellpose_chan: 0
+cellpose_chan2: null
+cellpose_pretrained_model: "cyto"
+cellpose_custom_model: null
+cellpose_flow_threshold: 0.4
+cellpose_edge_exclude: true
+stardist_model: "2D_versatile_fluo"
+stardist_n_tiles_x: 3
+stardist_n_tiles_y: 3
+mesmer_image_mpp: 0.138
+mesmer_compartment: "whole-cell"
+ilastik_pixel_project: null
+ilastik_multicut_project: null
+skip_mindagap: false
+mindagap_tilesize: 2144
+mindagap_boxsize: 3
+mindagap_loopnum: 40
+mindagap_edges: false
+skip_clahe: false
+clahe_cliplimit: 0.01
+clahe_nbins: 256
+clahe_pixel_size: 0.138
+clahe_kernel: 25
+clahe_pyramid_tile: 1072
+create_training_subset: false
+crop_amount: 4
+crop_nonzero_fraction: 0.4
+crop_size_x: 400
+crop_size_y: 400
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+### Utilizing the create training feature
+
+To run the pipeline so that the training subset is created with default values, run the following:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --create_training_subset
+```
+
+The number of crops, fraction of non-zero pixels in the crops, and crop size can be adjusted through parameters.
+This process generates both `TIFF` and `HDF5` files that are compatible with the Cellpose and ilastik GUIs for model training. The trained models can then be fed back into the pipeline for automated processing.
+
+After training a Cellpose model, or creating ilastik Pixel Classification and Multicut projects, make sure you match the parameters (e.g cell diameter, flow threshold) in the run to your training and continue the default pipeline run with:
+
+```bash
+nextflow run nf-core/molkart --input ./samplesheet.csv --outdir ./results -profile docker --segmentation_method cellpose,ilastik --cellpose_custom_model /path/to/model --ilastik_pixel_project /path/to/pixel_classifier.ilp --ilastik_multicut_project /path/to/multicut.ilp
+```
+
+### Segmentation approaches
+
+The four segmentation approaches (Mesmer, Cellpose, Stardist, ilastik) can be chosen using the `segmentation_method` parameter. If multiple are given (comma-separated, no whitespace), the pipeline will apply them in parallel. For parameter-based model options, please check the original tool's documentation. These can be provided with `mesmer_compartment`, `cellpose_pretrained_model`, and `stardist_model` for Mesmer, Cellpose and Stardist respectively.
+
+:::note
+If a custom Cellpose model is provided via the `cellpose_custom_model` parameter as a path, the `cellpose_pretrained_model` parameter is ignored.
+:::
+:::note
+Stardist segmentation currently only supports nuclear segmentation and the additional marker will not be used.
+:::
+:::note
+Stardist is the only tool that natively supports tiling. Make sure to adapt requested resources based on the size of the input image(s).
+:::
+:::note
+ilastik segmentation requires user-provided Pixel Classification and Multicut project files. The user must ensure that the training files have the same axes as the segmentation input files to ensure compatibility.
+:::
+
+### Skipping processes
+
+By default, both Mindagap and CLAHE are run, however both can be skipped when running the pipeline using the `skip_mindagap` and `skip_clahe` parameters.
+
+Local contrast enhancement might not be needed for every dataset and parameters should be chosen carefully depending on the data.
+
+Similarly, if the data does not have the grid pattern characteristic for Molecular Cartography data, Mindagap can be skipped (e.g. for Merscope data) meaning both grid-filling and Duplicatefinder would not be applied to the data.
 
 ### Updating the pipeline
 
@@ -128,7 +194,7 @@ Use this parameter to choose a configuration profile. Profiles can give configur
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
 > [!IMPORTANT]
-> We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
+> We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, as currently for this pipeline, Conda is not supported.
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
@@ -155,7 +221,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `wave`
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer. Currently not supported.
 
 ### `-resume`
 
