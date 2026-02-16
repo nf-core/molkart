@@ -100,29 +100,29 @@
                 "stack/mem_only_stack.ome.tif"
             ],
             [
-                "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
-                "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
-                "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
-                "mem_only.cellpose.spot_QC.csv:md5,2090a0bc4307e9712a6150bafeb38ec5",
-                "mem_only.mesmer.spot_QC.csv:md5,3273bd6fecf93a3d240614d1b38831c9",
-                "mem_only.stardist.spot_QC.csv:md5,1b7a3870e08576b07cb5466ffad9da52",
+                "mem_only_membrane_gridfilled.tiff:md5,88a04963c830115fe3e3d8b28c2f8564",
+                "mem_only_nuclear_gridfilled.tiff:md5,0ec40edfcf2afd0717bf96e850467f35",
+                "mem_only_spots_markedDups.txt:md5,ef8ae4bc5ab898c5538daacd59897f86",
+                "mem_only.cellpose.spot_QC.csv:md5,abe9a866b383c36451dd20671319f61c",
+                "mem_only.mesmer.spot_QC.csv:md5,77dfce129a052888c09621a1943e36e5",
+                "mem_only.stardist.spot_QC.csv:md5,b2ef7e1d78ff611065439e2ef23b2b54",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "multiqc_segmentation_stats.txt:md5,387be8d95a9bdcb52a13acedb2b9bd99",
-                "mem_only_cellpose_mask.tif:md5,d962bae7277cc7ad8cf96708a806b418",
-                "mem_only_cellpose_filtered.csv:md5,4cd99d408b527fb0e74074cbd1880f52",
-                "mem_only_cellpose_filtered.tif:md5,33f1f2e79dec6ebb27e2761413c55696",
-                "mem_only_mesmer_filtered.csv:md5,d489b06c9cd6cc4218f13e17b1fc5ba3",
-                "mem_only_mesmer_filtered.tif:md5,5751b2e39393a9c8221396f5ef592035",
+                "multiqc_segmentation_stats.txt:md5,7e08c3d84fec75dfe61310718403ec58",
+                "mem_only_cellpose_mask.tif:md5,1aa3535b8964bc257297d36be7f4fe1e",
+                "mem_only_cellpose_filtered.csv:md5,e8be973d7809a7a2ed2ab0e1667becff",
+                "mem_only_cellpose_filtered.tif:md5,1aa3535b8964bc257297d36be7f4fe1e",
+                "mem_only_mesmer_filtered.csv:md5,68ab417273f2f77a738891c773eb931a",
+                "mem_only_mesmer_filtered.tif:md5,0a1b60e0d27057217272102ca514d694",
                 "mem_only_stardist_filtered.csv:md5,68ab417273f2f77a738891c773eb931a",
-                "mem_only_stardist_filtered.tif:md5,0d124514cca74cb809b9adcca4a45e03",
-                "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
-                "mem_only_stardist_mask.tif:md5,527ada48b8127622300952ab163ef0a8"
+                "mem_only_stardist_filtered.tif:md5,71eec4ea5e68738f2331e7b889c10947",
+                "mem_only_mesmer_mask.tif:md5,1fbb347f705a1be89f470b26172f784c",
+                "mem_only_stardist_mask.tif:md5,dc606bf4447f4e84392f36cd2f8b53f8"
             ]
         ],
+        "timestamp": "2026-02-16T19:29:41.324872543",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-11-17T23:03:50.719079816"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }
