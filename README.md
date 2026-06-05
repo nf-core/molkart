@@ -47,7 +47,6 @@ Quality control
 - Create quality-control metrics specific to this pipeline
 - provide them to ([`MultiQC`](http://multiqc.info/)) to create a report
 
-
 ## Usage
 
 > [!NOTE]
