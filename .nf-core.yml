@@ -7,7 +7,7 @@ lint:
     - assets/nf-core-molkart_logo_light.png
     - docs/images/nf-core-molkart_logo_dark.png
     - docs/images/nf-core-molkart_logo_light.png
-nf_core_version: 4.0.2
+nf_core_version: 4.0.3
 repository_type: pipeline
 template:
   author: Kresimir Bestak, Florian Wuennemann

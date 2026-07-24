@@ -105,7 +105,7 @@
             },
             "mentions": [
                 {
-                    "@id": "#30aab0a5-9a1a-4da3-b939-96cfacbde6b8"
+                    "@id": "#a1abb769-659a-48c9-8f6c-39ce8df08bf1"
                 }
             ],
             "name": "nf-core/molkart"
@@ -137,11 +137,11 @@
                     "@id": "https://orcid.org/0009-0009-8245-9846"
                 },
                 {
-                    "@id": "#92a78c42-0eee-4223-bb14-d7feb5cbd026"
+                    "@id": "#90cc6924-35f8-484d-ab66-2d095acb0b2b"
                 }
             ],
             "dateCreated": "",
-            "dateModified": "2026-04-30T13:33:27Z",
+            "dateModified": "2026-07-24T12:36:09Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
             "keywords": [
                 "nf-core",
@@ -188,11 +188,11 @@
             "version": "!>=25.10.4"
         },
         {
-            "@id": "#30aab0a5-9a1a-4da3-b939-96cfacbde6b8",
+            "@id": "#a1abb769-659a-48c9-8f6c-39ce8df08bf1",
             "@type": "TestSuite",
             "instance": [
                 {
-                    "@id": "#7882bf47-1b0a-4559-b727-e5b99d4dafc7"
+                    "@id": "#a971dc90-21c0-4274-a787-299d3bbe59db"
                 }
             ],
             "mainEntity": {
@@ -201,7 +201,7 @@
             "name": "Test suite for nf-core/molkart"
         },
         {
-            "@id": "#7882bf47-1b0a-4559-b727-e5b99d4dafc7",
+            "@id": "#a971dc90-21c0-4274-a787-299d3bbe59db",
             "@type": "TestInstance",
             "name": "GitHub Actions workflow for testing nf-core/molkart",
             "resource": "repos/nf-core/molkart/actions/workflows/nf-test.yml",
@@ -345,7 +345,7 @@
             "name": "Kresimir Bestak"
         },
         {
-            "@id": "#92a78c42-0eee-4223-bb14-d7feb5cbd026",
+            "@id": "#90cc6924-35f8-484d-ab66-2d095acb0b2b",
             "@type": "Person",
             "name": "Florian Wuennemann"
         }
