@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [PR #132](https://github.com/nf-core/molkart/pull/132) - Template update (@kbestak)
+- [PR #136](https://github.com/nf-core/molkart/pull/136) - Template update (@kbestak)
 
 ### Fixed
 

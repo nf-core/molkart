@@ -103,11 +103,11 @@
                 "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801"
             ]
         ],
+        "timestamp": "2025-10-26T22:35:20.772225588",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:35:20.772225588"
+        }
     },
     "Two channels, stardist, mesmer, cellpose, clahe - stub": {
         "content": [
@@ -169,7 +169,9 @@
                 "molkartqc/mem_only.csv",
                 "multiqc",
                 "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
                 "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
@@ -199,6 +201,8 @@
                 "mem_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_spots_markedDups.txt:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_cellpose_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_cellpose_filtered.csv:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_cellpose_filtered.tif:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -210,11 +214,11 @@
                 "mem_only_stardist_mask.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
+        "timestamp": "2026-06-05T16:16:41.721905899",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:36:57.356349985"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     },
     "Skip mindagap - skip clahe - extended spots - stardist": {
         "content": [
@@ -285,11 +289,11 @@
                 "nuc_only_stardist_mask.tif:md5,adfcdce7a974e0fcf1bfc0e488d523e3"
             ]
         ],
+        "timestamp": "2025-11-17T16:16:47.767909528",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.10.0"
-        },
-        "timestamp": "2025-11-17T16:16:47.767909528"
+        }
     },
     "Nuclear channel, stardist, mesmer and cellpose, without clahe": {
         "content": [
@@ -399,11 +403,11 @@
                 "nuc_only_stardist_mask.tif:md5,89baf7c188fd640f236dbf8b116664e5"
             ]
         ],
+        "timestamp": "2025-10-26T22:34:16.345279697",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:34:16.345279697"
+        }
     },
     "Skip mindagap - clahe - cellpose": {
         "content": [
@@ -482,11 +486,11 @@
                 "mem_only_cellpose_filtered.tif:md5,5c566683d7af62721415329799ad2ac1"
             ]
         ],
+        "timestamp": "2025-10-26T22:36:05.905295847",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:36:05.905295847"
+        }
     },
     "Create training subset": {
         "content": [
@@ -545,11 +549,11 @@
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f"
             ]
         ],
+        "timestamp": "2025-10-26T22:36:29.896471646",
         "meta": {
             "nf-test": "0.9.3",
             "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:36:29.896471646"
+        }
     },
     "Create training subset - stub": {
         "content": [
@@ -590,7 +594,9 @@
                 "multiqc/crop_overview.png",
                 "multiqc/crop_overview.txt",
                 "multiqc/multiqc_data",
+                "multiqc/multiqc_data/.stub",
                 "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/.stub",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
                 "pipeline_info/nf_core_molkart_software_mqc_versions.yml",
@@ -607,13 +613,15 @@
             [
                 "mem_only_membrane_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
                 "mem_only_nuclear_gridfilled.tiff:md5,d41d8cd98f00b204e9800998ecf8427e",
-                "mem_only_stack.png:md5,d41d8cd98f00b204e9800998ecf8427e"
+                "mem_only_stack.png:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e",
+                ".stub:md5,d41d8cd98f00b204e9800998ecf8427e"
             ]
         ],
+        "timestamp": "2026-06-05T16:16:55.60494243",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.04.6"
-        },
-        "timestamp": "2025-10-26T22:37:15.75294997"
+            "nf-test": "0.9.4",
+            "nextflow": "25.10.4"
+        }
     }
 }
