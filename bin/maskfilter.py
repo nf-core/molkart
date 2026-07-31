@@ -104,12 +104,16 @@ def main(args):
     imsave(output, mask.astype("int32"), check_contrast=False)
     print(f"Filtered mask saved to {output}")
 
+    # A mask with no labels is a valid outcome (segmentation found nothing), so report
+    # zero percentages rather than dividing by zero and failing the pipeline.
+    if total == 0:
+        print(f"WARNING: no labels found in {in_path}")
     qc_df = pd.DataFrame(
         {
             "below_min_area": [small],
-            "below_percentage": [small / total],
+            "below_percentage": [small / total if total else 0.0],
             "above_max_area": [big],
-            "above_percentage": [big / total],
+            "above_percentage": [big / total if total else 0.0],
             "total_labels": [total],
         },
         index=None,
