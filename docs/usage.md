@@ -233,26 +233,91 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 
 ### GPU acceleration
 
-Cellpose segmentation can run on an NVIDIA GPU, which is substantially faster than the CPU
-fallback - on the `test` profile data, segmentation drops from roughly 5 minutes to 15 seconds.
+:::warning{title="Experimental feature"}
+This is an experimental feature and may produce errors.
+If you encounter any issues, please report them on the [nf-core/molkart GitHub repository](https://github.com/nf-core/molkart/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml).
+:::
+
+:::info{title="Prerequisites"}
+
+- GPU acceleration has only been tested with Docker.
+  - Singularity and Apptainer are wired up but untested; other container technologies might work.
+  - Conda is not supported - the Cellpose conda environment does not guarantee a CUDA-enabled
+    PyTorch build.
+- An NVIDIA GPU with a working host driver is required (check with `nvidia-smi`).
+- The driver must support CUDA 12.8, which is what the Cellpose container's PyTorch build targets.
+- For Docker/Podman, the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+  must be installed, otherwise every GPU task fails with `could not select device driver` or
+  `failed to discover GPU vendor from CDI`.
+- For Singularity/Apptainer, the host driver libraries must be visible to `--nv`.
+- ROCm / AMD GPUs are currently unsupported.
+
+:::
+
+Tools with implemented support for GPU acceleration are:
+
+- Cellpose
+
+To utilize GPU acceleration, you need to specify the `gpu` profile alongside your container
+engine profile. This tells the tool to use the GPU and requests one accelerator for the task.
+All processes which support GPU acceleration are marked with the `process_gpu` label.
 
 ```bash
 nextflow run nf-core/molkart -profile test,docker,gpu --outdir <OUTDIR>
 ```
 
-The profile requests one accelerator for processes labelled `process_gpu` and passes the
-appropriate flag to the container engine (`--gpus all` for Docker/Podman, `--nv` for
-Singularity/Apptainer). Processes without that label are unaffected and keep running on CPU.
-Without `-profile gpu` no GPU is requested and Cellpose runs on CPU, so the profile is safe to
-omit on machines without a GPU.
+On the `test` profile data this drops Cellpose segmentation from roughly 5 minutes to 15
+seconds. Processes without the `process_gpu` label are unaffected and keep running on CPU, and
+without `-profile gpu` no GPU is requested at all, so the profile is safe to omit on machines
+without a GPU.
 
-Requirements:
+You also need to make sure that the tasks are run on a machine with a GPU.
+If all tasks are run on a machine with a GPU, no further action is needed.
+If you are running the pipeline on a Slurm cluster, where there is a dedicated queue for GPU
+jobs, you need additional configuration that might look like this:
 
-- An NVIDIA GPU with a working driver on the host (check with `nvidia-smi`).
-- For Docker/Podman, the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-  must be installed, otherwise every GPU task fails with
-  `could not select device driver` or `failed to discover GPU vendor from CDI`.
-- For Singularity/Apptainer, the host driver libraries must be visible to `--nv`.
+```groovy
+process {
+    withLabel: process_gpu {
+        queue          = '<gpu-queue>'
+        clusterOptions = '--gpus 1'
+    }
+}
+```
+
+:::tip
+More information on how to configure Slurm in Nextflow can be found [here](https://www.nextflow.io/docs/latest/executor.html#slurm).
+Depending on your cluster configuration, you might need to adjust the `clusterOptions` to one of the following:
+
+- `--gpus 1` (as in the example above)
+- `--gpus-per-node=1`
+- `--gres=gpu:1`
+
+:::
+
+:::tip
+If your jobs get assigned to the correct nodes, but the GPU is not utilized, you might need to
+pass the device environment through to the container:
+
+```groovy
+process {
+    withLabel: process_gpu {
+        containerOptions = '--nv --env CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES --env NVIDIA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES'
+    }
+}
+```
+
+The `--nv` part is set by default by the `gpu` profile; the rest is needed in some cases to make
+the GPU visible to the container.
+:::
+
+:::note
+The `gpu` profile scopes the GPU request to `process_gpu`-labelled tasks via `containerOptions`,
+rather than setting `docker.runOptions` globally. This keeps CPU-only tasks runnable on hosts
+and cluster nodes without a GPU runtime. `containerOptions` is not supported by the Kubernetes
+executor - there the `accelerator` directive, which the profile also sets, is what maps to a GPU
+resource request.
+:::
 
 :::warning
 Cellpose results are not bit-identical between GPU and CPU runs - the number of cells is
