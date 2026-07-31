@@ -228,6 +228,53 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer. Currently not supported.
+- `gpu`
+  - Runs GPU-capable processes on a GPU. Use together with one of the container engine profiles, e.g. `-profile docker,gpu`. See [GPU acceleration](#gpu-acceleration) below.
+
+### GPU acceleration
+
+Cellpose segmentation can run on an NVIDIA GPU, which is substantially faster than the CPU
+fallback - on the `test` profile data, segmentation drops from roughly 5 minutes to 15 seconds.
+
+```bash
+nextflow run nf-core/molkart -profile test,docker,gpu --outdir <OUTDIR>
+```
+
+The profile requests one accelerator for processes labelled `process_gpu` and passes the
+appropriate flag to the container engine (`--gpus all` for Docker/Podman, `--nv` for
+Singularity/Apptainer). Processes without that label are unaffected and keep running on CPU.
+Without `-profile gpu` no GPU is requested and Cellpose runs on CPU, so the profile is safe to
+omit on machines without a GPU.
+
+Requirements:
+
+- An NVIDIA GPU with a working driver on the host (check with `nvidia-smi`).
+- For Docker/Podman, the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+  must be installed, otherwise every GPU task fails with
+  `could not select device driver` or `failed to discover GPU vendor from CDI`.
+- For Singularity/Apptainer, the host driver libraries must be visible to `--nv`.
+
+:::warning
+Cellpose results are not bit-identical between GPU and CPU runs - the number of cells is
+generally the same, but individual mask pixels can differ because of floating point
+non-determinism. Checksums of mask files should therefore not be compared across the two.
+:::
+
+:::note
+Docker 29 resolves `--gpus all` through CDI and can fail on NVIDIA-only hosts with
+`AMD CDI spec not found`. If you hit this, generate the NVIDIA CDI spec
+(`sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`) and request the device
+explicitly instead, via a config file passed with `-c`:
+
+```groovy
+process {
+    withLabel: process_gpu {
+        containerOptions = '--device nvidia.com/gpu=all'
+    }
+}
+```
+
+:::
 
 ### `-resume`
 
