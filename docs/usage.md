@@ -86,9 +86,7 @@ segmentation_min_area: null
 segmentation_max_area: null
 cellpose_save_flows: false
 cellpose_diameter: 30
-cellpose_chan: 0
-cellpose_chan2: null
-cellpose_pretrained_model: "cyto"
+cellpose_pretrained_model: null
 cellpose_custom_model: null
 cellpose_flow_threshold: 0.4
 cellpose_edge_exclude: true
@@ -142,6 +140,14 @@ The four segmentation approaches (Mesmer, Cellpose, Stardist, ilastik) can be ch
 
 :::note
 If a custom Cellpose model is provided via the `cellpose_custom_model` parameter as a path, the `cellpose_pretrained_model` parameter is ignored.
+:::
+
+:::warning
+Cellpose 4.x (cellpose-SAM) ships a single built-in model, `cpsam`, and removed the earlier
+models such as `cyto` and `nuclei`. Passing a removed model name to `cellpose_pretrained_model`
+is not an error - Cellpose treats it as a file path, fails to find it, and silently falls back to
+`cpsam` with only a warning in the log. Leave `cellpose_pretrained_model` unset unless you are
+pointing at a model you supply yourself.
 :::
 :::note
 Stardist segmentation currently only supports nuclear segmentation and the additional marker will not be used.
