@@ -314,9 +314,12 @@ the GPU visible to the container.
 :::note
 The `gpu` profile scopes the GPU request to `process_gpu`-labelled tasks via `containerOptions`,
 rather than setting `docker.runOptions` globally. This keeps CPU-only tasks runnable on hosts
-and cluster nodes without a GPU runtime. `containerOptions` is not supported by the Kubernetes
-executor - there the `accelerator` directive, which the profile also sets, is what maps to a GPU
-resource request.
+and cluster nodes without a GPU runtime, and makes the profile order-independent, so both
+`-profile docker,gpu` and `-profile gpu,docker` work.
+
+`containerOptions` is not supported by the Kubernetes executor - there the `accelerator`
+directive, which `conf/base.config` sets on the same label whenever the `gpu` profile is
+active, is what maps to a GPU resource request.
 :::
 
 :::warning
@@ -327,7 +330,9 @@ non-determinism. Checksums of mask files should therefore not be compared across
 
 :::note
 Docker 29 resolves `--gpus all` through CDI and can fail on NVIDIA-only hosts with
-`AMD CDI spec not found`. If you hit this, generate the NVIDIA CDI spec
+`AMD CDI spec not found`. Registering the `nvidia` runtime
+(`nvidia-ctk runtime configure --runtime=docker`) does not help, as the failure happens before
+the runtime is selected. If you hit this, generate the NVIDIA CDI spec
 (`sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`) and request the device
 explicitly instead, via a config file passed with `-c`:
 
