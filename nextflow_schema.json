@@ -35,7 +35,8 @@
                 },
                 "cellpose_pretrained_model": {
                     "type": "string",
-                    "description": "Pretrained Cellpose model to be used for segmentation. Leave unset to use the default `cpsam` model; Cellpose 4.x removed the older models such as `cyto` and `nuclei`.",
+                    "enum": ["cpsam"],
+                    "description": "Pretrained Cellpose model to be used for segmentation. Leave unset to use the default `cpsam` model; Cellpose 4.x removed the older models such as `cyto` and `nuclei`. To use a model you supply yourself, set `cellpose_custom_model` instead.",
                     "fa_icon": "fas fa-address-card"
                 },
                 "cellpose_custom_model": {

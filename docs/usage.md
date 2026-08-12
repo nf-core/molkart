@@ -144,10 +144,16 @@ If a custom Cellpose model is provided via the `cellpose_custom_model` parameter
 
 :::warning
 Cellpose 4.x (cellpose-SAM) ships a single built-in model, `cpsam`, and removed the earlier
-models such as `cyto` and `nuclei`. Passing a removed model name to `cellpose_pretrained_model`
-is not an error - Cellpose treats it as a file path, fails to find it, and silently falls back to
-`cpsam` with only a warning in the log. Leave `cellpose_pretrained_model` unset unless you are
-pointing at a model you supply yourself.
+models such as `cyto` and `nuclei`. `cellpose_pretrained_model` therefore only accepts `cpsam`,
+and the pipeline rejects any other name at launch - left to itself, Cellpose would treat an
+unknown name as a file path, fail to find it and silently fall back to `cpsam`. Leave the
+parameter unset to use `cpsam`, and use `cellpose_custom_model` to point at a model you supply
+yourself.
+
+The `cellpose_chan` and `cellpose_chan2` parameters were removed in 2.0.0, as Cellpose 4.x infers
+the channel axis itself. The pipeline errors out if either is set. Note that segmentation results
+are not comparable between molkart 1.x and 2.x: cellpose-SAM replaces the model entirely, so the
+same input yields different masks.
 :::
 :::note
 Stardist segmentation currently only supports nuclear segmentation and the additional marker will not be used.
