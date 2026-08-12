@@ -105,23 +105,24 @@
                 "mem_only_membrane_gridfilled.tiff:md5,6e24160d758468d2de07ca200dfb62c2",
                 "mem_only_nuclear_gridfilled.tiff:md5,123763d54f05b2274690b3b84f9690b1",
                 "mem_only_spots_markedDups.txt:md5,4562caad05850d7dd7b6e9235e068a8b",
-                "mem_only.cellpose.spot_QC.csv:md5,46408d9407f83aa69ba3b67f0f21f8c4",
                 "mem_only.mesmer.spot_QC.csv:md5,3273bd6fecf93a3d240614d1b38831c9",
                 "mem_only.stardist.spot_QC.csv:md5,1b7a3870e08576b07cb5466ffad9da52",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "multiqc_segmentation_stats.txt:md5,73d462cd86b9ca266168361ff3d2410b",
-                "mem_only_cellpose_mask.tif:md5,489488d743320fba2fad69796acefbc2",
-                "mem_only_cellpose_filtered.csv:md5,66c1d9d9ab0d026b485ebd9d017eaf84",
-                "mem_only_cellpose_filtered.tif:md5,c3f92c7119dcff078e4f776c2b2be58d",
                 "mem_only_mesmer_filtered.csv:md5,d489b06c9cd6cc4218f13e17b1fc5ba3",
                 "mem_only_mesmer_filtered.tif:md5,5751b2e39393a9c8221396f5ef592035",
                 "mem_only_stardist_filtered.csv:md5,68ab417273f2f77a738891c773eb931a",
                 "mem_only_stardist_filtered.tif:md5,0d124514cca74cb809b9adcca4a45e03",
                 "mem_only_mesmer_mask.tif:md5,6f8c792ccc4cca97b5696990fb4e3801",
                 "mem_only_stardist_mask.tif:md5,527ada48b8127622300952ab163ef0a8"
+            ],
+            [
+                "Sample\tsegmentation_method\ttotal_spots\tduplicated_total",
+                "mem_only_cellpose\tcellpose\t2511\t1",
+                "mem_only_mesmer\tmesmer\t2511\t1",
+                "mem_only_stardist\tstardist\t2511\t1"
             ]
         ],
-        "timestamp": "2026-08-11T13:27:48.457073853",
+        "timestamp": "2026-08-11T20:46:30.876050476",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

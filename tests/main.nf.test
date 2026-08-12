@@ -24,9 +24,24 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_path: All files in ${params.outdir}/ with stable content
             def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            // cellpose 4.x (cellpose-SAM) is not bit-reproducible across CPU models, so its mask
+            // and everything derived from it is left out of stable_path (see tests/.nftignore)
+            // and checked here instead: the outputs have to exist and be non-empty.
+            def cellpose_files = [
+                "segmentation/cellpose/nuc_only_cellpose_mask.tif",
+                "segmentation/filtered_masks/nuc_only_cellpose_filtered.tif",
+                "segmentation/filtered_masks/nuc_only_cellpose_filtered.csv",
+                "molkartqc/nuc_only.cellpose.spot_QC.csv"
+            ].collect { file("$outputDir/$it") }
+            // Of the segmentation stats, keep the columns that come from the spot table rather
+            // than from the mask: sample, method, total_spots and duplicated_total
+            def segmentation_stats = path("$outputDir/multiqc/multiqc_data/multiqc_segmentation_stats.txt")
+                .readLines()
+                .collect { line -> def col = line.split('\t'); [col[0], col[1], col[4], col[8]].join('\t') }
             assert workflow.success
             assertAll(
                 { assert workflow.success},
+                { assert cellpose_files.every { it.exists() && it.size() > 0 } },
                 { assert snapshot(
                     // Number of successful tasks
                     workflow.trace.succeeded().size(),
@@ -35,7 +50,9 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name,
                     // All files with stable contents
-                    stable_path
+                    stable_path,
+                    // Mask-independent columns of the segmentation stats
+                    segmentation_stats
                 ).match() }
             )
         }
@@ -60,9 +77,24 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_path: All files in ${params.outdir}/ with stable content
             def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            // cellpose 4.x (cellpose-SAM) is not bit-reproducible across CPU models, so its mask
+            // and everything derived from it is left out of stable_path (see tests/.nftignore)
+            // and checked here instead: the outputs have to exist and be non-empty.
+            def cellpose_files = [
+                "segmentation/cellpose/mem_only_cellpose_mask.tif",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.tif",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.csv",
+                "molkartqc/mem_only.cellpose.spot_QC.csv"
+            ].collect { file("$outputDir/$it") }
+            // Of the segmentation stats, keep the columns that come from the spot table rather
+            // than from the mask: sample, method, total_spots and duplicated_total
+            def segmentation_stats = path("$outputDir/multiqc/multiqc_data/multiqc_segmentation_stats.txt")
+                .readLines()
+                .collect { line -> def col = line.split('\t'); [col[0], col[1], col[4], col[8]].join('\t') }
             assert workflow.success
             assertAll(
                 { assert workflow.success},
+                { assert cellpose_files.every { it.exists() && it.size() > 0 } },
                 { assert snapshot(
                     // Number of successful tasks
                     workflow.trace.succeeded().size(),
@@ -71,7 +103,9 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name,
                     // All files with stable contents
-                    stable_path
+                    stable_path,
+                    // Mask-independent columns of the segmentation stats
+                    segmentation_stats
                 ).match() }
             )
         }
@@ -94,9 +128,24 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_path: All files in ${params.outdir}/ with stable content
             def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            // cellpose 4.x (cellpose-SAM) is not bit-reproducible across CPU models, so its mask
+            // and everything derived from it is left out of stable_path (see tests/.nftignore)
+            // and checked here instead: the outputs have to exist and be non-empty.
+            def cellpose_files = [
+                "segmentation/cellpose/mem_only_cellpose_mask.tif",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.tif",
+                "segmentation/filtered_masks/mem_only_cellpose_filtered.csv",
+                "molkartqc/mem_only.cellpose.spot_QC.csv"
+            ].collect { file("$outputDir/$it") }
+            // Of the segmentation stats, keep the columns that come from the spot table rather
+            // than from the mask: sample, method, total_spots and duplicated_total
+            def segmentation_stats = path("$outputDir/multiqc/multiqc_data/multiqc_segmentation_stats.txt")
+                .readLines()
+                .collect { line -> def col = line.split('\t'); [col[0], col[1], col[4], col[8]].join('\t') }
             assert workflow.success
             assertAll(
                 { assert workflow.success},
+                { assert cellpose_files.every { it.exists() && it.size() > 0 } },
                 { assert snapshot(
                     // Number of successful tasks
                     workflow.trace.succeeded().size(),
@@ -105,7 +154,9 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name,
                     // All files with stable contents
-                    stable_path
+                    stable_path,
+                    // Mask-independent columns of the segmentation stats
+                    segmentation_stats
                 ).match() }
             )
         }
@@ -128,6 +179,10 @@ nextflow_pipeline {
             def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
             // stable_path: All files in ${params.outdir}/ with stable content
             def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            // The segmentation stats are ignored in stable_path because cellpose contributes an
+            // unstable row to them (see tests/.nftignore). Nothing here runs cellpose, so the
+            // whole file is stable and is snapshotted in full.
+            def segmentation_stats = path("$outputDir/multiqc/multiqc_data/multiqc_segmentation_stats.txt").readLines()
             assert workflow.success
             assertAll(
                 { assert workflow.success},
@@ -139,7 +194,9 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name,
                     // All files with stable contents
-                    stable_path
+                    stable_path,
+                    // Full segmentation stats, stable in the absence of cellpose
+                    segmentation_stats
                 ).match() }
             )
         }
