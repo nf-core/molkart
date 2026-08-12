@@ -86,9 +86,7 @@ segmentation_min_area: null
 segmentation_max_area: null
 cellpose_save_flows: false
 cellpose_diameter: 30
-cellpose_chan: 0
-cellpose_chan2: null
-cellpose_pretrained_model: "cyto"
+cellpose_pretrained_model: null
 cellpose_custom_model: null
 cellpose_flow_threshold: 0.4
 cellpose_edge_exclude: true
@@ -142,6 +140,20 @@ The four segmentation approaches (Mesmer, Cellpose, Stardist, ilastik) can be ch
 
 :::note
 If a custom Cellpose model is provided via the `cellpose_custom_model` parameter as a path, the `cellpose_pretrained_model` parameter is ignored.
+:::
+
+:::warning
+Cellpose 4.x (cellpose-SAM) ships a single built-in model, `cpsam`, and removed the earlier
+models such as `cyto` and `nuclei`. `cellpose_pretrained_model` therefore only accepts `cpsam`,
+and the pipeline rejects any other name at launch - left to itself, Cellpose would treat an
+unknown name as a file path, fail to find it and silently fall back to `cpsam`. Leave the
+parameter unset to use `cpsam`, and use `cellpose_custom_model` to point at a model you supply
+yourself.
+
+The `cellpose_chan` and `cellpose_chan2` parameters were removed in 2.0.0, as Cellpose 4.x infers
+the channel axis itself. The pipeline errors out if either is set. Note that segmentation results
+are not comparable between molkart 1.x and 2.x: cellpose-SAM replaces the model entirely, so the
+same input yields different masks.
 :::
 :::note
 Stardist segmentation currently only supports nuclear segmentation and the additional marker will not be used.
@@ -222,6 +234,123 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer. Currently not supported.
+- `gpu`
+  - Runs GPU-capable processes on a GPU. Use together with one of the container engine profiles, e.g. `-profile docker,gpu`. See [GPU acceleration](#gpu-acceleration) below.
+
+### GPU acceleration
+
+:::warning{title="Experimental feature"}
+This is an experimental feature and may produce errors.
+If you encounter any issues, please report them on the [nf-core/molkart GitHub repository](https://github.com/nf-core/molkart/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml).
+:::
+
+:::info{title="Prerequisites"}
+
+- GPU acceleration has only been tested with Docker.
+  - Singularity and Apptainer are wired up but untested; other container technologies might work.
+  - Conda is not supported - the Cellpose conda environment does not guarantee a CUDA-enabled
+    PyTorch build.
+- An NVIDIA GPU with a working host driver is required (check with `nvidia-smi`).
+- The driver must support CUDA 12.8, which is what the Cellpose container's PyTorch build targets.
+- For Docker/Podman, the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+  must be installed, otherwise every GPU task fails with `could not select device driver` or
+  `failed to discover GPU vendor from CDI`.
+- For Singularity/Apptainer, the host driver libraries must be visible to `--nv`.
+- ROCm / AMD GPUs are currently unsupported.
+
+:::
+
+Tools with implemented support for GPU acceleration are:
+
+- Cellpose
+
+To utilize GPU acceleration, you need to specify the `gpu` profile alongside your container
+engine profile. This tells the tool to use the GPU and requests one accelerator for the task.
+All processes which support GPU acceleration are marked with the `process_gpu` label.
+
+```bash
+nextflow run nf-core/molkart -profile test,docker,gpu --outdir <OUTDIR>
+```
+
+On the `test` profile data this drops Cellpose segmentation from roughly 5 minutes to 15
+seconds. Processes without the `process_gpu` label are unaffected and keep running on CPU, and
+without `-profile gpu` no GPU is requested at all, so the profile is safe to omit on machines
+without a GPU.
+
+You also need to make sure that the tasks are run on a machine with a GPU.
+If all tasks are run on a machine with a GPU, no further action is needed.
+If you are running the pipeline on a Slurm cluster, where there is a dedicated queue for GPU
+jobs, you need additional configuration that might look like this:
+
+```groovy
+process {
+    withLabel: process_gpu {
+        queue          = '<gpu-queue>'
+        clusterOptions = '--gpus 1'
+    }
+}
+```
+
+:::tip
+More information on how to configure Slurm in Nextflow can be found [here](https://www.nextflow.io/docs/latest/executor.html#slurm).
+Depending on your cluster configuration, you might need to adjust the `clusterOptions` to one of the following:
+
+- `--gpus 1` (as in the example above)
+- `--gpus-per-node=1`
+- `--gres=gpu:1`
+
+:::
+
+:::tip
+If your jobs get assigned to the correct nodes, but the GPU is not utilized, you might need to
+pass the device environment through to the container:
+
+```groovy
+process {
+    withLabel: process_gpu {
+        containerOptions = '--nv --env CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES --env NVIDIA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES'
+    }
+}
+```
+
+The `--nv` part is set by default by the `gpu` profile; the rest is needed in some cases to make
+the GPU visible to the container.
+:::
+
+:::note
+The `gpu` profile scopes the GPU request to `process_gpu`-labelled tasks via `containerOptions`,
+rather than setting `docker.runOptions` globally. This keeps CPU-only tasks runnable on hosts
+and cluster nodes without a GPU runtime, and makes the profile order-independent, so both
+`-profile docker,gpu` and `-profile gpu,docker` work.
+
+`containerOptions` is not supported by the Kubernetes executor - there the `accelerator`
+directive, which `conf/base.config` sets on the same label whenever the `gpu` profile is
+active, is what maps to a GPU resource request.
+:::
+
+:::warning
+Cellpose results are not bit-identical between GPU and CPU runs - the number of cells is
+generally the same, but individual mask pixels can differ because of floating point
+non-determinism. Checksums of mask files should therefore not be compared across the two.
+:::
+
+:::note
+Docker 29 resolves `--gpus all` through CDI and can fail on NVIDIA-only hosts with
+`AMD CDI spec not found`. Registering the `nvidia` runtime
+(`nvidia-ctk runtime configure --runtime=docker`) does not help, as the failure happens before
+the runtime is selected. If you hit this, generate the NVIDIA CDI spec
+(`sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`) and request the device
+explicitly instead, via a config file passed with `-c`:
+
+```groovy
+process {
+    withLabel: process_gpu {
+        containerOptions = '--device nvidia.com/gpu=all'
+    }
+}
+```
+
+:::
 
 ### `-resume`
 

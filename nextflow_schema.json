@@ -33,21 +33,10 @@
                     "description": "Cell diameter, if 0 will use the diameter of the training labels used in the model, or with built-in model will estimate diameter for each image.",
                     "fa_icon": "far fa-circle"
                 },
-                "cellpose_chan": {
-                    "type": "integer",
-                    "default": 0,
-                    "description": "Specifies the channel to be segmented by Cellpose.",
-                    "fa_icon": "fas fa-dice-one"
-                },
-                "cellpose_chan2": {
-                    "type": "integer",
-                    "description": "Specifies nuclear channel index for Cellpose if using pretrained models such as cyto.",
-                    "fa_icon": "fas fa-dice-two"
-                },
                 "cellpose_pretrained_model": {
                     "type": "string",
-                    "default": "cyto",
-                    "description": "Pretrained Cellpose model to be used for segmentation.",
+                    "enum": ["cpsam"],
+                    "description": "Pretrained Cellpose model to be used for segmentation. Leave unset to use the default `cpsam` model; Cellpose 4.x removed the older models such as `cyto` and `nuclei`. To use a model you supply yourself, set `cellpose_custom_model` instead.",
                     "fa_icon": "fas fa-address-card"
                 },
                 "cellpose_custom_model": {

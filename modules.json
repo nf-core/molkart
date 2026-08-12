@@ -7,7 +7,7 @@
                 "nf-core": {
                     "cellpose": {
                         "branch": "master",
-                        "git_sha": "5bca12d66725b17a486edc24d1d2381d4170da25",
+                        "git_sha": "a5bdf5df1d0a3417b9b7904a2a3912c0b76ab3f9",
                         "installed_by": ["modules"]
                     },
                     "deepcell/mesmer": {

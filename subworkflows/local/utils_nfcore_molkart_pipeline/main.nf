@@ -179,6 +179,23 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     //genomeExistsError()
+
+    // Parameters dropped in v2.0.0 along with the move to Cellpose 4.x (cellpose-SAM).
+    // nf-schema only warns about parameters it does not recognise, so without this an
+    // existing parameter set runs to completion with the setting silently discarded.
+    def removed_params = [
+        cellpose_chan : "Cellpose 4.x infers the channel axis from the image itself.",
+        cellpose_chan2: "Cellpose 4.x infers the channel axis from the image itself.",
+    ]
+    def in_use = removed_params.keySet().findAll { params.containsKey(it) }
+    if (in_use) {
+        error(
+            "The following parameters were removed in nf-core/molkart 2.0.0:\n" +
+            in_use.collect { "  --${it}: ${removed_params[it]}" }.join("\n") +
+            "\nRemove them from your parameter set. Segmentation results from 1.x are not " +
+            "reproducible with 2.x regardless, as Cellpose 4.x replaces the model entirely."
+        )
+    }
 }
 
 //

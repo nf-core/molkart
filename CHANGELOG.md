@@ -3,18 +3,36 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.3.0dev - [date]
+## v2.0.0dev - [date]
+
+:::warning
+Cellpose 4.x (cellpose-SAM) replaces the model used for Cellpose segmentation, so the same input no longer produces the same masks as molkart 1.x. Results are not comparable across the two.
+:::
 
 ### Added
+
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - Added documentation for GPU acceleration and the `gpu` profile (@FloWuenne)
 
 ### Changed
 
 - [PR #132](https://github.com/nf-core/molkart/pull/132) - Template update (@kbestak)
 - [PR #136](https://github.com/nf-core/molkart/pull/136) - Template update (@kbestak)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - Updated Cellpose to 4.x (Cellpose-SAM); the `cellpose_chan` and `cellpose_chan2` parameters were removed and `cellpose_pretrained_model` now defaults to the built-in `cpsam` model (@FloWuenne)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - The pipeline now fails at launch if `cellpose_chan` or `cellpose_chan2` is set, or if `cellpose_pretrained_model` is set to a model Cellpose 4.x no longer ships, rather than discarding the setting with a warning (@FloWuenne)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - The `gpu` profile now requests a GPU for `process_gpu` tasks only, instead of for every container (@FloWuenne)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - Pipeline snapshots no longer checksum Cellpose outputs, which are not reproducible across CPU models (@FloWuenne)
 
 ### Fixed
 
 - [PR #130](https://github.com/nf-core/molkart/pull/130) - support for new Molecular Cartography spot table format (keep first 4 columns only)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - Fixed MASKFILTER failing on a mask that contains no labels (@FloWuenne)
+- [PR #139](https://github.com/nf-core/molkart/pull/139) - Fixed Cellpose failing under Docker when the host uid has no entry in the container's passwd file (@FloWuenne)
+
+### Dependencies
+
+| Tool     | Previous version | New version |
+| -------- | ---------------- | ----------- |
+| Cellpose | 3.0.1            | 4.0.9       |
 
 ## v1.2.0
 

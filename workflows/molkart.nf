@@ -181,7 +181,7 @@ workflow MOLKART {
             stack_mix,
             cellpose_custom_model ? cellpose_custom_model.map{it[2]} : []
             )
-        ch_versions = ch_versions.mix(CELLPOSE.out.versions)
+        // CELLPOSE publishes its versions to the `versions` topic, not an `out.versions` channel
         segmentation_masks = segmentation_masks
             .mix(CELLPOSE.out.mask
                 .combine(channel.of('cellpose')))

@@ -4,6 +4,10 @@ anndata/*.adata
 clahe/*.tiff
 stack/*.tif
 molkartqc/crop_overview.png
+segmentation/cellpose/*
+segmentation/filtered_masks/*_cellpose_filtered.{tif,csv}
+molkartqc/*.cellpose.spot_QC.csv
+multiqc/multiqc_data/multiqc_segmentation_stats.txt
 training_subset/hdf5/*
 training_subset/tiff/*
 multiqc/crop_overview.png
