@@ -41,7 +41,7 @@
                     "tifffile": "2022.4.8"
                 },
                 "Workflow": {
-                    "nf-core/molkart": "v1.3.0dev"
+                    "nf-core/molkart": "v2.0.0dev"
                 }
             },
             [
