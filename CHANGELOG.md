@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [PR #132](https://github.com/nf-core/molkart/pull/132) - Template update (@kbestak)
 - [PR #136](https://github.com/nf-core/molkart/pull/136) - Template update (@kbestak)
+- [PR #140](https://github.com/nf-core/molkart/pull/140) - Template update to nf-core/tools 4.1.0
 
 ### Fixed
 
