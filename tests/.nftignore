@@ -1,4 +1,13 @@
 .DS_Store
+spot2cell/*.csv
+anndata/*.adata
+clahe/*.tiff
+stack/*.tif
+molkartqc/crop_overview.png
+training_subset/hdf5/*
+training_subset/tiff/*
+multiqc/crop_overview.png
+multiqc/crop_overview.txt
 multiqc/multiqc_data/fastqc_top_overrepresented_sequences_table.txt
 multiqc/multiqc_data/multiqc.parquet
 multiqc/multiqc_data/multiqc.log
